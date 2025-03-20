@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TutorMatch: AI-Driven Tutor-Tutee Matching Platform</title>
-</head>
+
 <body>
     <header>
         <h1>TutorMatch: AI-Driven Tutor-Tutee Matching Platform 🎓</h1>
