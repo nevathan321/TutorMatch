@@ -89,34 +89,5 @@ php artisan serve  # Backend</code></pre>
         </div>
     </footer>
 
-  <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        h1, h2, h3 {
-            color: #2d3748;
-        }
-        .features span {
-            font-weight: bold;
-        }
-        pre {
-            background: #f4f4f4;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        .stack-category {
-            margin-bottom: 20px;
-        }
-        footer {
-            margin-top: 40px;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-        }
-    </style>
 </body>
 </html>
