@@ -32,10 +32,6 @@
             <h3>AI Integration</h3>
             <p>OpenAI API · Google Maps Integration</p>
         </div>
-        <div class="stack-category">
-            <h3>DevOps</h3>
-            <p>GitHub Actions · Docker · Redis</p>
-        </div>
     </section>
 
   <section class="getting-started">
