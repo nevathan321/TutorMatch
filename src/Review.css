@@ -1,0 +1,40 @@
+.Review {
+    padding-top: 18px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20%;
+    border: 2px solid rgb(211, 211, 211);
+    border-radius: 8px;
+}
+
+.authorinfo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.authorinfo img {
+    width: 60px;
+    height: 60px;
+}
+
+.authorname {
+    font-size: 15px;
+    color: rgb(138, 138, 138);
+    font-weight: bold;
+}
+
+.date {
+    font-size: 15px;
+    color: rgb(172, 172, 172);
+}
+
+.starReview {
+    display: flex;
+    gap: 3px;
+}
+
+.star {
+    width: 20px;
+    height: 20px
+}

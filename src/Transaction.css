@@ -1,0 +1,26 @@
+.Transaction {
+    border: 2px solid rgb(211, 211, 211);
+    border-radius: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Transaction img {
+    width: 50px;
+    height: 50px;
+    background-color: rgb(160, 213, 243);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.timedata {
+    display: flex;
+}
+
+.amount {
+    font-weight: bold;
+}
