@@ -1,0 +1,142 @@
+.container {
+  width: 1200px;
+  margin: 0 auto;
+  background-color: rgb(250, 250, 250);
+}
+
+.header {
+  padding: 20px;
+  background-color: rgb(250, 250, 250);
+}
+
+
+.search-bar {
+  margin: 0 20px;
+  padding: 10px 15px;
+  background-color: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 16px;
+  margin-left: 10px;
+  color: #666;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  margin-top: 20px;
+  background-color: #e9ecef;
+}
+
+.section-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.menu-dots {
+  color: #666;
+  font-weight: bold;
+}
+
+.message-card {
+  background-color: white;
+  margin: 6px 0;
+  padding: 15px;
+}
+
+.category {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.sender {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.message-image {
+  width: 100%;
+  height: 200px;
+  background-color: #e9ecef;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+}
+
+.envelope-icon {
+  width: 80px;
+  height: 80px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.envelope-icon::before,
+.envelope-icon::after {
+  content: '';
+  position: absolute;
+  background-color: #e9ecef;
+}
+
+.envelope-icon::before {
+  width: 70px;
+  height: 2px;
+  transform: rotate(45deg);
+}
+
+.envelope-icon::after {
+  width: 70px;
+  height: 2px;
+  transform: rotate(-45deg);
+}
+
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.actions {
+  display: flex;
+  gap: 20px;
+}
+
+.action-button {
+  color: #666;
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.new-task {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #e9ecef;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.new-task-icon {
+  margin-right: 10px;
+  font-size: 20px;
+}
