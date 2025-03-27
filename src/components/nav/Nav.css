@@ -1,0 +1,56 @@
+.Nav {
+    border-right: 2px solid rgb(211, 211, 211);
+}
+
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 25px;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.toolbar img {
+    padding: 10px;
+    border-radius: 100%;
+    transition: background-color 0.2s ease;
+}
+
+.toolbar img:hover {
+    background-color: rgb(199, 199, 199);
+}
+
+.sect {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.sect:hover {
+    background-color: rgb(199, 199, 199);
+}
+
+.sect img {
+    margin-right: 8px;
+}
+
+img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+  }

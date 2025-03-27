@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import Dashboard from './pages/dashboard/Dashboard';
 import Nav from './components/nav/Nav';
@@ -7,6 +6,8 @@ import Profile from './pages/profile/profile';
 import Inbox from './pages/inbox/inbox';
 import Match from './pages/Match/match';
 import Login from './pages/login/login';
+
+
 function App() {
   const isLoggedIn = true;
   if (!isLoggedIn) {
