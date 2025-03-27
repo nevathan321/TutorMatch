@@ -1,0 +1,10 @@
+.card {
+    width: 100vh;
+    height: 150vh;
+    border: 2px solid rgb(211, 211, 211);
+}
+
+.image{
+    width: 100%;
+    height: 200px;
+}
