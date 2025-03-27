@@ -62,7 +62,7 @@ function Dashboard() {
 
     return (
         <div className="Dashboard">
-            <p className="title">Dashboard</p>
+            <h2 className="title">Dashboard</h2>
 
             <div className="reviewpanel">
                 <h2 className="reviewheader">Latest Reviews</h2>
