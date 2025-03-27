@@ -5,8 +5,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Profile from './pages/profile/profile';
 import Inbox from './pages/inbox/inbox';
 import Match from './pages/Match/match';
-import Settings from './pages/settings/settings';
-
 
 function App() {
   return (
@@ -20,7 +18,6 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/match" element={<Match />} />
-            <Route path="/settings" element={<Settings />} />
           </Routes>
         </Router>
 
