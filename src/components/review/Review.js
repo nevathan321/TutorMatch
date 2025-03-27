@@ -1,7 +1,7 @@
 import './Review.css';
-import sampleprofile from './images/sampleprofile.png';
-import fullstar from './images/fullstar.png';
-import emptystar from './images/emptystar.png';
+import sampleprofile from '../../images/sampleprofile.png';
+import fullstar from '../../images/fullstar.png';
+import emptystar from '../../images/emptystar.png';
 
 function Review({ id, rating, title, body, author, date, pfp }) {
     // Create an array of stars based on the rating
@@ -22,6 +22,7 @@ function Review({ id, rating, title, body, author, date, pfp }) {
 
         return stars;
     };
+    
     return (
         <div className='Review'>
             <div className='starReview'>
