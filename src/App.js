@@ -1,23 +1,32 @@
 import logo from './logo.svg';
 import './App.css';
-
+import Dashboard from './pages/dashboard/Dashboard';
+import Nav from './components/nav/Nav';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Profile from './pages/profile/profile';
+import Inbox from './pages/inbox/inbox';
+import Match from './pages/Match/match';
+import Login from './pages/login/login';
 function App() {
+  const isLoggedIn = true;
+  if (!isLoggedIn) {
+    return <Login/>
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className='tile'>
+        
+        <Router>
+          <Nav /> 
+          <Routes>
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/inbox" element={<Inbox />} />
+            <Route path="/match" element={<Match />} />
+          </Routes>
+        </Router>
+
+      </div>
     </div>
   );
 }
