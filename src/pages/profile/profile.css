@@ -1,5 +1,59 @@
-.Profile{
+.Profile {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.top h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.userDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.userContainer {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.userContainer > div {
+    flex: 0 1 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+
+label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+input {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d0d4da;
+    background-color: #f1f4f8;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+input::placeholder {
+    color: #999;
+}
+
+.buttonGroup{
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
 }

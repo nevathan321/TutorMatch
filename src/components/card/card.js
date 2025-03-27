@@ -1,13 +1,11 @@
 import './card.css';
 
-function card(){
+function Card({ children }) {
     return (
-        <div class = "card">
-            <div class = "profile-photo"> 
-                <img class = "image" src="https://www.w3schools.com/howto/img_avatar.png" alt="profile" />
-            </div>
+        <div className="card">
+            {children}
         </div>
-    )
+    );
 }
 
-export default card;
+export default Card;
