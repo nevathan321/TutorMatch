@@ -1,0 +1,52 @@
+.navigation-buttons {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    padding: 0 1rem;
+  }
+  
+  .nav-button {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  
+  .nav-button:hover {
+    transform: scale(1.05);
+  }
+  
+  .nav-button.previous {
+    background-color: #ef5350; /* Red */
+    color: white;
+  }
+  
+  .nav-button.previous:hover {
+    background-color: #e53935; /* Darker red */
+  }
+  
+  .nav-button.next {
+    background-color: #66bb6a; /* Green */
+    color: white;
+  }
+  
+  .nav-button.next:hover {
+    background-color: #43a047; /* Darker green */
+  }
+  
+  .nav-button svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
