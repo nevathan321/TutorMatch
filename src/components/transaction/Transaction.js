@@ -1,5 +1,5 @@
 import './Transaction.css';
-import card from './images/card.png';
+import card from '../../images/card.png';
 
 function Transaction({ id, type, amount, status, date, time }) {
     return (

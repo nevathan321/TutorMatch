@@ -1,6 +1,6 @@
 import './Dashboard.css';
-import Review from './Review';
-import Transaction from './Transaction';
+import Review from '../../components/review/Review';
+import Transaction from '../../components/transaction/Transaction';
 
 function Dashboard() {
     let reviews = [
@@ -43,7 +43,7 @@ function Dashboard() {
             time: "Time"
         },
         {
-            id: 10000000,
+            id: 10000001,
             type: "Type",
             amount: 100,
             status: "Confirmed",
@@ -51,7 +51,7 @@ function Dashboard() {
             time: "Time"
         },
         {
-            id: 10000000,
+            id: 10000002,
             type: "Type",
             amount: 100,
             status: "Confirmed",
@@ -69,7 +69,7 @@ function Dashboard() {
                 <div className="reviewdisplay">
                     {reviews.map((review) => (
                         <Review
-                            id={review.id}
+                            key={review.id}
                             rating={review.rating}
                             title={review.title}
                             body={review.body}
@@ -86,7 +86,7 @@ function Dashboard() {
                     <div className='transactions'>
                         {transactions.map((transaction) => (
                             <Transaction
-                                id={transaction.id}
+                                key={transaction.id}
                                 type={transaction.type}
                                 amount={transaction.amount}
                                 status={transaction.status}

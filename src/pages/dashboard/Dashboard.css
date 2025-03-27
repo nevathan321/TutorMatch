@@ -13,7 +13,6 @@ body {
 }
 
 .reviewpanel {
-    padding-top: 60px;
     padding-bottom: 15px;
     padding-left: 10px;
     padding-right: 10px;
@@ -24,6 +23,7 @@ body {
 .reviewdisplay {
     display: flex;
     justify-content: space-between;
+    
 }
 
 h4 {
@@ -37,7 +37,7 @@ h4 {
 
 .transactionpanel {
     border: 2px solid rgb(211, 211, 211);
-    width: 48%;
+    box-sizing: border-box;  /* Ensure border is included in width */
 }
 
 .transactionpanel h4 {
@@ -45,7 +45,7 @@ h4 {
 }
 
 .transactions {
-    width: 50%;
+    width: 80%;
     margin: auto;
 }
 
