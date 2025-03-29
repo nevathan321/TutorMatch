@@ -23,6 +23,7 @@ body {
 .Nav {
   width: 14%;
 }
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 .page {
@@ -31,5 +32,9 @@ body {
 .Dashboard, .Profile {
   flex-grow: 0.9;
 >>>>>>> main
+=======
+.page {
+  flex-grow: 0.9; 
+>>>>>>> 37d11cdc085f51517f02c3bae739deb87ea909b0
   margin-left: 30px;
 }
