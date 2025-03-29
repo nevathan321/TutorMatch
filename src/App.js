@@ -18,19 +18,11 @@ function App() {
       <div className='tile'>
         
         <Router>
-<<<<<<< HEAD
-<<<<<<< HEAD
           <Nav />
 
           <div className='page'>
-=======
+
           <Nav /> 
->>>>>>> main
-=======
-          <Nav />
-
-          <div className='page'>
->>>>>>> 37d11cdc085f51517f02c3bae739deb87ea909b0
           <Routes>
             <Route path="/profile" element={<Profile />} />
             <Route path="/" element={<Dashboard />} />
