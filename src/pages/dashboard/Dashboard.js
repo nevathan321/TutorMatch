@@ -1,6 +1,7 @@
 import './Dashboard.css';
 import Review from '../../components/review/Review';
 import Transaction from '../../components/transaction/Transaction';
+import Calendar from '../../components/calendar/Calendar';
 
 function Dashboard() {
     let reviews = [
@@ -36,7 +37,7 @@ function Dashboard() {
     let transactions = [
         {
             id: 10000000,
-            type: "Type",
+            type: "Payment",
             amount: 100,
             status: "Pending",
             date: "Date",
@@ -44,7 +45,7 @@ function Dashboard() {
         },
         {
             id: 10000001,
-            type: "Type",
+            type: "Refund",
             amount: 100,
             status: "Confirmed",
             date: "Date",
@@ -52,9 +53,9 @@ function Dashboard() {
         },
         {
             id: 10000002,
-            type: "Type",
+            type: "Currency Exchange",
             amount: 100,
-            status: "Confirmed",
+            status: "Denied",
             date: "Date",
             time: "Time"
         },
@@ -88,6 +89,7 @@ function Dashboard() {
                             <Transaction
                                 key={transaction.id}
                                 type={transaction.type}
+                                id={transaction.id}
                                 amount={transaction.amount}
                                 status={transaction.status}
                                 date={transaction.date}
@@ -98,6 +100,7 @@ function Dashboard() {
                 </div>
                 <div className='schedulepanel'>
                     <h4>Schedule</h4>
+                    
                 </div>
             </div>
         </div>
