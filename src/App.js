@@ -22,7 +22,6 @@ function App() {
 
           <div className='page'>
 
-          <Nav /> 
           <Routes>
             <Route path="/profile" element={<Profile />} />
             <Route path="/" element={<Dashboard />} />
