@@ -9,7 +9,7 @@ body {
   font-family: 'Roboto', sans-serif;
   background-color: #F5F7FA;  /* Light gray/blue background */
   color: #333;                /* Default text color */
-  line-height: 1.5;
+  line-height: 1.5; 
 }
 
 .App {
@@ -23,8 +23,7 @@ body {
 .Nav {
   width: 14%;
 }
-
-.Dashboard, .Profile {
-  flex-grow: 0.9;
+.page {
+  flex-grow: 0.9; 
   margin-left: 30px;
 }

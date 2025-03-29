@@ -18,13 +18,16 @@ function App() {
       <div className='tile'>
         
         <Router>
-          <Nav /> 
+          <Nav />
+
+          <div className='page'>
           <Routes>
             <Route path="/profile" element={<Profile />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/match" element={<Match />} />
           </Routes>
+          </div>
         </Router>
 
       </div>
@@ -32,4 +35,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 
