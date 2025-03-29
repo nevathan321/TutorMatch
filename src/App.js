@@ -5,11 +5,18 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Profile from './pages/profile/profile';
 import Inbox from './pages/inbox/inbox';
 import Match from './pages/Match/match';
+import Login from './pages/login/login';
+
 
 function App() {
+  const isLoggedIn = true;
+  if (!isLoggedIn) {
+    return <Login/>
+  }
   return (
     <div className="App">
       <div className='tile'>
+        
         <Router>
           <Nav />
 
