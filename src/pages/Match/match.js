@@ -1,8 +1,8 @@
 /*Change js*/
 
 import React, { useState, useEffect } from 'react';
-import TutorCard from '../../../components/TutorCard/TutorCard';
-import NavigationButtons from '../../../components/nav/NavigationButtons/NavigationButtons';
+import TutorCard from '../../components/TutorCard/TutorCard';
+import NavigationButtons from '../../components/NavigationButtons/NavigationButtons';
 import './match.css';
 
 // Sample data - replace with API call in a real application
