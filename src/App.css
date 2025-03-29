@@ -24,7 +24,12 @@ body {
   width: 14%;
 }
 
+<<<<<<< HEAD
 .page {
   flex-grow: 0.9; 
+=======
+.Dashboard, .Profile {
+  flex-grow: 0.9;
+>>>>>>> main
   margin-left: 30px;
 }
