@@ -8,8 +8,9 @@ import Match from './pages/Match/match';
 import Login from './pages/login/login';
 
 
+
 function App() {
-  const isLoggedIn = true;
+  const isLoggedIn = false;
   if (!isLoggedIn) {
     return <Login/>
   }
