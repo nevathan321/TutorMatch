@@ -4,18 +4,19 @@ import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import tutorImage from "./tutorImage.jpg";
 
-export default function login() {
+export default function login({setIsLoggedIn}) {
   const handleLoginSuccess = (response) => {
     const token = response.credential;
     const decodedToken = jwtDecode(token);
 
     console.log("Decoded token:", decodedToken);
-
+    setIsLoggedIn(true);
   };
 
   const handleLoginFailure = (error) => {
     console.error("Google login error:", error);
   };
+  
   return (
     <div className="login-page">
       <div class="login-container">
