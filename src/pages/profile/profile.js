@@ -3,6 +3,22 @@ import ProfilePhotoBlock from "../../components/profilephoto/profilePhoto";
 import './profile.css';
 
 function Profile(){
+
+    function checkPassword(){
+        var password = document.getElementById('password').value;
+        var confirmPassword = document.getElementById('confirmPassword').value;
+
+        if(password != confirmPassword){
+            document.getElementById('warning').innerHTML = "Passwords do not match";
+            return false;
+        }
+        else{
+            document.getElementById('warning').innerHTML = "";
+            return true;
+        }
+        
+    }
+
     return(
         <div className='Profile'>
             <div className='top'>
@@ -33,15 +49,17 @@ function Profile(){
                     </div>
                     
                     <label for='password'>Password:</label>
-                    <input  style={{ width: '50%' }} type='password' id='password' name='password' placeholder='Password' required></input>
+                    <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='password' name='password' placeholder='Password' required></input>
 
                     <label for='confirmPassword'>Confirm Password:</label>
-                    <input style={{ width: '50%' }} type='password' id='confirmPassword' name='confirmPassword' placeholder='Confirm Password' required></input>
+                    <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='confirmPassword' name='confirmPassword' placeholder='Confirm Password' required></input>
+                    <p style = {{"color" : "red" }} id = "warning"> </p>
 
                     <div className="buttonGroup"> 
                         <button className = "btn delete" type = "reset"> Cancel</button>
                         <button className = "btn" type='submit'>Update</button>
                     </div>
+                    
                 </form>
             </Card>
         </div>
