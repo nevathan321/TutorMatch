@@ -18,6 +18,10 @@ function ProfilePhotoBlock() {
         }
     }
 
+    function deletePhoto(){
+        setImageSrc(profile);
+    }
+
     function triggerFileInput() {
         document.getElementById('fileInput').click();
     }
@@ -39,7 +43,7 @@ function ProfilePhotoBlock() {
                     />
 
                     <button className="btn" onClick={triggerFileInput}>Upload Photo</button>
-                    <button className="btn delete">Delete Photo</button>
+                    <button className="btn delete" onClick={deletePhoto}>Delete Photo</button>
                 </div>
             </div>
         </div>
