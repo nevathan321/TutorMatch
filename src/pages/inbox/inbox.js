@@ -88,11 +88,6 @@ function inbox() {
                 <div class="menu-dots">•••</div>
             </div>
         </div>
-        
-        <div class="new-task">
-            <span class="new-task-icon">+</span>
-            <span>New Task</span>
-        </div>
     </div>
   </React.Fragment>
   );
