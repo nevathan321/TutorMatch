@@ -33,6 +33,12 @@
     gap: 0.5rem;
 }
 
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
 
 label {
     font-weight: 500;
@@ -56,4 +62,81 @@ input::placeholder {
     justify-content: space-between;
     gap: 1rem;
     margin-top: 1rem;
+}
+
+.toggleWrapper {
+    margin-bottom: 1rem;
+    justify-content: end;
+    display: flex;
+}
+  
+.toggleSwitch {
+    width: 120px;
+    height: 36px;
+    background: #eee;
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+  
+.toggleSwitch.tutor {
+    background: #4caf50;
+}
+  
+.toggleSwitch.tutee {
+    background: #2196f3;
+}
+  
+.toggleThumb {
+    width: 60px;
+    height: 100%;
+    background: #fff;
+    border-radius: 20px;
+    text-align: center;
+    line-height: 36px;
+    font-weight: 600;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: left 0.3s ease;
+}
+  
+.toggleSwitch.tutor .toggleThumb {
+    left: 60px;
+}
+
+
+.tagsContainer {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .tag {
+    background-color: #d9ecff;
+    color: #003366;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .removeTag {
+    margin-left: 8px;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #003366;
+  }
+
+.TutorDetails{
+    display: none;
 }
