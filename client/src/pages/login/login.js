@@ -31,6 +31,7 @@ export default function login({ setIsLoggedIn }) {
   const handleLoginFailure = (error) => {
     console.error("Google login error:", error);
   };
+  
   return (
     <div className="login-page">
       <div class="login-container">

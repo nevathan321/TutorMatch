@@ -1,4 +1,4 @@
-import React,  {useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Dashboard from './pages/dashboard/Dashboard';
 import Nav from './components/nav/Nav';
@@ -17,10 +17,8 @@ function App() {
   return (
     <div className="App">
       <div className='tile'>
-        
         <Router>
           <Nav />
-
           <div className='page'>
           <Routes>
             <Route path="/profile" element={<Profile />} />
