@@ -1,28 +1,38 @@
-/*css change*/ 
-
 .match-container {
-    padding: 2rem 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .match-heading {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 2rem;
-  }
-  
-  .tutor-card-container {
-    position: relative;
-    max-width: 801px;
-    margin: 0 auto;
-  }
-  
-  .loading-state {
-    text-align: center;
-    padding: 3rem;
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.match-heading {
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+  color: #333;
+}
+
+.tutor-card-container {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.no-tutors-message {
+  text-align: center;
+  padding: 3rem;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.no-tutors-message h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.no-tutors-message p {
+  color: #666;
+  margin-bottom: 0.5rem;
+}

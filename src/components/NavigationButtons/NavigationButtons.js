@@ -1,28 +1,26 @@
-/*js change*/
-
 import React from 'react';
 import './NavigationButtons.css';
 
-function NavigationButtons({ onPrevious, onNext }) {
+function NavigationButtons({ onReject, onAccept }) {
   return (
     <div className="navigation-buttons">
       <button 
-        className="nav-button previous" 
-        onClick={onPrevious}
-        aria-label="Previous tutor"
+        className="nav-button reject" 
+        onClick={onReject}
+        aria-label="Reject tutor"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="nav-icon">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </button>
       
       <button 
-        className="nav-button next" 
-        onClick={onNext}
-        aria-label="Next tutor"
+        className="nav-button accept" 
+        onClick={onAccept}
+        aria-label="Accept tutor"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="nav-icon">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </button>
     </div>
