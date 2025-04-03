@@ -1,0 +1,175 @@
+.react-calendar {
+    width: 90%;
+    border: none;
+    margin: auto;
+    font-family: 'Roboto', sans-serif;
+    height: 60%;
+    background: transparent;
+}
+
+.react-calendar__viewContainer {
+    width: 90%;
+    height: 100%;
+    margin: auto;
+}
+
+.react-calendar__tile {
+    padding: 20px 10px;
+    margin-left: -1px !important;
+    margin-top: -1px !important;
+    aspect-ratio: 1 !important;
+    /*Ensures perfect square*/
+}
+
+.react-calendar__month-view__days__day {
+    border: 2px solid rgb(211, 211, 211) !important;
+    font-size: 15px;
+}
+
+.react-calendar__month-view__days {
+    gap: 0 !important;
+    /* Removes grid gap */
+}
+
+.react-calendar__navigation__label__labelText {
+    font-size: 30px;
+}
+
+.react-calendar__month-view__weekdays {
+    text-transform: none !important;
+    text-decoration: none !important;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+    text-decoration: none !important;
+    border-bottom: none !important;
+    cursor: default;
+}
+
+.react-calendar__month-view__days__day--weekend {
+    color: inherit;
+}
+
+/* Weekend text color when selected */
+.react-calendar__tile--active.react-calendar__month-view__days__day--weekend {
+    color: white !important;
+}
+
+/* Keep neighboring months gray */
+.react-calendar__month-view__days__day--neighboringMonth {
+    color: #757575 !important;
+}
+
+/* Weekend in neighboring months */
+.react-calendar__month-view__days__day--weekend.react-calendar__month-view__days__day--neighboringMonth {
+    color: #757575 !important;
+}
+
+.react-calendar__tile--now,
+.react-calendar__tile--now:enabled:hover {
+    background: lightgray;
+}
+
+.react-calendar__tile--hasActive:enabled:hover,
+.react-calendar__tile--hasActive:enabled:focus,
+.react-calendar__tile--hasActive:enabled:active {
+    background: transparent !important;
+    color: inherit !important;
+}
+
+.react-calendar__tile--active {
+    background: #7810ff !important;
+    color: white;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+    background: #7810ff !important;
+}
+
+.react-calendar__tile--hasActive {
+    background: #7810ff !important;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+    background: #e0d0ff !important;
+    color: #7810ff !important;
+}
+
+/* Light purple background when selecting month */
+.react-calendar__year-view__months__month--active,
+.react-calendar__year-view__months__month:enabled:hover,
+.react-calendar__year-view__months__month:enabled:focus {
+    background: #e0d0ff !important;
+    color: #7810ff !important;
+}
+
+/* Remove purple from non-active months */
+.react-calendar__year-view__months__month {
+    background: transparent !important;
+    color: inherit !important;
+}
+
+/* Adjust the month grid layout */
+.react-calendar__year-view__months {
+    width: 60% !important;
+    height: 30% !important;
+}
+
+.react-calendar__year-view {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+react-calendar__decade-view__years__year
+
+/* Light purple background when selecting month */
+.react-calendar__decade-view__years__year--active,
+.react-calendar__decade-view__years__year:enabled:hover,
+.react-calendar__decade-view__years__year:enabled:focus {
+    background: #e0d0ff !important;
+    color: #7810ff !important;
+}
+
+/* Adjust the month grid layout */
+.react-calendar__decade-view__years {
+    width: 60% !important;
+    height: 30% !important;
+}
+
+.react-calendar__decade-view {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.react-calendar__decade-view__years__year {
+    background: transparent !important;
+    color: inherit !important;
+}
+
+
+
+/* Light purple background when selecting month */
+.react-calendar__century-view__decades__decade--active,
+.react-calendar__century-view__decades__decade:enabled:hover,
+.react-calendar__century-view__decades__decade:enabled:focus {
+    background: #e0d0ff !important;
+    color: #7810ff !important;
+}
+
+/* Adjust the month grid layout */
+.react-calendar__century-view__decades {
+    width: 60% !important;
+    height: 30% !important;
+}
+
+.react-calendar__century-view {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.react-calendar__century-view__decades__decade {
+    background: transparent !important;
+    color: inherit !important;
+}

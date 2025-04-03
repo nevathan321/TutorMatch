@@ -23,6 +23,7 @@ body {
 .Nav {
   width: 14%;
 }
+
 .page {
   flex-grow: 0.9; 
   margin-left: 30px;
