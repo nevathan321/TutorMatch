@@ -6,6 +6,7 @@ header("Cross-Origin-Opener-Policy: same-origin");  // Add this to allow same-or
 header("Cross-Origin-Embedder-Policy: require-corp");  // Add this for stricter policies
 
 $username = "root";
+//$password = "9YjhtlaJ";
 $password = "";
 $host = "localhost:3306";
 
