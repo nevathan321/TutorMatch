@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TutorCard from '../../components/TutorCard/TutorCard';
 import NavigationButtons from '../../components/NavigationButtons/NavigationButtons';
+import { useNotifications } from '../../context/NotificationContext';
 import './match.css';
 
 // Sample data - replace with API call in a real application
@@ -59,9 +60,12 @@ function Match() {
   const [tutors, setTutors] = useState(tutorsData);
   const [currentTutorIndex, setCurrentTutorIndex] = useState(0);
   const [acceptedTutors, setAcceptedTutors] = useState([]);
+  const { addNotification } = useNotifications();
   
   // Handle rejecting a tutor (swipe left)
   const handleReject = () => {
+    const rejectedTutor = tutors[currentTutorIndex];
+    
     // Remove the current tutor from the list
     const updatedTutors = [...tutors];
     updatedTutors.splice(currentTutorIndex, 1);
@@ -76,12 +80,21 @@ function Match() {
         setCurrentTutorIndex(0);
       }
     }
+    
+    // Add a notification for the rejection (optional)
+    addNotification({
+      title: 'Tutor Rejected',
+      message: `You've rejected ${rejectedTutor.name} as a potential tutor.`,
+      type: 'info'
+    });
   };
   
   // Handle accepting a tutor (swipe right)
   const handleAccept = () => {
+    const acceptedTutor = tutors[currentTutorIndex];
+    
     // Add the current tutor to the accepted list
-    setAcceptedTutors([...acceptedTutors, tutors[currentTutorIndex]]);
+    setAcceptedTutors([...acceptedTutors, acceptedTutor]);
     
     // Remove the current tutor from the list
     const updatedTutors = [...tutors];
@@ -98,14 +111,77 @@ function Match() {
       }
     }
     
-    // In a real app, you would send this match to your backend
-    console.log('Accepted tutor:', tutors[currentTutorIndex]);
+    // Add a notification for the match
+    addNotification({
+      title: 'New Match!',
+      message: `You've matched with ${acceptedTutor.name}! You can now start a conversation.`,
+      type: 'success'
+    });
+    
+    // Simulate a tutor response after a delay (for demonstration)
+    setTimeout(() => {
+      addNotification({
+        title: `Message from ${acceptedTutor.name}`,
+        message: `Hi there! Thanks for matching with me. I'd be happy to help with your ${acceptedTutor.subjects[0]} studies.`,
+        type: 'info'
+      });
+    }, 10000); // 10 seconds later
   };
   
   const handleSeeMoreReviews = () => {
-    // Implement functionality to show more reviews
-    console.log('Show more reviews for', tutors[currentTutorIndex].name);
+    const currentTutor = tutors[currentTutorIndex];
+    // Add a notification when user wants to see more reviews
+    addNotification({
+      title: 'Reviews Loading',
+      message: `Loading more reviews for ${currentTutor.name}...`,
+      type: 'info'
+    });
+    
+    // Simulate loading reviews
+    setTimeout(() => {
+      addNotification({
+        title: 'Reviews Available',
+        message: `5 more reviews available for ${currentTutor.name}`,
+        type: 'success'
+      });
+    }, 2000);
   };
+  
+  // Add a welcome notification when the component mounts
+  useEffect(() => {
+    // Only show welcome notification if it's the first visit
+    const hasVisitedBefore = localStorage.getItem('tutorMatchVisited');
+    
+    if (!hasVisitedBefore) {
+      setTimeout(() => {
+        addNotification({
+          title: 'Welcome to TutorMatch!',
+          message: 'Start swiping to find your perfect tutor match.',
+          type: 'info'
+        });
+        
+        localStorage.setItem('tutorMatchVisited', 'true');
+      }, 1000);
+      
+      // Add a tip notification after a short delay
+      setTimeout(() => {
+        addNotification({
+          title: 'Quick Tip',
+          message: 'Swipe right on tutors you like, left on those you want to skip.',
+          type: 'info'
+        });
+      }, 5000);
+    }
+    
+    // Simulate a system notification after a delay
+    setTimeout(() => {
+      addNotification({
+        title: 'New Tutors Available',
+        message: 'We\'ve added 5 new tutors in your area for Mathematics and Physics!',
+        type: 'success'
+      });
+    }, 15000);
+  }, [addNotification]);
   
   return (
     <div className="match-container">
@@ -130,6 +206,20 @@ function Match() {
             {acceptedTutors.length > 0 && (
               <p>You've matched with {acceptedTutors.length} tutor(s).</p>
             )}
+            <button 
+              className="refresh-tutors-button"
+              onClick={() => {
+                setTutors(tutorsData);
+                setCurrentTutorIndex(0);
+                addNotification({
+                  title: 'Tutors Refreshed',
+                  message: 'We\'ve refreshed your tutor list!',
+                  type: 'success'
+                });
+              }}
+            >
+              Refresh Tutors
+            </button>
           </div>
         )}
       </div>
