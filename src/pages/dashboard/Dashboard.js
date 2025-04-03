@@ -1,7 +1,8 @@
 import './Dashboard.css';
 import Review from '../../components/review/Review';
 import Transaction from '../../components/transaction/Transaction';
-import Calendar from '../../components/calendar/Calendar';
+import Calendar from '../../components/calendar/MyCalendar';
+import MyCalendar from '../../components/calendar/MyCalendar';
 
 function Dashboard() {
     let reviews = [
@@ -100,7 +101,7 @@ function Dashboard() {
                 </div>
                 <div className='schedulepanel'>
                     <h4>Schedule</h4>
-                    
+                    <MyCalendar/>
                 </div>
             </div>
         </div>

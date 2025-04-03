@@ -20,6 +20,7 @@ function App() {
         <Router>
           <Nav />
           <div className='page'>
+
           <Routes>
             <Route path="/profile" element={<Profile />} />
             <Route path="/" element={<Dashboard />} />
