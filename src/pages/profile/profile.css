@@ -140,3 +140,17 @@ input::placeholder {
 .TutorDetails{
     display: none;
 }
+
+/* Multi-select styling to match .formGroup and input aesthetics */
+.styledSelect {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d0d4da;
+    background-color: #f1f4f8;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 120px;
+    resize: vertical;
+    outline: none;
+  }
+  

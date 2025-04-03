@@ -87,6 +87,21 @@ function Profile(){
                             <input style={{ width: '50%' }} type='number' id='hourlyRate' name='hourlyRate' placeholder='10' required></input>
                         </div>
 
+
+                        <div className="formGroup">
+                            <label htmlFor="preferredDays">Preferred Days</label>
+                            <select
+                                name="preferredDays"
+                                id="preferredDays"
+                                multiple
+                                className="styledSelect"
+                            >
+                                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                                <option key={day} value={day}>{day}</option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className="formGroup">
                             <label for='subjectExpertise'>Subject Expertise</label>
                             <input style={{ width: '50%' }} type='text' id='subjectExpertise' name='subjectExpertise' placeholder='Add a subject and press Enter' value={subject} onChange={(e) => setSubject(e.target.value)} onKeyDown={handleSubjectKeyDown} />
