@@ -1,5 +1,3 @@
-/*js change*/
-
 import React from 'react';
 import './TutorCard.css';
 
@@ -21,7 +19,7 @@ function TutorCard({ tutor, onSeeMoreReviews }) {
       stars.push(
         <span 
           key={i} 
-          className={`star ${i <= rating ? 'filled' : 'empty'}`}
+          className={`star ${i <= rating ? 'filled' : ''}`}
         >
           ★
         </span>
@@ -46,11 +44,19 @@ function TutorCard({ tutor, onSeeMoreReviews }) {
         <h2 className="tutor-name">{name}</h2>
         
         <div className="tutor-subjects">
-          {subjects.map((subject, index) => (
-            <span key={index} className="subject-tag">
-              {subject}
-            </span>
-          ))}
+          {subjects.map((subject, index) => {
+            const subjectClass = subject.toLowerCase() === 'chemistry' 
+              ? 'chemistry' 
+              : subject.toLowerCase() === 'physics' 
+                ? 'physics' 
+                : '';
+                
+            return (
+              <span key={index} className={`subject-tag ${subjectClass}`}>
+                {subject}
+              </span>
+            );
+          })}
         </div>
         
         <div className="tutor-price">{priceRange}</div>

@@ -1,6 +1,4 @@
-/*Change js*/
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import TutorCard from '../../components/TutorCard/TutorCard';
 import NavigationButtons from '../../components/NavigationButtons/NavigationButtons';
 import './match.css';
@@ -14,12 +12,12 @@ const tutorsData = [
     priceRange: '$45-50/Hr',
     education: 'PhD student at McMaster',
     rating: 3,
-    image: '/tutors/john-doe.png', // Replace with actual image path
+    image: '/placeholder-tutor.png',
     review: {
       title: 'AMAZING',
       text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.',
       reviewerName: 'Ashley',
-      reviewerImage: '/reviewers/ashley.png', // Replace with actual image path
+      reviewerImage: '/placeholder-avatar.png',
       date: 'March 23, 2024'
     }
   },
@@ -30,12 +28,12 @@ const tutorsData = [
     priceRange: '$40-45/Hr',
     education: 'MSc in Mathematics at UofT',
     rating: 4,
-    image: '/tutors/jane-smith.png', // Replace with actual image path
+    image: '/placeholder-tutor.png',
     review: {
       title: 'VERY HELPFUL',
       text: 'Explained complex concepts in a simple way. Would recommend!',
       reviewerName: 'Michael',
-      reviewerImage: '/reviewers/michael.png', // Replace with actual image path
+      reviewerImage: '/placeholder-avatar.png',
       date: 'March 15, 2024'
     }
   },
@@ -46,52 +44,68 @@ const tutorsData = [
     priceRange: '$55-60/Hr',
     education: 'Software Engineer at Google',
     rating: 5,
-    image: '/tutors/alex-johnson.png', // Replace with actual image path
+    image: '/placeholder-tutor.png',
     review: {
       title: 'EXCEPTIONAL',
       text: 'Alex helped me understand algorithms that I was struggling with for weeks.',
       reviewerName: 'Sarah',
-      reviewerImage: '/reviewers/sarah.png', // Replace with actual image path
+      reviewerImage: '/placeholder-avatar.png',
       date: 'March 10, 2024'
     }
   }
 ];
 
 function Match() {
-  const [currentTutorIndex, setCurrentTutorIndex] = useState(0);
   const [tutors, setTutors] = useState(tutorsData);
+  const [currentTutorIndex, setCurrentTutorIndex] = useState(0);
+  const [acceptedTutors, setAcceptedTutors] = useState([]);
   
-  const handlePrevious = () => {
-    if (currentTutorIndex > 0) {
-      setCurrentTutorIndex(currentTutorIndex - 1);
+  // Handle rejecting a tutor (swipe left)
+  const handleReject = () => {
+    // Remove the current tutor from the list
+    const updatedTutors = [...tutors];
+    updatedTutors.splice(currentTutorIndex, 1);
+    
+    if (updatedTutors.length === 0) {
+      // No more tutors to show
+      setTutors([]);
+    } else {
+      setTutors(updatedTutors);
+      // If we're at the end of the list, go back to the first tutor
+      if (currentTutorIndex >= updatedTutors.length) {
+        setCurrentTutorIndex(0);
+      }
     }
   };
   
-  const handleNext = () => {
-    if (currentTutorIndex < tutors.length - 1) {
-      setCurrentTutorIndex(currentTutorIndex + 1);
+  // Handle accepting a tutor (swipe right)
+  const handleAccept = () => {
+    // Add the current tutor to the accepted list
+    setAcceptedTutors([...acceptedTutors, tutors[currentTutorIndex]]);
+    
+    // Remove the current tutor from the list
+    const updatedTutors = [...tutors];
+    updatedTutors.splice(currentTutorIndex, 1);
+    
+    if (updatedTutors.length === 0) {
+      // No more tutors to show
+      setTutors([]);
+    } else {
+      setTutors(updatedTutors);
+      // If we're at the end of the list, go back to the first tutor
+      if (currentTutorIndex >= updatedTutors.length) {
+        setCurrentTutorIndex(0);
+      }
     }
+    
+    // In a real app, you would send this match to your backend
+    console.log('Accepted tutor:', tutors[currentTutorIndex]);
   };
   
   const handleSeeMoreReviews = () => {
     // Implement functionality to show more reviews
     console.log('Show more reviews for', tutors[currentTutorIndex].name);
   };
-  
-  // In a real app, you would fetch tutors from an API
-  // useEffect(() => {
-  //   const fetchTutors = async () => {
-  //     try {
-  //       const response = await fetch('/api/tutors');
-  //       const data = await response.json();
-  //       setTutors(data);
-  //     } catch (error) {
-  //       console.error('Error fetching tutors:', error);
-  //     }
-  //   };
-  //   
-  //   fetchTutors();
-  // }, []);
   
   return (
     <div className="match-container">
@@ -105,12 +119,18 @@ function Match() {
               onSeeMoreReviews={handleSeeMoreReviews}
             />
             <NavigationButtons 
-              onPrevious={handlePrevious} 
-              onNext={handleNext}
+              onReject={handleReject} 
+              onAccept={handleAccept}
             />
           </>
         ) : (
-          <div className="loading-state">Loading tutors...</div>
+          <div className="no-tutors-message">
+            <h2>No more tutors available</h2>
+            <p>You've gone through all available tutors.</p>
+            {acceptedTutors.length > 0 && (
+              <p>You've matched with {acceptedTutors.length} tutor(s).</p>
+            )}
+          </div>
         )}
       </div>
     </div>

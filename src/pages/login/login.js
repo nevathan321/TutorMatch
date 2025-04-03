@@ -1,7 +1,37 @@
 import React from "react";
-import "./login.css"
+import "./login.css";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 import tutorImage from "./tutorImage.jpg";
-export default function login() {
+
+async function saveUser(userInfo) {
+  try {
+    const response = await fetch("http://localhost:8000/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userInfo),
+    });
+    const result = await response.json();
+    console.log(result);
+  } catch {}
+}
+
+export default function login({ setIsLoggedIn }) {
+  const handleLoginSuccess = (response) => {
+    const token = response.credential;
+    const userInfo = jwtDecode(token);
+
+    console.log("Decoded token:", userInfo);
+    setIsLoggedIn(true);
+    saveUser(userInfo);
+  };
+
+  const handleLoginFailure = (error) => {
+    console.error("Google login error:", error);
+  };
+  
   return (
     <div className="login-page">
       <div class="login-container">
@@ -33,7 +63,7 @@ export default function login() {
               <input type="checkbox" id="remember" />
               <label for="remember">Remember me</label>
             </div>
-            <a href="#" class="forgot-password">
+            <a href="" class="forgot-password">
               Forgot Password?
             </a>
           </div>
@@ -44,25 +74,23 @@ export default function login() {
         </form>
 
         <div class="social-login">
-          <button class="social-button">
-            
-            Log in with Google
-          </button>
-          <button class="social-button">
-            
-            Log in with Apple
-          </button>
+          <GoogleLogin
+            onSuccess={handleLoginSuccess}
+            onError={handleLoginFailure}
+          />
+
+          <button class="social-button">Log in with Apple</button>
         </div>
 
         <div class="divider"></div>
 
         <p class="signup-link">
-          No account yet? <a href="#">Sign Up</a>
+          No account yet? <a href="">Sign Up</a>
         </p>
       </div>
 
       <div class="image-container">
-        <img src={tutorImage}/>
+        <img src={tutorImage} />
       </div>
     </div>
   );
