@@ -4,9 +4,10 @@ import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import tutorImage from "./tutorImage.jpg";
 
+
 async function saveUser(userInfo) {
   try {
-    const response = await fetch("http://localhost:8000/", {
+    const response = await fetch("http://localhost:8000/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
