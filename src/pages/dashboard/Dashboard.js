@@ -1,7 +1,6 @@
 import './Dashboard.css';
 import Review from '../../components/review/Review';
 import Transaction from '../../components/transaction/Transaction';
-import Calendar from '../../components/calendar/MyCalendar';
 import MyCalendar from '../../components/calendar/MyCalendar';
 
 function Dashboard() {

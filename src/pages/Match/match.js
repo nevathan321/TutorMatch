@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TutorCard from '../../components/TutorCard/TutorCard';
 import NavigationButtons from '../../components/NavigationButtons/NavigationButtons';
 import { useNotifications } from '../../context/NotificationContext';
-import './match.css';
-
+import './match.css'
 // Sample data - replace with API call in a real application
 const tutorsData = [
   {

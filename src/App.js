@@ -7,6 +7,7 @@ import Profile from './pages/profile/profile';
 import Inbox from './pages/inbox/inbox';
 import Match from './pages/Match/match';
 import Login from './pages/login/login';
+import { NotificationProvider } from './context/NotificationContext';
 
 //switch root path when uploading to filezilla
 //const ROOT_PATH = "/~bhavanaa/TutorMatch";
@@ -24,23 +25,28 @@ function App() {
     )
   }
   return (
-    <div className="App">
-      <div className='tile'>
-        <Router basename={ROOT_PATH}>
-          <Nav />
-          <div className='page'>
+    
+      <div className="App">
+        <div className='tile'>
+          <NotificationProvider>
+            <Router basename={ROOT_PATH}>
+              <Nav />
+              <div className='page'>
 
-          <Routes>
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/inbox" element={<Inbox />} />
-            <Route path="/match" element={<Match />} />
-          </Routes>
+              <Routes>
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/inbox" element={<Inbox />} />
+                <Route path="/match" element={<Match />} />
+              </Routes>
+              </div>
+            </Router>
+          </NotificationProvider>
+
           </div>
-        </Router>
+        </div>
+     
 
-      </div>
-    </div>
   );
 }
 
