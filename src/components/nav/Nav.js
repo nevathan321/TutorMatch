@@ -64,11 +64,13 @@ function Nav() {
           </svg>
           <span>Profile</span>
         </Link>
+
+         <div className="nav-actions">
+          <NotificationsPanel />
+        </div>
       </div>
       
-      <div className="nav-actions">
-        <NotificationsPanel />
-      </div>
+
     </nav>
   );
 }

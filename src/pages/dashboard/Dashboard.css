@@ -57,3 +57,9 @@ h4 {
 .schedulepanel h4 {
     margin-left: 8px;
 }
+
+.Dashboard{
+    padding: 2rem 1rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
