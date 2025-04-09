@@ -64,7 +64,7 @@ export default function login({ setIsLoggedIn }) {
               <input type="checkbox" id="remember" />
               <label for="remember">Remember me</label>
             </div>
-            <a href="" class="forgot-password">
+            <a href="/" class="forgot-password">
               Forgot Password?
             </a>
           </div>
@@ -86,12 +86,12 @@ export default function login({ setIsLoggedIn }) {
         <div class="divider"></div>
 
         <p class="signup-link">
-          No account yet? <a href="">Sign Up</a>
+          No account yet? <a href="/">Sign Up</a>
         </p>
       </div>
 
       <div class="image-container">
-        <img src={tutorImage} />
+        <img src={tutorImage} alt="profile" />
       </div>
     </div>
   );

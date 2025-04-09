@@ -12,7 +12,7 @@ function Profile(){
         var password = document.getElementById('password').value;
         var confirmPassword = document.getElementById('confirmPassword').value;
 
-        if(password != confirmPassword){
+        if(password !== confirmPassword){
             document.getElementById('warning').innerHTML = "Passwords do not match";
             return false;
         }
