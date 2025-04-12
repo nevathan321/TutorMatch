@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import TutorCard from '../../components/TutorCard/TutorCard';
-import NavigationButtons from '../../components/NavigationButtons/NavigationButtons';
 import { useNotifications } from '../../context/NotificationContext';
 import './match.css';
 
@@ -60,11 +59,18 @@ function Match() {
   const [tutors, setTutors] = useState(tutorsData);
   const [currentTutorIndex, setCurrentTutorIndex] = useState(0);
   const [acceptedTutors, setAcceptedTutors] = useState([]);
+  const [rejectedTutors, setRejectedTutors] = useState([]);
+  const [allTutorsViewed, setAllTutorsViewed] = useState(false);
   const { addNotification } = useNotifications();
   
   // Handle rejecting a tutor (swipe left)
   const handleReject = () => {
+    if (tutors.length === 0) return;
+    
     const rejectedTutor = tutors[currentTutorIndex];
+    
+    // Add to rejected list
+    setRejectedTutors(prev => [...prev, rejectedTutor]);
     
     // Remove the current tutor from the list
     const updatedTutors = [...tutors];
@@ -73,6 +79,7 @@ function Match() {
     if (updatedTutors.length === 0) {
       // No more tutors to show
       setTutors([]);
+      setAllTutorsViewed(true);
     } else {
       setTutors(updatedTutors);
       // If we're at the end of the list, go back to the first tutor
@@ -80,21 +87,16 @@ function Match() {
         setCurrentTutorIndex(0);
       }
     }
-    
-    // Add a notification for the rejection (optional)
-    addNotification({
-      title: 'Tutor Rejected',
-      message: `You've rejected ${rejectedTutor.name} as a potential tutor.`,
-      type: 'info'
-    });
   };
   
   // Handle accepting a tutor (swipe right)
   const handleAccept = () => {
+    if (tutors.length === 0) return;
+    
     const acceptedTutor = tutors[currentTutorIndex];
     
     // Add the current tutor to the accepted list
-    setAcceptedTutors([...acceptedTutors, acceptedTutor]);
+    setAcceptedTutors(prev => [...prev, acceptedTutor]);
     
     // Remove the current tutor from the list
     const updatedTutors = [...tutors];
@@ -103,6 +105,7 @@ function Match() {
     if (updatedTutors.length === 0) {
       // No more tutors to show
       setTutors([]);
+      setAllTutorsViewed(true);
     } else {
       setTutors(updatedTutors);
       // If we're at the end of the list, go back to the first tutor
@@ -129,59 +132,45 @@ function Match() {
   };
   
   const handleSeeMoreReviews = () => {
-    const currentTutor = tutors[currentTutorIndex];
-    // Add a notification when user wants to see more reviews
-    addNotification({
-      title: 'Reviews Loading',
-      message: `Loading more reviews for ${currentTutor.name}...`,
-      type: 'info'
-    });
+    if (tutors.length === 0) return;
     
-    // Simulate loading reviews
-    setTimeout(() => {
-      addNotification({
-        title: 'Reviews Available',
-        message: `5 more reviews available for ${currentTutor.name}`,
-        type: 'success'
-      });
-    }, 2000);
+    // No notification for seeing more reviews
+    console.log("Showing more reviews for", tutors[currentTutorIndex].name);
   };
   
-  // Add a welcome notification when the component mounts
-  useEffect(() => {
-    // Only show welcome notification if it's the first visit
-    const hasVisitedBefore = localStorage.getItem('tutorMatchVisited');
+  // Navigate to previous tutor
+  const handlePrevTutor = () => {
+    if (tutors.length <= 1) return;
     
-    if (!hasVisitedBefore) {
-      setTimeout(() => {
-        addNotification({
-          title: 'Welcome to TutorMatch!',
-          message: 'Start swiping to find your perfect tutor match.',
-          type: 'info'
-        });
-        
-        localStorage.setItem('tutorMatchVisited', 'true');
-      }, 1000);
-      
-      // Add a tip notification after a short delay
-      setTimeout(() => {
-        addNotification({
-          title: 'Quick Tip',
-          message: 'Swipe right on tutors you like, left on those you want to skip.',
-          type: 'info'
-        });
-      }, 5000);
+    setCurrentTutorIndex(prevIndex => 
+      prevIndex === 0 ? tutors.length - 1 : prevIndex - 1
+    );
+  };
+  
+  // Navigate to next tutor
+  const handleNextTutor = () => {
+    if (tutors.length <= 1) return;
+    
+    setCurrentTutorIndex(prevIndex => 
+      prevIndex === tutors.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+  
+  // Handle refreshing tutors
+  const handleRefreshTutors = () => {
+    // Filter out tutors that have been accepted or rejected
+    const allInteractedIds = [...acceptedTutors, ...rejectedTutors].map(tutor => tutor.id);
+    const freshTutors = tutorsData.filter(tutor => !allInteractedIds.includes(tutor.id));
+    
+    if (freshTutors.length > 0) {
+      setTutors(freshTutors);
+      setCurrentTutorIndex(0);
+      setAllTutorsViewed(false);
+    } else {
+      // No new tutors available
+      setAllTutorsViewed(true);
     }
-    
-    // Simulate a system notification after a delay
-    setTimeout(() => {
-      addNotification({
-        title: 'New Tutors Available',
-        message: 'We\'ve added 5 new tutors in your area for Mathematics and Physics!',
-        type: 'success'
-      });
-    }, 15000);
-  }, [addNotification]);
+  };
   
   return (
     <div className="match-container">
@@ -189,37 +178,55 @@ function Match() {
       
       <div className="tutor-card-container">
         {tutors.length > 0 ? (
-          <>
+          <div className="tutor-card-with-navigation">
+            {/* Previous button positioned absolutely */}
+            <button 
+              className="arrow-button prev" 
+              onClick={handlePrevTutor}
+              aria-label="Previous tutor"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            
+            {/* Tutor card */}
             <TutorCard 
               tutor={tutors[currentTutorIndex]} 
               onSeeMoreReviews={handleSeeMoreReviews}
-            />
-            <NavigationButtons 
-              onReject={handleReject} 
               onAccept={handleAccept}
+              onReject={handleReject}
             />
-          </>
+            
+            {/* Next button positioned absolutely */}
+            <button 
+              className="arrow-button next" 
+              onClick={handleNextTutor}
+              aria-label="Next tutor"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
         ) : (
           <div className="no-tutors-message">
-            <h2>No more tutors available</h2>
-            <p>You've gone through all available tutors.</p>
-            {acceptedTutors.length > 0 && (
-              <p>You've matched with {acceptedTutors.length} tutor(s).</p>
+            <h2>{allTutorsViewed ? "No more tutors available" : "Loading tutors..."}</h2>
+            {allTutorsViewed && (
+              <>
+                <p>You've gone through all available tutors at this time.</p>
+                {acceptedTutors.length > 0 && (
+                  <p>You've matched with {acceptedTutors.length} tutor(s)!</p>
+                )}
+                <p className="no-tutors-note">We're constantly adding new tutors to our platform. We'll email you as soon as we have new matches that fit your needs!</p>
+                <button 
+                  className="refresh-tutors-button"
+                  onClick={handleRefreshTutors}
+                >
+                  Check for New Tutors
+                </button>
+              </>
             )}
-            <button 
-              className="refresh-tutors-button"
-              onClick={() => {
-                setTutors(tutorsData);
-                setCurrentTutorIndex(0);
-                addNotification({
-                  title: 'Tutors Refreshed',
-                  message: 'We\'ve refreshed your tutor list!',
-                  type: 'success'
-                });
-              }}
-            >
-              Refresh Tutors
-            </button>
           </div>
         )}
       </div>
