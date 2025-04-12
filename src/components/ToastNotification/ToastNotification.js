@@ -7,17 +7,25 @@ function ToastNotification({ notification, onClose }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsExiting(true);
-    }, 4500); 
+    }, 4500); // Start exit animation after 4.5 seconds
     
     const closeTimer = setTimeout(() => {
       onClose(notification.id);
-    }, 5000); 
+    }, 5000); // Remove after 5 seconds
     
     return () => {
       clearTimeout(timer);
       clearTimeout(closeTimer);
     };
   }, [notification.id, onClose]);
+  
+  const handleClose = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setIsExiting(true);
+    setTimeout(() => {
+      onClose(notification.id);
+    }, 300); // Wait for exit animation to complete
+  };
   
   const getTypeClass = () => {
     switch (notification.type) {
@@ -79,12 +87,11 @@ function ToastNotification({ notification, onClose }) {
       </div>
       <button 
         className="toast-close"
-        onClick={() => onClose(notification.id)}
+        onClick={handleClose}
         aria-label="Close notification"
       >
         &times;
       </button>
-      <div className="toast-progress"></div>
     </div>
   );
 }

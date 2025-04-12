@@ -8,17 +8,21 @@ function NotificationsPanel() {
   const { 
     notifications, 
     unreadCount, 
+    soundEnabled,
+    toggleSound,
     markAsRead, 
     markAllAsRead, 
     removeNotification,
     clearAllNotifications
   } = useNotifications();
   const panelRef = useRef(null);
+  const buttonRef = useRef(null);
   
   // Close panel when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (panelRef.current && !panelRef.current.contains(event.target)) {
+      if (panelRef.current && !panelRef.current.contains(event.target) && 
+          buttonRef.current && !buttonRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     }
@@ -114,11 +118,12 @@ function NotificationsPanel() {
   };
   
   return (
-    <div className="notifications-container" ref={panelRef}>
+    <div className="notifications-container">
       <button 
         className="notifications-button" 
         onClick={togglePanel}
         aria-label="Notifications"
+        ref={buttonRef}
       >
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
@@ -138,18 +143,27 @@ function NotificationsPanel() {
       </button>
       
       {isOpen && (
-        <div className="notifications-panel">
+        <div className="notifications-panel" ref={panelRef}>
           <div className="notifications-header">
             <h3>Notifications</h3>
             <div className="notifications-actions">
+              <button 
+                className={`toggle-sound-button ${!soundEnabled ? 'sound-off' : ''}`}
+                onClick={toggleSound}
+                title={soundEnabled ? "Mute notifications" : "Unmute notifications"}
+              >
+                {soundEnabled ? "Mute" : "Unmute"}
+              </button>
+              
               {unreadCount > 0 && (
                 <button 
                   className="mark-all-read-button"
                   onClick={handleMarkAllAsRead}
                 >
-                  Mark all as read
+                  Mark all read
                 </button>
               )}
+              
               {notifications.length > 0 && (
                 <button 
                   className="clear-all-button"

@@ -1,193 +1,280 @@
 .tutor-card {
-  display: flex;
-  flex-direction: column;
-  background-color: white;
+  background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem;
   position: relative;
-  padding: 2rem;
-  overflow: visible;
+  max-width: 800px;
+  margin: 0 auto;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tutor-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.tutor-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #4a90e2, #67b26f);
   z-index: 1;
 }
 
-@media (min-width: 768px) {
+.tutor-info {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
   .tutor-card {
-    flex-direction: row;
+    padding: 1.5rem;
+  }
+  
+  .tutor-info {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 
 .tutor-image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-@media (min-width: 768px) {
-  .tutor-image-container {
-    width: 40%;
-  }
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .tutor-image {
-  width: 16rem;
-  height: 16rem;
-  border-radius: 50%;
-  background-color: #f8e1e4; /* Light pink background */
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.tutor-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease;
 }
 
-.tutor-info {
-  padding: 1rem 1rem 1rem 2rem;
-  width: 100%;
+.tutor-image-container:hover .tutor-image {
+  transform: scale(1.05);
+}
+
+.tutor-details {
   display: flex;
   flex-direction: column;
-}
-
-@media (min-width: 768px) {
-  .tutor-info {
-    width: 60%;
-  }
+  gap: 1rem;
 }
 
 .tutor-name {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 700;
   color: #333;
+  margin: 0 0 0.5rem;
 }
 
 .tutor-subjects {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .subject-tag {
-  padding: 0.35rem 1rem;
-  border-radius: 9999px;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
   font-size: 0.875rem;
   font-weight: 500;
+  display: inline-block;
 }
 
 .subject-tag.chemistry {
-  background-color: #e8f5e9; /* Light green */
-  color: #2e7d32; /* Dark green */
+  background-color: rgba(103, 178, 111, 0.15);
+  color: #3c8c48;
 }
 
 .subject-tag.physics {
-  background-color: #ffebee; /* Light red */
-  color: #c62828; /* Dark red */
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+
+.subject-tag.mathematics {
+  background-color: rgba(74, 144, 226, 0.15);
+  color: #2980b9;
+}
+
+.subject-tag.programming {
+  background-color: rgba(155, 89, 182, 0.15);
+  color: #8e44ad;
+}
+
+.subject-tag.statistics {
+  background-color: rgba(243, 156, 18, 0.15);
+  color: #d35400;
 }
 
 .tutor-price {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: 0.75rem;
   color: #333;
+  margin: 0.5rem 0;
 }
 
 .tutor-education {
-  color: #666;
-  margin-bottom: 1.5rem;
   font-size: 1rem;
-}
-
-.see-reviews-btn {
-  background-color: #1a1a1a;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-  transition: background-color 0.2s;
-  width: 100%;
-}
-
-.see-reviews-btn:hover {
-  background-color: #333;
-}
-
-.rating-stars {
-  display: flex;
+  color: #666;
   margin-bottom: 1rem;
 }
 
+.tutor-rating {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+}
+
 .star {
+  color: #ddd;
   font-size: 1.5rem;
   margin-right: 0.25rem;
-  color: #e0e0e0; /* Light gray for empty stars */
 }
 
 .star.filled {
-  color: #ffc107; /* Gold for filled stars */
+  color: #f1c40f;
 }
 
 .review-section {
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
 }
 
 .review-title {
   font-size: 1.25rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
   color: #333;
+  margin-bottom: 0.5rem;
 }
 
 .review-text {
+  font-size: 1rem;
   color: #666;
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
+  line-height: 1.6;
+  margin-bottom: 1rem;
 }
 
 .reviewer-info {
   display: flex;
   align-items: center;
+  margin-top: 1rem;
 }
 
-.reviewer-avatar {
-  width: 2rem;
-  height: 2rem;
+.reviewer-image {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  overflow: hidden;
+  object-fit: cover;
   margin-right: 0.75rem;
 }
 
-.reviewer-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.reviewer-details {
-  display: flex;
-  flex-direction: column;
-}
-
 .reviewer-name {
-  font-size: 0.9375rem;
   font-weight: 600;
-  margin: 0;
+  font-size: 0.875rem;
   color: #333;
 }
 
 .review-date {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   color: #999;
-  margin: 0;
+  margin-left: 0.5rem;
+}
+
+.see-more-button {
+  display: block;
+  width: 100%;
+  padding: 0.875rem;
+  background-color: #222;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.see-more-button:hover {
+  background-color: #333;
+  transform: translateY(-2px);
+}
+
+.tutor-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.action-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.action-button svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.5;
+}
+
+.action-button.reject {
+  background-color: #f8f8f8;
+  color: #e74c3c;
+  border: 1px solid #eee;
+}
+
+.action-button.reject:hover {
+  background-color: #fee;
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.action-button.accept {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.action-button.accept:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+}
+
+/* Animation for card transitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tutor-card {
+  animation: fadeIn 0.5s ease-out;
 }

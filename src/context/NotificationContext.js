@@ -1,52 +1,48 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+const notificationSound = new Audio(process.env.PUBLIC_URL + '/notification-sound.mp3');
+notificationSound.play();
 
-// Create the context
+
 const NotificationContext = createContext();
 
-// Custom hook to use the notification context
 export const useNotifications = () => useContext(NotificationContext);
 
-// Sample initial notifications for demonstration
-const initialNotifications = [
-  {
-    id: 1,
-    title: 'Welcome to TutorMatch!',
-    message: 'Find your perfect tutor match today.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-    read: false,
-    type: 'info'
-  },
-  {
-    id: 2,
-    title: 'Complete Your Profile',
-    message: 'Add your subjects and availability to get better matches.',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
-    read: false,
-    type: 'info'
-  }
-];
-
 export const NotificationProvider = ({ children }) => {
-  // Load notifications from localStorage if available
-  const savedNotifications = localStorage.getItem('tutorMatchNotifications');
-  const [notifications, setNotifications] = useState(
-    savedNotifications ? JSON.parse(savedNotifications) : initialNotifications
-  );
+  const [notifications, setNotifications] = useState([]);
+  const [toasts, setToasts] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const audioRef = useRef(null);
   
-  // Update unread count whenever notifications change
+  // Initialize audio
   useEffect(() => {
-    const unread = notifications.filter(notification => !notification.read).length;
-    setUnreadCount(unread);
+    audioRef.current = new Audio(notificationSound);
+    audioRef.current.volume = 0.5;
     
-    // Save to localStorage
-    localStorage.setItem('tutorMatchNotifications', JSON.stringify(notifications));
+    // Check if sound preference is stored
+    const storedSoundPreference = localStorage.getItem('notificationSoundEnabled');
+    if (storedSoundPreference !== null) {
+      setSoundEnabled(storedSoundPreference === 'true');
+    }
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+  
+  // Update unread count when notifications change
+  useEffect(() => {
+    const count = notifications.filter(notification => !notification.read).length;
+    setUnreadCount(count);
   }, [notifications]);
   
-  // Add a new notification
+  // Add a notification
   const addNotification = (notification) => {
     const newNotification = {
-      id: Date.now(),
+      id: Date.now().toString(),
       timestamp: new Date(),
       read: false,
       ...notification
@@ -54,15 +50,18 @@ export const NotificationProvider = ({ children }) => {
     
     setNotifications(prev => [newNotification, ...prev]);
     
-    // Play notification sound if available
-    try {
-      const audio = new Audio('/notification-sound.mp3');
-      audio.play().catch(e => console.log('Audio play failed:', e));
-    } catch (error) {
-      console.log('Audio not supported:', error);
+    // Play sound if enabled
+    if (soundEnabled && audioRef.current) {
+      // Reset audio to beginning if it's already playing
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(error => {
+        console.error('Error playing notification sound:', error);
+      });
     }
     
-    return newNotification.id; // Return ID for potential reference
+    // Also add as toast
+    addToast(newNotification);
   };
   
   // Mark a notification as read
@@ -95,9 +94,30 @@ export const NotificationProvider = ({ children }) => {
     setNotifications([]);
   };
   
-  // Get notifications by type
-  const getNotificationsByType = (type) => {
-    return notifications.filter(notification => notification.type === type);
+  // Toggle sound
+  const toggleSound = () => {
+    const newSoundEnabled = !soundEnabled;
+    setSoundEnabled(newSoundEnabled);
+    localStorage.setItem('notificationSoundEnabled', newSoundEnabled.toString());
+  };
+  
+  // Add a toast notification
+  const addToast = (notification) => {
+    const toast = {
+      id: notification.id || Date.now().toString(),
+      type: notification.type || 'info',
+      title: notification.title || '',
+      message: notification.message || '',
+      autoClose: true,
+      autoCloseDuration: 5000
+    };
+    
+    setToasts(prev => [...prev, toast]);
+  };
+  
+  // Remove a toast notification
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
   };
   
   return (
@@ -105,12 +125,16 @@ export const NotificationProvider = ({ children }) => {
       value={{
         notifications,
         unreadCount,
+        soundEnabled,
         addNotification,
         markAsRead,
         markAllAsRead,
         removeNotification,
         clearAllNotifications,
-        getNotificationsByType
+        toggleSound,
+        toasts,
+        addToast,
+        removeToast
       }}
     >
       {children}

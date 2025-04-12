@@ -4,19 +4,15 @@ import ToastNotification from '../ToastNotification/ToastNotification';
 import './ToastContainer.css';
 
 function ToastContainer() {
-  const { notifications, removeNotification } = useNotifications();
-  
-  const toastNotifications = notifications
-    .filter(notification => notification.type)
-    .slice(0, 5);
+  const { toasts, removeToast } = useNotifications();
   
   return (
     <div className="toast-container">
-      {toastNotifications.map(notification => (
-        <ToastNotification
-          key={notification.id}
-          notification={notification}
-          onClose={removeNotification}
+      {toasts.map(toast => (
+        <ToastNotification 
+          key={toast.id} 
+          notification={toast} 
+          onClose={removeToast} 
         />
       ))}
     </div>
