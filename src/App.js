@@ -17,13 +17,13 @@ const ROOT_PATH = "/"
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  if (!isLoggedIn){
+  /* if (!isLoggedIn){
     return (
       <Router basename={ROOT_PATH}>
         <Login setIsLoggedIn={setIsLoggedIn}/>
       </Router>
     )
-  }
+  } */
   
   return (
     <div className="App">
