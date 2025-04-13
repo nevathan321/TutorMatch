@@ -1,9 +1,13 @@
 import profile from '../../images/profile.png';
 import './profilePhoto.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-function ProfilePhotoBlock({ onPhotoChange }) {
-    const [imageSrc, setImageSrc] = useState(profile);
+function ProfilePhotoBlock({ initialPhoto, onPhotoChange }) {
+    const [imageSrc, setImageSrc] = useState(initialPhoto || profile);
+
+    useEffect(() => {
+        setImageSrc(initialPhoto || profile); // Update imageSrc if initialPhoto changes
+    }, [initialPhoto]);
 
     function uploadPhoto(event){
         const file = event.target.files[0];

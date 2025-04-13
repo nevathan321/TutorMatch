@@ -45,12 +45,14 @@ function Profile(){
         } else {
             document.querySelector('.TutorDetails').style.display = 'none';
         }
-    }, [role]); // Run this effect whenever `role` changes
+    }, [role]); 
 
     useEffect(() => {
         const storedData = localStorage.getItem('profileData');
         if (storedData) {
             const profileData = JSON.parse(storedData);
+            console.log("Loaded profile data:", profileData); 
+
             const fnameInput = document.getElementById('fname');
             const lnameInput = document.getElementById('lname');
             const macIdInput = document.getElementById('macId');
@@ -69,9 +71,10 @@ function Profile(){
 
             setRole(profileData.role);
             setSubjects(profileData.subjectExpertise || []);
-            setProfilePhoto(profileData.profilePhoto || null); // Load photo from local storage
+            setProfilePhoto(profileData.profilePhoto || null); 
         }
-    }, []); // Run only once when the component mounts
+    }, []);
+
 
     function saveProfileData(e) {
         e.preventDefault();
@@ -88,7 +91,8 @@ function Profile(){
             password: document.getElementById('password').value,
             profilePhoto // Save photo data into local storage
         };
-    
+
+        console.log("Saving profile data:", profileData); // Debugging log
         localStorage.setItem('profileData', JSON.stringify(profileData));
         alert('Profile updated successfully!');
     }
@@ -100,7 +104,10 @@ function Profile(){
             </div>
 
             <Card>
-                <ProfilePhotoBlock onPhotoChange={setProfilePhoto} /> {/* Pass callback */}
+                <ProfilePhotoBlock 
+                    initialPhoto={profilePhoto} // Pass initial photo
+                    onPhotoChange={setProfilePhoto} // Pass callback
+                />
             </Card>
 
             <Card>
