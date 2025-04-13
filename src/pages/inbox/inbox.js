@@ -4,6 +4,10 @@ import { useGmailApi } from "../../utils/gmailAPI";
 import Card from "../../components/card/card";
 import "./inbox.css";
 
+import MyCalendar from "../../components/calendar/MyCalendar";
+
+
+
 function Inbox() {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +17,18 @@ function Inbox() {
   const [showEmailModal, setShowEmailModal] = useState(false);
   const { sendEmail } = useGmailApi();
   const [emailStatus, setEmailStatus] = useState({ type: "", message: "" });
+
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [calendarTutor, setCalendarTutor] = useState(null);
+
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [chatTutor, setChatTutor] = useState(null);
+
+  const [chatInput, setChatInput] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
+
+
 
   // Fetch matched tutors
   useEffect(() => {
@@ -157,6 +173,12 @@ function Inbox() {
     }
   };
 
+  const handleSendChatMessage = () => {
+    if (chatInput.trim() === "") return;
+    setChatHistory([...chatHistory, { sender: "user", message: chatInput }]);
+    setChatInput("");
+  };
+
   if (loading) {
     return (
       <div className="inbox-loading">
@@ -246,7 +268,10 @@ function Inbox() {
                   </svg>
                   Email
                 </button>
-                <button className="action-button secondary">
+                <button className="action-button secondary" onClick={ () => {
+                  setCalendarTutor(match);
+                  setShowCalendarModal(true);
+                }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                     <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -255,7 +280,10 @@ function Inbox() {
                   </svg>
                   Schedule
                 </button>
-                <button className="action-button secondary">
+                <button className="action-button secondary" onClick={ () => {
+                  setChatTutor(match);
+                  setShowChatModal(true);
+                }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                   </svg>
@@ -332,7 +360,64 @@ function Inbox() {
           </div>
         </div>
       )}
+
+
+      {showCalendarModal && (
+      <div className="email-modal-overlay">
+        <div className="email-modal">
+          <div className="email-modal-header">
+            <h3>Schedule with {calendarTutor?.name}</h3>
+          </div>
+          
+          <div className="email-body">
+            <label style={{textAlign: "center"}}>Select a date:</label>
+            <MyCalendar 
+                selectedDate={selectedDate}
+                onDateChange={(date) => setSelectedDate(date)}
+                context="modal"
+              />
+          </div>
+          
+          <div className="email-modal-footer">
+            <button className = "cancel-button" onClick={() => setShowCalendarModal(false)}>Cancel</button>
+            <button
+              className="send-button"
+              onClick={() => {
+                alert(`Scheduled session with ${calendarTutor?.name} on ${selectedDate.toDateString()}`);
+                setShowCalendarModal(false);
+              }}
+            >
+              Confirm Date
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {showChatModal && (
+        <div className="email-modal-overlay">
+          <div className="email-modal chat">
+            <div className="email-modal-header">
+              <h3>Chat with {chatTutor?.name}</h3>
+              <button className="close-button" onClick={() => setShowChatModal(false)}>×</button>
+            </div>
+            <div className="email-modal-content">
+              <div className="chat-messages">
+                {chatHistory.map((msg, idx) => (
+                  <div key={idx} className={`chat-message ${msg.sender}`}>{msg.message}</div>
+                ))}
+              </div>
+            </div>
+            <div className="chat-input">
+              <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Type a message..." />
+              <button onClick={handleSendChatMessage}>Send</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
+    
   );
 }
 
