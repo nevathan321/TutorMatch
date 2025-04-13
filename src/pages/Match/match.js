@@ -61,7 +61,7 @@ function Match() {
   const [acceptedTutors, setAcceptedTutors] = useState([]);
   const [rejectedTutors, setRejectedTutors] = useState([]);
   const [allTutorsViewed, setAllTutorsViewed] = useState(false);
-  const { addNotification } = useNotifications();
+  const { addNotification, initializeAudio } = useNotifications();
   
   // Handle rejecting a tutor (swipe left)
   const handleReject = () => {
@@ -92,6 +92,9 @@ function Match() {
   // Handle accepting a tutor (swipe right)
   const handleAccept = () => {
     if (tutors.length === 0) return;
+    
+    // Initialize audio on user interaction
+    initializeAudio();
     
     const acceptedTutor = tutors[currentTutorIndex];
     

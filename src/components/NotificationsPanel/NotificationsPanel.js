@@ -13,7 +13,8 @@ function NotificationsPanel() {
     markAsRead, 
     markAllAsRead, 
     removeNotification,
-    clearAllNotifications
+    clearAllNotifications,
+    initializeAudio // Add this
   } = useNotifications();
   const panelRef = useRef(null);
   const buttonRef = useRef(null);
@@ -34,6 +35,9 @@ function NotificationsPanel() {
   }, []);
   
   const togglePanel = () => {
+    // Initialize audio on user interaction
+    initializeAudio();
+    
     setIsOpen(!isOpen);
     
     // If opening the panel, mark notifications as read after a delay
@@ -56,6 +60,8 @@ function NotificationsPanel() {
   const handleClearAll = () => {
     clearAllNotifications();
   };
+  
+  // Rest of the component remains the same...
   
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
