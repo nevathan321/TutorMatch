@@ -6,15 +6,10 @@ header("Cross-Origin-Opener-Policy: same-origin");  // Add this to allow same-or
 header("Cross-Origin-Embedder-Policy: require-corp");  // Add this for stricter policies
 require_once '../connect.php';
 
-function doesUserExist($dbh, $email, $user_type)
+function doesUserExist($dbh, $email)
 {
   try {
-    $checkSQL = NULL;
-    if ($user_type == "tutee") {
-      $checkSQL = "SELECT * FROM Tutees WHERE email = :email";
-    } else if ($user_type == "tutor") {
-      $checkSQL = "SELECT * FROM Tutors WHERE email = :email";
-    }
+    $checkSQL = "SELECT * FROM Users WHERE email = :email";
 
     $stmt = $dbh->prepare($checkSQL);
     $stmt->execute([":email" => $email]);
@@ -29,50 +24,13 @@ function doesUserExist($dbh, $email, $user_type)
   }
 }
 
-function addTuteeToDatabase($dbh, $userData)
+function addUserToDatabase($dbh, $userData, $user_type)
 {
   $full_name = $userData['name'];
-  $first_name = $userData['given_name'];
-  $last_name = $userData['family_name'];
+  $first_name = $userData['first_name'];
+  $last_name = $userData['last_name'];
   $email = $userData['email'];
-
-  $macid = $userData['macid'] ?? NULL;
-  $major = $userData['major'] ?? NULL;
-  $year_of_study = $userData['year_of_study'] ?? NULL;
-  $dob = $userData['dob'] ?? NULL;
-  $account_password = NULL;
-
-  try {
-    $insertUserQuery = "INSERT INTO Tutees 
-        (first_name, last_name, full_name, account_password, email, macid, major, year_of_study, dob) 
-        VALUES (:first_name, :last_name, :full_name, :account_password, :email, :macid, :major, :year_of_study, :dob)";
-
-    $stmt = $dbh->prepare($insertUserQuery);
-    $stmt->execute([
-      ":first_name" => $first_name,
-      ":last_name" => $last_name,
-      ":full_name" => $full_name,
-      ":account_password" => $account_password,
-      ":email" => $email,
-      ":macid" => $macid,
-      ":major" => $major,
-      ":year_of_study" => $year_of_study,
-      ":dob" => $dob
-    ]);
-
-    echo json_encode(["user_exists" => false,"status" => "success", "message" => "Tutee added successfully"]);
-  } catch (PDOException $e) {
-    die(json_encode(["status" => "error", "message" => "Error inserting to the database: " . $e->getMessage()]));
-  }
-}
-
-function addTutorToDatabase($dbh, $userData)
-{
-  $full_name = $userData['name'];
-  $first_name = $userData['given_name'];
-  $last_name = $userData['family_name'];
-  $email = $userData['email'];
-
+  $account_password = $userData['account_password'] ?? NULL;
   $macid = $userData['macid'] ?? NULL;
   $student_number = $userData['student_number'] ?? NULL;
   $major = $userData['major'] ?? NULL;
@@ -80,27 +38,38 @@ function addTutorToDatabase($dbh, $userData)
   $dob = $userData['dob'] ?? NULL;
   $main_subject = $userData['main_subject'] ?? NULL;
   $wage = $userData['wage'] ?? NULL;
-
   try {
-    $insertUserQuery = "INSERT INTO Tutors (first_name, last_name, full_name, account_password, email, macid, student_number, major, year_of_study, dob, main_subject, wage) 
-                          VALUES (:first_name, :last_name, :full_name, NULL, :email, :macid, :student_number, :major, :year_of_study, :dob, :main_subject, :wage)";
+    $insertUserQuery = "INSERT INTO users (
+        first_name, last_name, full_name, email, account_password,
+        macid, student_number, major, main_subject, wage,
+        year_of_study, dob, user_type
+    ) VALUES (
+        :first_name, :last_name, :full_name, :email, :account_password,
+        :macid, :student_number, :major, :main_subject, :wage,
+        :year_of_study, :dob, :user_type
+    )";
+
 
     $stmt = $dbh->prepare($insertUserQuery);
-    $stmt->execute([
-      ":first_name" => $first_name,
-      ":last_name" => $last_name,
-      ":full_name" => $full_name,
-      ":email" => $email,
-      ":macid" => $macid,
-      ":student_number" => $student_number,
-      ":major" => $major,
-      ":year_of_study" => $year_of_study,
-      ":dob" => $dob,
-      ":main_subject" => $main_subject,
-      ":wage" => $wage
-    ]);
 
-    echo json_encode(["user_exists" => false, "status" => "success", "message" => "Tutor added successfully"]);
+    $data = [
+      'first_name' => $first_name,
+      'last_name' => $last_name,
+      'full_name' => $full_name,
+      'email' => $email,
+      'account_password' => password_hash($account_password, PASSWORD_DEFAULT),
+      'macid' => $macid,
+      'student_number' => $student_number,
+      'major' => $major,
+      'main_subject' => $main_subject,
+      'wage' => $wage, // or NULL if tutee
+      'year_of_study' => $year_of_study,
+      'dob' => $dob,
+      'user_type' => $user_type // or 'tutee'
+  ];
+    $stmt->execute($data);
+
+    echo json_encode(["user_exists" => false, "status" => "success", "message" => "User added successfully"]);
   } catch (PDOException $e) {
     die("Error inserting into the database: " . $e->getMessage());
   }
@@ -117,11 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
   }
 
-  if ($user_type == "tutee") {
-    addTuteeToDatabase($dbh, $userData);
-  } else if ($user_type == "tutor") {
-    addTutorToDatabase($dbh, $userData);
-  }
+
+  addUserToDatabase($dbh, $userData, $user_type);
 } else {
   echo "WORKING";
 }

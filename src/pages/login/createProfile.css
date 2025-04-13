@@ -1,9 +1,8 @@
-
 .user-type-toggle {
     display: flex;
     justify-content: center;
-    margin: 1.5rem 0;
-    gap: 1rem;
+    margin: 0 0;
+    gap: 20px;
 }
 
 .toggle-btn {
@@ -102,7 +101,13 @@ input[type="date"]:focus {
 
 .details-card {
     width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
     padding: 2rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
 }
 
 .form-title {
@@ -116,12 +121,12 @@ input[type="date"]:focus {
 .signup-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.5rem;
 }
 
 .form-row {
     display: flex;
-    gap: 1.5rem;
+    gap: 1.2rem;
     width: 100%;
 }
 
