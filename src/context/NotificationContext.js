@@ -1,7 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
-const notificationSound = new Audio(process.env.PUBLIC_URL + '/notification-sound.mp3');
-notificationSound.play();
-
+// Remove direct import of notification sound
+// import notificationSound from '../assets/notification-sound.mp3';
 
 const NotificationContext = createContext();
 
@@ -13,18 +12,21 @@ export const NotificationProvider = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const audioRef = useRef(null);
+  const [audioInitialized, setAudioInitialized] = useState(false);
   
-  // Initialize audio
+  // Initialize audio only after user interaction
   useEffect(() => {
-    audioRef.current = new Audio(notificationSound);
-    audioRef.current.volume = 0.5;
-    
     // Check if sound preference is stored
     const storedSoundPreference = localStorage.getItem('notificationSoundEnabled');
     if (storedSoundPreference !== null) {
       setSoundEnabled(storedSoundPreference === 'true');
     }
     
+    // We'll initialize the audio element but not load the source yet
+    audioRef.current = new Audio();
+    audioRef.current.volume = 0.5;
+    
+    // Cleanup function
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -32,6 +34,15 @@ export const NotificationProvider = ({ children }) => {
       }
     };
   }, []);
+  
+  // Function to initialize audio after user interaction
+  const initializeAudio = () => {
+    if (!audioInitialized && audioRef.current) {
+      // Set the source only after user interaction
+      audioRef.current.src = '/notification-sound.mp3'; // Adjust path as needed
+      setAudioInitialized(true);
+    }
+  };
   
   // Update unread count when notifications change
   useEffect(() => {
@@ -50,14 +61,20 @@ export const NotificationProvider = ({ children }) => {
     
     setNotifications(prev => [newNotification, ...prev]);
     
-    // Play sound if enabled
-    if (soundEnabled && audioRef.current) {
+    // Play sound if enabled and audio is initialized
+    if (soundEnabled && audioInitialized && audioRef.current) {
       // Reset audio to beginning if it's already playing
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(error => {
-        console.error('Error playing notification sound:', error);
-      });
+      
+      // Use a promise to catch any errors
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log('Audio playback was prevented by the browser:', error);
+        });
+      }
     }
     
     // Also add as toast
@@ -96,6 +113,9 @@ export const NotificationProvider = ({ children }) => {
   
   // Toggle sound
   const toggleSound = () => {
+    // Initialize audio if not already done
+    initializeAudio();
+    
     const newSoundEnabled = !soundEnabled;
     setSoundEnabled(newSoundEnabled);
     localStorage.setItem('notificationSoundEnabled', newSoundEnabled.toString());
@@ -134,7 +154,8 @@ export const NotificationProvider = ({ children }) => {
         toggleSound,
         toasts,
         addToast,
-        removeToast
+        removeToast,
+        initializeAudio // Export this function to be called on user interaction
       }}
     >
       {children}
