@@ -8,7 +8,7 @@ import Inbox from "./pages/inbox/inbox";
 import Match from "./pages/Match/match";
 import { NotificationProvider } from "./context/NotificationContext";
 import ToastContainer from "./components/ToastContainer/ToastContainer";
-import Login from "./pages/login/Login";
+import Login from "./pages/login/createProfile";
 import Signup from "./pages/login/Singup";
 // switch root path when uploading to filezilla
 // const ROOT_PATH = "/~bhavanaa/TutorMatch";
