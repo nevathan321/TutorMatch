@@ -7,6 +7,7 @@ function Profile(){
     const [role, setRole] = useState('Tutee');
     const [subject, setSubject] = useState('');
     const [subjects, setSubjects] = useState([]);
+    const [profilePhoto, setProfilePhoto] = useState(null); // State to store photo data
 
     function checkPassword(){
         var password = document.getElementById('password').value;
@@ -44,7 +45,57 @@ function Profile(){
         } else {
             document.querySelector('.TutorDetails').style.display = 'none';
         }
-    }, [role]); // Run this effect whenever `role` changes
+    }, [role]); 
+
+    useEffect(() => {
+        const storedData = localStorage.getItem('profileData');
+        if (storedData) {
+            const profileData = JSON.parse(storedData);
+            console.log("Loaded profile data:", profileData); 
+
+            const fnameInput = document.getElementById('fname');
+            const lnameInput = document.getElementById('lname');
+            const macIdInput = document.getElementById('macId');
+            const studentNumberInput = document.getElementById('studentNumber');
+            const hourlyRateInput = document.getElementById('hourlyRate');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+
+            if (fnameInput) fnameInput.value = profileData.firstName || '';
+            if (lnameInput) lnameInput.value = profileData.lastName || '';
+            if (macIdInput) macIdInput.value = profileData.macId || '';
+            if (studentNumberInput) studentNumberInput.value = profileData.studentNumber || '';
+            if (hourlyRateInput) hourlyRateInput.value = profileData.hourlyRate || '';
+            if (passwordInput) passwordInput.value = profileData.password || '';
+            if (confirmPasswordInput) confirmPasswordInput.value = profileData.password || '';
+
+            setRole(profileData.role);
+            setSubjects(profileData.subjectExpertise || []);
+            setProfilePhoto(profileData.profilePhoto || null); 
+        }
+    }, []);
+
+
+    function saveProfileData(e) {
+        e.preventDefault();
+    
+        const profileData = {
+            role,
+            firstName: document.getElementById('fname').value,
+            lastName: document.getElementById('lname').value,
+            macId: document.getElementById('macId').value,
+            studentNumber: document.getElementById('studentNumber').value,
+            hourlyRate: role === 'Tutor' ? document.getElementById('hourlyRate').value : null,
+            preferredDays: role === 'Tutor' ? Array.from(document.getElementById('preferredDays').selectedOptions).map(option => option.value) : [],
+            subjectExpertise: role === 'Tutor' ? subjects : [],
+            password: document.getElementById('password').value,
+            profilePhoto // Save photo data into local storage
+        };
+
+        console.log("Saving profile data:", profileData); // Debugging log
+        localStorage.setItem('profileData', JSON.stringify(profileData));
+        alert('Profile updated successfully!');
+    }
 
     return(
         <div className='Profile'>
@@ -53,7 +104,10 @@ function Profile(){
             </div>
 
             <Card>
-                <ProfilePhotoBlock />
+                <ProfilePhotoBlock 
+                    initialPhoto={profilePhoto} // Pass initial photo
+                    onPhotoChange={setProfilePhoto} // Pass callback
+                />
             </Card>
 
             <Card>
@@ -127,7 +181,7 @@ function Profile(){
 
                     <div className="buttonGroup"> 
                         <button className = "btn delete" type = "reset"> Cancel</button>
-                        <button className = "btn" type='submit'>Update</button>
+                        <button className = "btn" type='submit' onClick={saveProfileData}>Update</button>
                     </div>
                 </form>
             </Card>

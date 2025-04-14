@@ -1,9 +1,13 @@
 import profile from '../../images/profile.png';
 import './profilePhoto.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-function ProfilePhotoBlock() {
-    const [imageSrc, setImageSrc] = useState(profile);
+function ProfilePhotoBlock({ initialPhoto, onPhotoChange }) {
+    const [imageSrc, setImageSrc] = useState(initialPhoto || profile);
+
+    useEffect(() => {
+        setImageSrc(initialPhoto || profile); // Update imageSrc if initialPhoto changes
+    }, [initialPhoto]);
 
     function uploadPhoto(event){
         const file = event.target.files[0];
@@ -11,6 +15,7 @@ function ProfilePhotoBlock() {
 
         reader.onloadend = function(){
             setImageSrc(reader.result);
+            onPhotoChange(reader.result); // Notify parent component
         }
 
         if(file){
@@ -20,15 +25,26 @@ function ProfilePhotoBlock() {
 
     function deletePhoto(){
         setImageSrc(profile);
+        onPhotoChange(profile); // Notify parent component
     }
 
     function triggerFileInput() {
         document.getElementById('fileInput').click();
     }
 
+    function handleImageError() {
+        setImageSrc(profile); // Reset to default profile image on error
+        onPhotoChange(profile); // Notify parent component
+    }
+
     return (
         <div className="profile-photo">
-            <img className="image" src={imageSrc} alt="Profile" />
+            <img 
+                className="image" 
+                src={imageSrc} 
+                alt="Profile" 
+                onError={handleImageError} 
+            />
             <div className="profile-header">
                 <h2>John Doe</h2>
                 <p>Email: liyuxiao2@gmail.com</p>
