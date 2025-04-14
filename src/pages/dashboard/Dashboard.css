@@ -1,336 +1,375 @@
 /* src/pages/dashboard/Dashboard.css */
 .dashboard-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-    background-color: #f9fafb;
-    min-height: calc(100vh - 80px);
-  }
-  
-  .dashboard-header {
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
-  
-  .dashboard-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 0.5rem;
-  }
-  
-  .dashboard-subtitle {
-    font-size: 1.1rem;
-    color: #64748b;
-  }
-  
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f9fafb;
+  min-height: calc(100vh - 80px);
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-subtitle {
+  font-size: 1.1rem;
+  color: #64748b;
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.stat-icon.sessions {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.stat-icon.upcoming {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.stat-icon.rating {
+  background-color: #fef3c7;
+  color: #f59e0b;
+}
+
+.stat-icon.earnings {
+  background-color: #f0fdf4;
+  color: #22c55e;
+}
+
+.stat-icon.matches {
+  background-color: #f3e8ff;
+  color: #a855f7;
+}
+
+.stat-icon.favorites {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.stat-content h3 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto auto;
+  gap: 1.5rem;
+}
+
+.dashboard-card {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.card-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.view-all {
+  font-size: 0.875rem;
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.view-all:hover {
+  text-decoration: underline;
+}
+
+.schedule-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.schedule-button:hover {
+  background-color: #2563eb;
+}
+
+.matches-list {
+  padding: 1.25rem;
+}
+
+.match-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.match-item:last-child {
+  border-bottom: none;
+}
+
+.match-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 1rem;
+}
+
+.match-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.match-details {
+  flex: 1;
+}
+
+.match-details h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.25rem 0;
+}
+
+.match-details p {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0 0 0.25rem 0;
+}
+
+.match-date {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.contact-button {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.contact-button:hover {
+  background-color: #e2e8f0;
+}
+
+.calendar-container {
+  padding: 1.25rem;
+  /* Modified: Increased height to fit calendar properly */
+  height: 400px;
+  overflow-y: auto; /* Added scrollbar for overflow content */
+}
+
+/* Added styles for calendar responsive behavior */
+.calendar-container .react-calendar {
+  width: 100%;
+  border: none;
+  font-family: inherit;
+}
+
+.calendar-container .react-calendar button {
+  margin: 0;
+  border: 0;
+  outline: none;
+}
+
+.calendar-container .react-calendar__month-view__days__day--weekend {
+  color: #f43f5e;
+}
+
+.calendar-container .react-calendar__tile--active {
+  background: #3b82f6;
+  color: white;
+}
+
+.calendar-container .react-calendar__tile--hasActive {
+  background: #bfdbfe;
+}
+
+.reviews-list {
+  padding: 1.25rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.transactions-list {
+  padding: 1.25rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.no-data p {
+  font-size: 1rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+.action-link {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+}
+
+.action-link:hover {
+  background-color: #2563eb;
+}
+
+.dashboard-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 80px);
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.dashboard-loading p {
+  font-size: 1rem;
+  color: #64748b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
   .stats-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
-  }
-  
-  .stat-card {
-    background-color: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
-  
-  .stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
-  }
-  
-  .stat-icon.sessions {
-    background-color: #eff6ff;
-    color: #3b82f6;
-  }
-  
-  .stat-icon.upcoming {
-    background-color: #ecfdf5;
-    color: #10b981;
-  }
-  
-  .stat-icon.rating {
-    background-color: #fef3c7;
-    color: #f59e0b;
-  }
-  
-  .stat-icon.earnings {
-    background-color: #f0fdf4;
-    color: #22c55e;
-  }
-  
-  .stat-icon.matches {
-    background-color: #f3e8ff;
-    color: #a855f7;
-  }
-  
-  .stat-icon.favorites {
-    background-color: #fee2e2;
-    color: #ef4444;
-  }
-  
-  .stat-content h3 {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #64748b;
-    margin-bottom: 0.25rem;
-  }
-  
-  .stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1e293b;
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto auto;
-    gap: 1.5rem;
+    grid-template-columns: 1fr;
   }
-  
-  .dashboard-card {
-    background-color: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  }
-  
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  
-  .card-header h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-  }
-  
-  .view-all {
-    font-size: 0.875rem;
-    color: #3b82f6;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .view-all:hover {
-    text-decoration: underline;
-  }
-  
-  .schedule-button {
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .schedule-button:hover {
-    background-color: #2563eb;
-  }
-  
-  .matches-list {
-    padding: 1.25rem;
-  }
-  
-  .match-item {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  
-  .match-item:last-child {
-    border-bottom: none;
-  }
-  
-  .match-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-right: 1rem;
-  }
-  
-  .match-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .match-details {
-    flex: 1;
-  }
-  
-  .match-details h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0 0 0.25rem 0;
-  }
-  
-  .match-details p {
-    font-size: 0.875rem;
-    color: #64748b;
-    margin: 0 0 0.25rem 0;
-  }
-  
-  .match-date {
-    font-size: 0.75rem;
-    color: #94a3b8;
-  }
-  
-  .contact-button {
-    background-color: #f1f5f9;
-    color: #475569;
-    border: none;
-    border-radius: 8px;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    text-decoration: none;
-    display: inline-block;
-  }
-  
-  .contact-button:hover {
-    background-color: #e2e8f0;
-  }
-  
+
+  /* Ensure calendar is still visible on smaller screens */
   .calendar-container {
-    padding: 1.25rem;
-    height: 300px;
+    height: 350px;
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-container {
+    grid-template-columns: 1fr;
   }
   
-  .reviews-list {
-    padding: 1.25rem;
-    max-height: 400px;
-    overflow-y: auto;
+  .dashboard-header h1 {
+    font-size: 2rem;
   }
   
-  .transactions-list {
-    padding: 1.25rem;
-    max-height: 400px;
-    overflow-y: auto;
+  .stat-card {
+    padding: 1rem;
   }
   
-  .no-data {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 3rem;
-    text-align: center;
-  }
-  
-  .no-data p {
-    font-size: 1rem;
-    color: #64748b;
-    margin-bottom: 1rem;
-  }
-  
-  .action-link {
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 0.75rem 1.25rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    text-decoration: none;
-  }
-  
-  .action-link:hover {
-    background-color: #2563eb;
-  }
-  
-  .dashboard-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: calc(100vh - 80px);
-  }
-  
-  .loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3b82f6;
-    border-radius: 50%;
+  .stat-icon {
     width: 40px;
     height: 40px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
   }
   
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+  .stat-value {
+    font-size: 1.25rem;
   }
-  
-  .dashboard-loading p {
-    font-size: 1rem;
-    color: #64748b;
+
+  /* Further adjust calendar container for very small screens */
+  .calendar-container {
+    padding: 0.75rem;
+    height: 320px;
   }
-  
-  /* Responsive adjustments */
-  @media (max-width: 1024px) {
-    .stats-container {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .dashboard-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  @media (max-width: 640px) {
-    .stats-container {
-      grid-template-columns: 1fr;
-    }
-    
-    .dashboard-header h1 {
-      font-size: 2rem;
-    }
-    
-    .stat-card {
-      padding: 1rem;
-    }
-    
-    .stat-icon {
-      width: 40px;
-      height: 40px;
-    }
-    
-    .stat-value {
-      font-size: 1.25rem;
-    }
-  }
+}
