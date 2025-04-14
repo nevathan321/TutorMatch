@@ -232,33 +232,37 @@
   overflow: hidden;
 }
 
+/* Fixed match actions to prevent overflow */
 .match-actions {
   display: flex;
   padding: 1rem;
-  gap: 0.75rem;
+  gap: 0.5rem; /* Reduced gap slightly */
+  justify-content: space-between; /* Helps with spacing distribution */
 }
 
 .action-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem;
+  padding: 0.5rem 0.75rem; /* Slightly reduced padding */
   border-radius: 8px;
-  font-size: 0.875rem;
+  font-size: 0.75rem; /* Slightly reduced font size */
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
   border: none;
+  min-width: 0; /* Allows buttons to shrink if needed */
+  flex: 1; /* Each button gets equal width */
+  white-space: nowrap; /* Prevents text wrapping */
 }
 
 .action-button svg {
-  margin-right: 0.5rem;
+  margin-right: 0.25rem; /* Reduced margin */
 }
 
 .action-button.primary {
   background-color: #3b82f6;
   color: white;
-  flex: 1;
 }
 
 .action-button.primary:hover {
@@ -573,8 +577,7 @@
   background: #4338ca;
 }
 
-
-
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .matches-grid {
     grid-template-columns: 1fr;
@@ -582,5 +585,33 @@
   
   .email-modal {
     width: 95%;
+  }
+  
+  /* Ensure action buttons remain visible on smaller screens */
+  .match-actions {
+    flex-wrap: nowrap;
+  }
+  
+  .action-button {
+    font-size: 0.7rem;
+    padding: 0.5rem;
+  }
+}
+
+/* For very small screens, further optimize button layout */
+@media (max-width: 380px) {
+  .match-actions {
+    padding: 0.75rem;
+  }
+  
+  .action-button {
+    padding: 0.4rem;
+    font-size: 0.65rem;
+  }
+  
+  .action-button svg {
+    margin-right: 0.1rem;
+    width: 14px;
+    height: 14px;
   }
 }
