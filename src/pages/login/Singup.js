@@ -10,16 +10,22 @@ export default function Signup({ setIsLoggedIn, setUserProfile }) {
   const navigate = useNavigate();
   const [step, setStep] = useState("signup");
   const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
 
-  const handleLoginSuccess = (response) => {
+  const handleSingupSuccess = (response) => {
     const token = response.credential;
     const userInfo = jwtDecode(token);
 
     console.log("Decoded token:", userInfo);
-    //setIsLoggedIn(true);
+    setEmail(userInfo.email)
+    setFirstName(userInfo.given_name)
+    setLastName(userInfo.family_name)
+    setStep("createProfile")
+    
   };
 
-  const handleLoginFailure = (error) => {
+  const handleSignupFailure = (error) => {
     console.error("Google login error:", error);
   };
 
@@ -30,7 +36,7 @@ export default function Signup({ setIsLoggedIn, setUserProfile }) {
   };
 
   if (step === "createProfile"){
-    return <CreateProfile setIsLoggedIn={setIsLoggedIn} setUserProfile={setUserProfile} email={email} />
+    return <CreateProfile setIsLoggedIn={setIsLoggedIn} setUserProfile={setUserProfile} email={email} firstName={firstName} lastName={lastName} />
   }
 
   if (step === "signup") {
@@ -60,8 +66,8 @@ export default function Signup({ setIsLoggedIn, setUserProfile }) {
 
           <div className="social-login">
             <GoogleLogin
-              onSuccess={handleLoginSuccess}
-              onError={handleLoginFailure}
+              onSuccess={handleSingupSuccess}
+              onError={handleSignupFailure}
             />
           </div>
 

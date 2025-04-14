@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./createProfile.css";
 
-export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email }) {
+export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, firstName, lastName }) {
   const navigate = useNavigate();
   const [userType, setUserType] = useState("tutee");
 
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
+    first_name: firstName,
+    last_name: lastName,
     email: email,
     macid: "",
     student_number: "",
