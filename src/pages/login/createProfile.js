@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./createProfile.css";
 
+const SIGNUP_ENDPOINT = "http://localhost/tutorMatch/server/signup/"
 export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, firstName, lastName }) {
   const navigate = useNavigate();
   const [userType, setUserType] = useState("tutee");
@@ -55,7 +56,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
     };
 
     try {
-      const response = await fetch(`http://localhost:8000/signup/index.php?type=${userType}`, {
+      const response = await fetch(`${SIGNUP_ENDPOINT}?type=${userType}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -25,7 +25,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
   const handleSubmit = async (e) => {//regular login
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/login/", {
+      const response = await fetch("http://localhost/tutorMatch/server/login/", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -56,7 +56,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
     
     console.log(googleEmail)
     try {
-      const response = await fetch("http://localhost:8000/login/googleLogin.php", {
+      const response = await fetch("http://localhost/tutorMatch/server/login/googleLogin.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
