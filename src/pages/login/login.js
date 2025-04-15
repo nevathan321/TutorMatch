@@ -5,20 +5,6 @@ import { jwtDecode } from "jwt-decode";
 import tutorImage from "./tutorImage.jpg";
 import { useNavigate } from "react-router-dom";
 
-async function saveUser(userInfo) {
-  //for gauth
-  try {
-    const response = await fetch("http://localhost:8000/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userInfo),
-    });
-    const result = await response.json();
-    console.log(result);
-  } catch {}
-}
 
 export default function Login({ setIsLoggedIn, setUserProfile }) {
   const navigate = useNavigate();
@@ -26,7 +12,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
     email: "",
     account_password: "",
   });
-  const [errorMessage, setErrorMessage] = useState(" "); // State to hold error messages
+  const [errorMessage, setErrorMessage] = useState(""); // State to hold error messages
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,10 +22,10 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {//regular login
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/login", {
+      const response = await fetch("http://localhost/tutorMatch/server/login/", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -48,27 +34,54 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
       });
 
       const loginResult = await response.json();
+      console.log(loginResult)
       if (loginResult.success) {
         console.log("Login Successfull:", loginResult);
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
-        setErrorMessage("")
+        setErrorMessage("");
+        localStorage.setItem("email", loginResult.user_profile.email); 
+
         return;
       }
-      setErrorMessage("Incorrect email or password")
+      setErrorMessage("Incorrect email or password");
     } catch (err) {
       console.error("Login error:", err);
     }
   };
 
-  const handleLoginSuccess = (response) => {
-    const token = response.credential;
-    const userInfo = jwtDecode(token);
 
-    console.log("Decoded token:", userInfo);
-    setIsLoggedIn(true);
-    saveUser(userInfo);
-  };
+  const handleLoginSuccess = async (guathResponse) => {//google login
+    const token = guathResponse.credential;
+    const userGoogleInfo = jwtDecode(token);
+    const googleEmail = {email: userGoogleInfo.email}
+    
+    console.log(googleEmail)
+    try {
+      const response = await fetch("http://localhost/tutorMatch/server/login/googleLogin.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams(googleEmail).toString(),
+      });
+
+      const loginResult = await response.json();
+
+      if (loginResult.success) {
+        console.log("Login Successfull:", loginResult);
+        setIsLoggedIn(true);
+        setUserProfile(loginResult.user_profile);
+        setErrorMessage("");
+        localStorage.setItem("userEmail", loginResult.user_profile.email); 
+        return;
+      }
+      setErrorMessage("Incorrect email or password");
+    } catch (err) {
+      console.error("Login error:", err);
+    }
+  }
+  
 
   const handleLoginFailure = (error) => {
     console.error("Google login error:", error);
