@@ -16,8 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
   if ($stmt) {
-    // Password is correct → user is authenticated
-    echo json_encode(["success" => true, "user_profile" => $user]);
+    echo json_encode(["success" => true, "user_profile" => $user, "email" => $email]);
     // Redirect to dashboard or wherever
   } else {
     // Invalid email or password

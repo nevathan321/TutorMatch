@@ -3,7 +3,7 @@ import ProfilePhotoBlock from "../../components/profilephoto/profilePhoto";
 import { useState, useEffect } from 'react';
 import './profile.css';
 
-function Profile(){
+function Profile({userProfile}){
     const [role, setRole] = useState('Tutee');
     const [subject, setSubject] = useState('');
     const [subjects, setSubjects] = useState([]);
@@ -108,6 +108,7 @@ function Profile(){
                 <ProfilePhotoBlock 
                     initialPhoto={profilePhoto} // Pass initial photo
                     onPhotoChange={setProfilePhoto} // Pass callback
+                    userProfile = {userProfile}
                 />
             </Card>
 
