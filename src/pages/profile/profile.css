@@ -1,126 +1,264 @@
-.Profile {
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  /* Container styles */
+  .Profile {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 2rem auto;
+    max-width: 900px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.top h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-}
-
-.userDetails {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-top: 1rem;
-}
-
-.userContainer {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.userContainer > div {
-    flex: 0 1 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-label {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-}
-
-input {
-    padding: 0.75rem 1rem;
-    border: 1px solid #d0d4da;
-    background-color: #f1f4f8;
-    border-radius: 6px;
-    font-size: 1rem;
-}
-
-input::placeholder {
-    color: #999;
-}
-
-.buttonGroup{
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.toggleWrapper {
-    margin-bottom: 1rem;
-    justify-content: end;
-    display: flex;
-}
+  }
   
-.toggleSwitch {
+  /* Card Styles */
+  .top, .userDetails {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .top:hover, .userDetails:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Profile Header */
+  .top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .top h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Profile Image and Info */
+  .top img {
     width: 120px;
-    height: 36px;
-    background: #eee;
-    border-radius: 20px;
-    position: relative;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin-bottom: 1rem;
+  }
+  
+  .top p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .top span {
+    color: #666;
+    font-size: 0.95rem;
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Button Styles */
+  button, .button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.2s ease;
+    border: none;
+    margin: 0 0.5rem;
+  }
+  
+  .top button:first-of-type {
+    background-color: #2196F3;
+    color: white;
+  }
+  
+  .top button:first-of-type:hover {
+    background-color: #0d8bf2;
+  }
+  
+  .top button:last-of-type {
+    background-color: #ff4d4f;
+    color: white;
+  }
+  
+  .top button:last-of-type:hover {
+    background-color: #f53e3e;
+  }
+  
+  /* User Details Section */
+  .userDetails h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f0f0f0;
+    color: #333;
+  }
+  
+  /* Form Styles */
+  .userContainer {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -1rem;
+  }
+  
+  .userContainer > div {
+    flex: 1 0 280px;
+    padding: 0 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .formGroup {
+    margin-bottom: 1.5rem;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background-color: #f9f9f9;
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: #4a90e2;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  }
+  
+  input::placeholder {
+    color: #aaa;
+  }
+  
+  /* Toggle Switch */
+  .toggleWrapper {
     display: flex;
     align-items: center;
-    font-size: 0.85rem;
-}
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+  }
   
-.toggleSwitch.tutor {
-    background: #4caf50;
-}
+  .toggleSwitch {
+    position: relative;
+    display: inline-block;
+    width: 120px;
+    height: 36px;
+    background-color: #eee;
+    border-radius: 34px;
+    overflow: hidden;
+  }
   
-.toggleSwitch.tutee {
-    background: #2196f3;
-}
+  .toggleSwitch.tutor {
+    background-color: #4caf50;
+  }
   
-.toggleThumb {
-    width: 60px;
-    height: 100%;
-    background: #fff;
-    border-radius: 20px;
-    text-align: center;
-    line-height: 36px;
-    font-weight: 600;
+  .toggleSwitch.tutee {
+    background-color: #2196F3;
+  }
+  
+  .toggleThumb {
     position: absolute;
-    top: 0;
+    cursor: pointer;
+    width: 60px;
+    height: 36px;
     left: 0;
-    transition: left 0.3s ease;
-}
+    top: 0;
+    background-color: white;
+    border-radius: 34px;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #555;
+  }
   
-.toggleSwitch.tutor .toggleThumb {
+  .toggleSwitch.tutor .toggleThumb {
     left: 60px;
-}
-
-
-.tagsContainer {
-    margin-top: 0.5rem;
+  }
+  
+  /* Button Group */
+  .buttonGroup {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .buttonGroup button:first-child {
+    background-color: #f0f0f0;
+    color: #666;
+  }
+  
+  .buttonGroup button:first-child:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .buttonGroup button:last-child {
+    background-color: #2196F3;
+    color: white;
+  }
+  
+  .buttonGroup button:last-child:hover {
+    background-color: #0d8bf2;
+  }
+  
+  /* Tutor Details */
+  .TutorDetails {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .TutorDetails:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tagsContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 0.5rem;
   }
   
   .tag {
-    background-color: #d9ecff;
-    color: #003366;
-    padding: 6px 10px;
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    padding: 0.5rem 0.75rem;
     border-radius: 20px;
     font-size: 0.85rem;
     display: flex;
@@ -128,29 +266,76 @@ input::placeholder {
   }
   
   .removeTag {
-    margin-left: 8px;
     background: none;
     border: none;
-    font-size: 1rem;
-    line-height: 1;
     cursor: pointer;
-    color: #003366;
-  }
-
-.TutorDetails{
-    display: none;
-}
-
-/* Multi-select styling to match .formGroup and input aesthetics */
-.styledSelect {
-    padding: 0.75rem 1rem;
-    border: 1px solid #d0d4da;
-    background-color: #f1f4f8;
-    border-radius: 6px;
+    color: #0d47a1;
+    margin-left: 0.5rem;
     font-size: 1rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    min-height: 120px;
-    resize: vertical;
-    outline: none;
   }
   
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .top {
+      text-align: center;
+    }
+    
+    .buttonGroup {
+      flex-direction: column;
+    }
+    
+    .buttonGroup button {
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+    
+    .userContainer {
+      flex-direction: column;
+    }
+  }
+
+  /* Interactive Preferred Days Styling */
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .days-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .days-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .day-button {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .day-button:hover {
+    background-color: #f0f0f0;
+    border-color: #d0d0d0;
+  }
+  
+  .day-button.selected {
+    background-color: #2196f3;
+    color: white;
+    border-color: #2196f3;
+  }
+  
+  .day-button.selected:hover {
+    background-color: #0d8bf2;
+  }
