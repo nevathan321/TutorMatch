@@ -40,6 +40,8 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
         setErrorMessage("");
+        localStorage.setItem("email", loginResult.user_profile.email); 
+
         return;
       }
       setErrorMessage("Incorrect email or password");
@@ -63,7 +65,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
         },
         body: new URLSearchParams(googleEmail).toString(),
       });
-      console.log("WOOK")
+
       const loginResult = await response.json();
 
       if (loginResult.success) {
@@ -71,6 +73,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
         setErrorMessage("");
+        localStorage.setItem("userEmail", loginResult.user_profile.email); 
         return;
       }
       setErrorMessage("Incorrect email or password");
