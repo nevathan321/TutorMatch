@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import TutorCard from '../../components/TutorCard/TutorCard';
 import { useNotifications } from '../../context/NotificationContext';
 import './match.css';
