@@ -1,199 +1,98 @@
 import Card from "../../components/card/card";
 import ProfilePhotoBlock from "../../components/profilephoto/profilePhoto";
-import { useState, useEffect } from 'react';
-import './profile.css';
+import { useState, useEffect } from "react";
+import "./profile.css";
 
-function Profile(){
-    const [role, setRole] = useState('Tutee');
-    const [subject, setSubject] = useState('');
-    const [subjects, setSubjects] = useState([]);
-    const [profilePhoto, setProfilePhoto] = useState(null); // State to store photo data
-    const [selectedDays, setSelectedDays] = useState([]);
+function Profile({ userProfile }) {
+  const [role, setRole] = useState("Tutee");
+  //const [subject, setSubject] = useState("");
+  //const [subjects, setSubjects] = useState([]);
+  const [profilePhoto, setProfilePhoto] = useState(null); // State to store photo data
+  //const [selectedDays, setSelectedDays] = useState([]);
 
-    function checkPassword(){
-        var password = document.getElementById('password').value;
-        var confirmPassword = document.getElementById('confirmPassword').value;
+  useEffect(() => {}, []);
 
-        if(password !== confirmPassword){
-            document.getElementById('warning').innerHTML = "Passwords do not match";
-            return false;
-        }
-        else{
-            document.getElementById('warning').innerHTML = "";
-            return true;
-        }
-        
+  const getYearOfStudyString = (year) => {
+    switch (year) {
+      case 1:
+        return "1st Year"
+      case 2:
+        return "2nd Year"
+      case 3:
+        return "3rd Year"
+      case 4:
+        return "4th Year"
+      case 5:
+        return "5th Year"
+      default:
+        return "N/A"
     }
+  } 
 
-    const handleSubjectKeyDown = (e) => {
-        if (e.key === 'Enter' && subject.trim()) {
-          e.preventDefault();
-          if (!subjects.includes(subject.trim())) {
-            setSubjects([...subjects, subject.trim()]);
-            setSubject('');
-          }
-        }
-      };
-      
-    const removeSubject = (index) => {
-        setSubjects(subjects.filter((_, i) => i !== index));
-    };
+  return (
+    <div className="Profile">
+     
 
-    useEffect(() => {
-        if (role === 'Tutor') {
-            document.querySelector('.TutorDetails').style.display = 'block';
-        } else {
-            document.querySelector('.TutorDetails').style.display = 'none';
-        }
-    }, [role]); 
+      <Card>
+        <ProfilePhotoBlock
+          initialPhoto={profilePhoto} // Pass initial photo
+          onPhotoChange={setProfilePhoto} // Pass callback
+          userProfile={userProfile}
+        />
+      </Card>
 
-    useEffect(() => {
-        const storedData = localStorage.getItem('profileData');
-        if (storedData) {
-            const profileData = JSON.parse(storedData);
-            console.log("Loaded profile data:", profileData); 
-
-            const fnameInput = document.getElementById('fname');
-            const lnameInput = document.getElementById('lname');
-            const macIdInput = document.getElementById('macId');
-            const studentNumberInput = document.getElementById('studentNumber');
-            const hourlyRateInput = document.getElementById('hourlyRate');
-            const passwordInput = document.getElementById('password');
-            const confirmPasswordInput = document.getElementById('confirmPassword');
-
-            if (fnameInput) fnameInput.value = profileData.firstName || '';
-            if (lnameInput) lnameInput.value = profileData.lastName || '';
-            if (macIdInput) macIdInput.value = profileData.macId || '';
-            if (studentNumberInput) studentNumberInput.value = profileData.studentNumber || '';
-            if (hourlyRateInput) hourlyRateInput.value = profileData.hourlyRate || '';
-            if (passwordInput) passwordInput.value = profileData.password || '';
-            if (confirmPasswordInput) confirmPasswordInput.value = profileData.password || '';
-
-            setRole(profileData.role);
-            setSubjects(profileData.subjectExpertise || []);
-            setSelectedDays(profileData.preferredDays || []);
-            setProfilePhoto(profileData.profilePhoto || null); 
-        }
-    }, []);
-
-
-    function saveProfileData(e) {
-        e.preventDefault();
-    
-        const profileData = {
-            role,
-            firstName: document.getElementById('fname').value,
-            lastName: document.getElementById('lname').value,
-            macId: document.getElementById('macId').value,
-            studentNumber: document.getElementById('studentNumber').value,
-            hourlyRate: role === 'Tutor' ? document.getElementById('hourlyRate').value : null,
-            preferredDays: role === 'Tutor' ? selectedDays : [],
-            subjectExpertise: role === 'Tutor' ? subjects : [],
-            password: document.getElementById('password').value,
-            profilePhoto // Save photo data into local storage
-        };
-
-        console.log("Saving profile data:", profileData); // Debugging log
-        localStorage.setItem('profileData', JSON.stringify(profileData));
-        alert('Profile updated successfully!');
-    }
-
-    return(
-        <div className='Profile'>
-            <div className='top'>
-                <h1> Edit Profile </h1>
-            </div>
-
-            <Card>
-                <ProfilePhotoBlock 
-                    initialPhoto={profilePhoto} // Pass initial photo
-                    onPhotoChange={setProfilePhoto} // Pass callback
-                />
-            </Card>
-
-            <Card>
-                <div className="toggleWrapper">
-                    <div className={`toggleSwitch ${role === 'Tutor' ? 'tutor' : 'tutee'}`} onClick={() => setRole(role === 'Tutee' ? 'Tutor' : 'Tutee')}>
-                        <div className="toggleThumb">{role}</div>
-                    </div>
-                </div>
-
-                <h1> User Details</h1>
-                <form className = "userDetails">
-                    <div className='userContainer'>
-                        <label for='fname'>First Name:</label>
-                        <input type='text' id='fname' name='fname' placeholder='First Name' required></input>
-
-                        <label for='lname'>Last Name:</label>
-                        <input type='text' id='lname' name='lname' placeholder='Last Name' required></input>
-                    </div>
-
-                    <div className="userContainer">
-                        <label for='macId'>McMaster ID:</label>
-                        <input type='text' id='macId' name='macId' placeholder='macId' required></input>
-
-                        <label for='studentNumber'>Student Number:</label>
-                        <input type='number' id='studentNumber' name='studentNumber' placeholder='Student Number' required></input>
-                    </div>
-
-                    <div className="TutorDetails"> 
-                        <div className="formGroup">
-                            <label for='hourlyRate'>Hourly Rate</label>
-                            <input style={{ width: '50%' }} type='number' id='hourlyRate' name='hourlyRate' placeholder='10' required></input>
-                        </div>
-
-                        <div className="formGroup">
-                            <label for="preferredDays">Preferred Days</label>
-                            <div className="days-grid">
-                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                    <button
-                                        key={day}
-                                        type="button"
-                                        className={`day-button ${selectedDays.includes(day) ? "selected" : ""}`}
-                                        onClick={() => {
-                                            const newSelectedDays = selectedDays.includes(day)
-                                                ? selectedDays.filter((d) => d !== day)
-                                                : [...selectedDays, day];
-                                            setSelectedDays(newSelectedDays);
-                                        }}
-                                    >
-                                        {day.substring(0, 3)}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="formGroup">
-                            <label for='subjectExpertise'>Subject Expertise</label>
-                            <input style={{ width: '50%' }} type='text' id='subjectExpertise' name='subjectExpertise' placeholder='Add a subject and press Enter' value={subject} onChange={(e) => setSubject(e.target.value)} onKeyDown={handleSubjectKeyDown} />
-                        </div>
-                        
-                        <div className="tagsContainer">
-                            {subjects.map((subj, idx) => (
-                                <span key={idx} className="tag">
-                                    {subj}
-                                    <button type="button" className="removeTag" onClick={() => removeSubject(idx)}>×</button>
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                    
-                    
-                    <label for='password'>Password:</label>
-                    <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='password' name='password' placeholder='Password' required></input>
-
-                    <label for='confirmPassword'>Confirm Password:</label>
-                    <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='confirmPassword' name='confirmPassword' placeholder='Confirm Password' required></input>
-                    <p style = {{"color" : "red" }} id = "warning"> </p>
-
-                    <div className="buttonGroup"> 
-                        <button className = "btn delete" type = "reset"> Cancel</button>
-                        <button className = "btn" type='submit' onClick={saveProfileData}>Update</button>
-                    </div>
-                </form>
-            </Card>
+      <Card>
+        <div className="toggleWrapper">
+          <div
+            className={`toggleSwitch ${role === "Tutor" ? "tutor" : "tutee"}`}
+            onClick={() => setRole(role === "Tutee" ? "Tutor" : "Tutee")}>
+            <div className="toggleThumb">{role}</div>
+          </div>
         </div>
-    )
+
+        <h1> User Details</h1>
+        <div className="user-details">
+          <p>Email: {userProfile.email}</p>
+          <p>Date Of Birth: {userProfile.dob}</p>
+          <p>MacID: {userProfile.macid}</p>
+          <p>Student Number: {userProfile.student_number}</p>
+          <p>Year: {getYearOfStudyString(userProfile.year_of_study)} </p>
+          <button >Edit Profile</button>
+        </div>
+
+      </Card>
+    </div>
+  );
 }
 
 export default Profile;
+
+
+
+//preferred days selector
+{/* <div className="days-grid">
+                {[
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday",
+                ].map((day) => (
+                  <button
+                    key={day}
+                    type="button"
+                    className={`day-button ${
+                      selectedDays.includes(day) ? "selected" : ""
+                    }`}
+                    onClick={() => {
+                      const newSelectedDays = selectedDays.includes(day)
+                        ? selectedDays.filter((d) => d !== day)
+                        : [...selectedDays, day];
+                      setSelectedDays(newSelectedDays);
+                    }}>
+                    {day.substring(0, 3)}
+                  </button>
+                ))}
+              </div> */}
