@@ -47,7 +47,7 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
             />
             <div className="profile-header">
                 <h2>{userProfile.full_name}</h2>
-                <p>Email: {userProfile.email}</p>
+                <p>{userProfile.major}</p>
                 <div className="options">
 
                     <input
