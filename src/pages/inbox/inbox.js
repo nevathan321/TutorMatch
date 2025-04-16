@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import "./inbox.css";
 
-import MyCalendar from "../../../components/calendar/MyCalendar";
+import MyCalendar from "../../components/calendar/MyCalendar";
 
 function Inbox() {
   const [matches, setMatches] = useState([]);
