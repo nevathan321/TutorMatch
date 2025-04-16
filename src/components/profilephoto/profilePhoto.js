@@ -9,6 +9,24 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
         setImageSrc(initialPhoto || userProfile?.profilePhoto || profile);
     }, [initialPhoto, userProfile]);
 
+    const getYearOfStudyString = (year) => {
+        switch (year) {
+          case 1:
+            return "1st Year";
+          case 2:
+            return "2nd Year";
+          case 3:
+            return "3rd Year";
+          case 4:
+            return "4th Year";
+          case 5:
+            return "5th Year";
+          default:
+            return "N/A";
+        }
+      };
+    
+
     function uploadPhoto(event){
         const file = event.target.files[0];
         const reader = new FileReader();
@@ -47,7 +65,7 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
             />
             <div className="profile-header">
                 <h2>{userProfile.full_name}</h2>
-                <p>Email: {userProfile.email}</p>
+                <p>{userProfile.major} - {getYearOfStudyString(userProfile.year_of_study)}</p>
                 <div className="options">
 
                     <input
