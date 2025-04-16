@@ -7,7 +7,7 @@ import ProfilePhoto from "../../../components/profilephoto/profilePhoto"
 import ToastContainer from "../../../components/ToastContainer/ToastContainer"
 
 function Profile() {
-  const [role, setRole] = useState("Tutor")
+  const [role, setRole] = useState("Tutee")
   const [subject, setSubject] = useState("")
   const [subjects, setSubjects] = useState([])
   const [profilePhoto, setProfilePhoto] = useState(null)

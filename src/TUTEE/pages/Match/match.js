@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import TutorCard from '../../components/TutorCard/TutorCard';
-import { useNotifications } from '../../context/NotificationContext';
+import TutorCard from '../../../components/TutorCard/TutorCard';
+import { useNotifications } from '../../../context/NotificationContext';
 import './match.css';
 
 // Sample data - replace with API call in a real application
