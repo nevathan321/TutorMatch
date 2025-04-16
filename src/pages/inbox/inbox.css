@@ -577,6 +577,54 @@
   background: #4338ca;
 }
 
+.email-status {
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.email-status.loading {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.email-status.loading::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 50%;
+  border-top-color: #4b5563;
+  margin-right: 8px;
+  animation: spin 1s linear infinite;
+}
+
+.email-status.success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.email-status.error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.email-status.info {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .matches-grid {

@@ -8,7 +8,7 @@ import Inbox from "./pages/inbox/inbox";
 import Match from "./pages/Match/match";
 import { NotificationProvider } from "./context/NotificationContext";
 import ToastContainer from "./components/ToastContainer/ToastContainer";
-import Login from "./pages/login/Login";
+import Login from "./pages/login/login";
 import Signup from "./pages/login/Singup";
 // switch root path when uploading to filezilla
 // const ROOT_PATH = "/~bhavanaa/TutorMatch";
@@ -17,7 +17,7 @@ const ROOT_PATH = "/";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState(null) ;
-  if (!isLoggedIn) {
+  /* if (!isLoggedIn) {
     return (
       <Router basename={ROOT_PATH}>
         <Routes>
@@ -27,7 +27,7 @@ function App() {
         </Routes>
       </Router>
     );
-  }
+  } */
   console.log(userProfile)
   return (
     <NotificationProvider>
