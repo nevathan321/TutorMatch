@@ -1,13 +1,13 @@
 import React, { useState , useEffect} from "react";
 import "./App.css";
 import Dashboard from "./TUTEE/pages/dashboard/Dashboard";
-import Nav from "./TUTEE/components/nav/Nav";
+import Nav from "./components/nav/Nav";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Profile from "./TUTEE/pages/profile/profile";
 import Inbox from "./TUTEE/pages/inbox/inbox";
 import Match from "./TUTEE/pages/Match/match";
-import { NotificationProvider } from "./TUTEE/context/NotificationContext";
-import ToastContainer from "./TUTEE/components/ToastContainer/ToastContainer";
+import { NotificationProvider } from "./context/NotificationContext";
+import ToastContainer from "./components/ToastContainer/ToastContainer";
 import Login from "./TUTEE/pages/login/login";
 import Signup from "./TUTEE/pages/login/Singup";
 // switch root path when uploading to filezilla

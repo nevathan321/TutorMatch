@@ -1,11 +1,8 @@
 // src/pages/inbox/inbox.js
 import React, { useState, useEffect } from "react";
-import Card from "../../components/card/card";
 import "./inbox.css";
 
-import MyCalendar from "../../components/calendar/MyCalendar";
-
-
+import MyCalendar from "../../../components/calendar/MyCalendar";
 
 function Inbox() {
   const [matches, setMatches] = useState([]);
@@ -25,8 +22,6 @@ function Inbox() {
 
   const [chatInput, setChatInput] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
-
-
 
   // Fetch matched tutors
   useEffect(() => {
@@ -266,7 +261,7 @@ function Inbox() {
       <div className="matches-grid">
         {filteredMatches.length > 0 ? (
           filteredMatches.map(match => (
-            <Card key={match.id} className="tutor-match-card">
+            <div key={match.id} className="tutor-match-card">
               <div className="match-header">
                 <div className="match-date">
                   Matched on {new Date(match.matchDate).toLocaleDateString()}
@@ -339,7 +334,7 @@ function Inbox() {
                   Chat
                 </button>
               </div>
-            </Card>
+            </div>
           ))
         ) : (
           <div className="no-matches">

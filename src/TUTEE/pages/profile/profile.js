@@ -1,5 +1,4 @@
-import Card from "../../components/card/card";
-import ProfilePhotoBlock from "../../components/profilephoto/profilePhoto";
+import ProfilePhotoBlock from "../../../components/profilephoto/profilePhoto";
 import { useState, useEffect } from "react";
 import "./profile.css";
 
@@ -9,35 +8,17 @@ function Profile({ userProfile }) {
 
   useEffect(() => {}, []);
 
-  const getYearOfStudyString = (year) => {
-    switch (year) {
-      case 1:
-        return "1st Year";
-      case 2:
-        return "2nd Year";
-      case 3:
-        return "3rd Year";
-      case 4:
-        return "4th Year";
-      case 5:
-        return "5th Year";
-      default:
-        return "N/A";
-    }
-  };
-
-
   return (
     <div className="Profile">
-      <Card>
+      <div className="card">
         <ProfilePhotoBlock
           initialPhoto={profilePhoto} // Pass initial photo
           onPhotoChange={setProfilePhoto} // Pass callback
           userProfile={userProfile}
         />
-      </Card>
+      </div>
 
-      <Card>
+      <div className="card">
         <div className="toggleWrapper">
           <div
             className={`toggleSwitch ${role === "Tutor" ? "tutor" : "tutee"}`}
@@ -53,10 +34,9 @@ function Profile({ userProfile }) {
           <p>Date Of Birth: {userProfile.dob}</p>
           <p>MacID: {userProfile.macid}</p>
           <p>Student Number: {userProfile.student_number}</p>
-          <p>Year: {getYearOfStudyString(userProfile.year_of_study)}</p>
           <button>Edit Profile</button>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

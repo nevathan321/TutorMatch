@@ -86,9 +86,9 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
   return (
     <div className="signup-container">
       <div className="signup-header">
-        <h1>Create Your Account</h1>
+        <h1>TutorMatch</h1>
         <p className="subtitle">
-          Join our community by filling out the form below
+          Create Your Account
         </p>
 
         <div className="user-type-toggle">
@@ -112,7 +112,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
         </h2>
         <form className="signup-form" onSubmit={handleSubmit}>
           <div className="form-row">
-            <div className="form-group">
+            <div className="create-profile-form-group">
               <label htmlFor="first_name">First Name</label>
               <input
                 type="text"
@@ -125,7 +125,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
               />
             </div>
 
-            <div className="form-group">
+            <div className="create-profile-form-group">
               <label htmlFor="last_name">Last Name</label>
               <input
                 type="text"
@@ -140,7 +140,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
           </div>
 
           <div className="form-row">
-            <div className="form-group">
+            <div className="create-profile-form-group">
               <label htmlFor="email">Email</label>
               <input
                 type="email"
@@ -154,7 +154,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
               />
             </div>
 
-            <div className="form-group">
+            <div className="create-profile-form-group">
               <label htmlFor="macid">McMaster ID</label>
               <input
                 type="text"
@@ -169,7 +169,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
           </div>
 
           <div className="form-row">
-            <div className="form-group">
+            <div className="create-profile-form-group">
               <label htmlFor="student_number">Student Number</label>
               <input
                 type="text"
@@ -182,7 +182,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
               />
             </div>
 
-            <div className="form-group">
+            <div className="create-profile-form-group">
               <label htmlFor="major">Major</label>
               <input
                 type="text"
@@ -197,7 +197,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
           </div>
 
           <div className="form-row">
-            <div className="form-group">
+            <div className="create-profile-form-group">
               <label htmlFor="year_of_study">Year of Study</label>
               <select
                 id="year_of_study"
@@ -214,7 +214,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
               </select>
             </div>
 
-            <div className="form-group">
+            <div className="create-profile-form-group">
               <label htmlFor="dob">Date of Birth</label>
               <input
                 type="date"
@@ -230,7 +230,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
           {userType === "tutor" && (
             <>
               <div className="form-row">
-                <div className="form-group">
+                <div className="create-profile-form-group">
                   <label htmlFor="main_subject">Main Subject</label>
                   <input
                     type="text"
@@ -243,7 +243,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="create-profile-form-group">
                   <label htmlFor="wage">Hourly Wage ($)</label>
                   <input
                     type="number"
@@ -261,35 +261,37 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
             </>
           )}
 
-          <div className="form-group full-width">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="Create a password"
-              required
-            />
-          </div>
-
-          <div className="form-group full-width">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              placeholder="Re-enter your password"
-              required
-            />
-            {formData.password &&
-              formData.confirmPassword &&
-              formData.password !== formData.confirmPassword && (
-                <p className="warning-message">Passwords don't match!</p>
-              )}
+          <div className="form-row">
+            <div className="create-profile-form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Create a password"
+                required
+              />
+            </div>
+            
+            <div className="create-profile-form-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                placeholder="Re-enter your password"
+                required
+              />
+              {formData.password &&
+                formData.confirmPassword &&
+                formData.password !== formData.confirmPassword && (
+                  <p className="warning-message">Passwords don't match!</p>
+                )}
+            </div>
           </div>
 
           <div className="form-actions">
