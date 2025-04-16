@@ -1,26 +1,23 @@
 import React, { useState , useEffect} from "react";
 import "./App.css";
-import Dashboard from "./pages/dashboard/Dashboard";
-import Nav from "./components/nav/Nav";
+import Dashboard from "./TUTEE/pages/dashboard/Dashboard";
+import Nav from "./TUTEE/components/nav/Nav";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Profile from "./pages/profile/profile";
-import Inbox from "./pages/inbox/inbox";
-import Match from "./pages/Match/match";
-import { NotificationProvider } from "./context/NotificationContext";
-import ToastContainer from "./components/ToastContainer/ToastContainer";
-import Login from "./pages/login/login";
-import Signup from "./pages/login/Singup";
-
+import Profile from "./TUTEE/pages/profile/profile";
+import Inbox from "./TUTEE/pages/inbox/inbox";
+import Match from "./TUTEE/pages/Match/match";
+import { NotificationProvider } from "./TUTEE/context/NotificationContext";
+import ToastContainer from "./TUTEE/components/ToastContainer/ToastContainer";
+import Login from "./TUTEE/pages/login/login";
+import Signup from "./TUTEE/pages/login/Singup";
 // switch root path when uploading to filezilla
-// const ROOT_PATH = "/~bhavanaa/TutorMatch";
 const ROOT_PATH = "/";
 
 function App() {
-  // Force login state to true so we can see profile without login
-  const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
 
-  useEffect(() => {
+   useEffect(() => {
     const email = localStorage.getItem("email");
     if (email == null) {
       setIsLoggedIn(false)
@@ -54,7 +51,7 @@ function App() {
         console.error("Login error:", err);
       }
     }
-  if (isLoggedIn == null) return
+  //if (isLoggedIn == null) return
   if (!isLoggedIn) {
     return (
       <Router basename={ROOT_PATH}>
@@ -65,7 +62,7 @@ function App() {
         </Routes>
       </Router>
     );
-  }
+  } 
   
   return (
     <NotificationProvider>

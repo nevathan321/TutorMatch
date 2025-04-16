@@ -52,7 +52,7 @@ try {
                 <h1>Authentication Successful!</h1>
                 <p class='success'>You have successfully authenticated with Google.</p>
                 <p>You can now return to the TutorMatch application and send emails.</p>
-                <a href='http://localhost:3001/inbox' class='btn'>Return to TutorMatch</a>
+                <a href='http://localhost:3000/inbox' class='btn'>Return to TutorMatch</a>
             </body>
             </html>
             ";
@@ -95,7 +95,7 @@ try {
         <h1>Authentication Error</h1>
         <p class='error'>An error occurred during authentication:</p>
         <p>" . htmlspecialchars($e->getMessage()) . "</p>
-        <a href='http://localhost:3001/inbox'>Return to TutorMatch</a>
+        <a href='http://localhost:3000/inbox'>Return to TutorMatch</a>
     </body>
     </html>
     ";
