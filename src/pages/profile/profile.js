@@ -1,40 +1,39 @@
 import Card from "../../components/card/card";
+import profile from "../../images/profile.png";
 import ProfilePhotoBlock from "../../components/profilephoto/profilePhoto";
 import { useState, useEffect } from 'react';
 import './profile.css';
 
-function Profile({userProfile}){
-    const [role, setRole] = useState('Tutee');
+function Profile({ userProfile }) {
+    const [role, setRole] = useState(userProfile?.role || 'Tutee');
     const [subject, setSubject] = useState('');
-    const [subjects, setSubjects] = useState([]);
-    const [profilePhoto, setProfilePhoto] = useState(null); // State to store photo data
-    const [selectedDays, setSelectedDays] = useState([]);
+    const [subjects, setSubjects] = useState(userProfile?.subjectExpertise || []);
+    const [profilePhoto, setProfilePhoto] = useState(userProfile?.profilePhoto || null);
+    const [selectedDays, setSelectedDays] = useState(userProfile?.preferredDays || []);
 
-    function checkPassword(){
+    function checkPassword() {
         var password = document.getElementById('password').value;
         var confirmPassword = document.getElementById('confirmPassword').value;
 
-        if(password !== confirmPassword){
+        if (password !== confirmPassword) {
             document.getElementById('warning').innerHTML = "Passwords do not match";
             return false;
-        }
-        else{
+        } else {
             document.getElementById('warning').innerHTML = "";
             return true;
         }
-        
     }
 
     const handleSubjectKeyDown = (e) => {
         if (e.key === 'Enter' && subject.trim()) {
-          e.preventDefault();
-          if (!subjects.includes(subject.trim())) {
-            setSubjects([...subjects, subject.trim()]);
-            setSubject('');
-          }
+            e.preventDefault();
+            if (!subjects.includes(subject.trim())) {
+                setSubjects([...subjects, subject.trim()]);
+                setSubject('');
+            }
         }
-      };
-      
+    };
+
     const removeSubject = (index) => {
         setSubjects(subjects.filter((_, i) => i !== index));
     };
@@ -45,40 +44,33 @@ function Profile({userProfile}){
         } else {
             document.querySelector('.TutorDetails').style.display = 'none';
         }
-    }, [role]); 
+    }, [role]);
 
     useEffect(() => {
-        const storedData = localStorage.getItem('profileData');
-        if (storedData) {
-            const profileData = JSON.parse(storedData);
-            console.log("Loaded profile data:", profileData); 
-
-            const fnameInput = document.getElementById('fname');
-            const lnameInput = document.getElementById('lname');
-            const macIdInput = document.getElementById('macId');
-            const studentNumberInput = document.getElementById('studentNumber');
-            const hourlyRateInput = document.getElementById('hourlyRate');
-            const passwordInput = document.getElementById('password');
-            const confirmPasswordInput = document.getElementById('confirmPassword');
-
-            if (fnameInput) fnameInput.value = profileData.firstName || '';
-            if (lnameInput) lnameInput.value = profileData.lastName || '';
-            if (macIdInput) macIdInput.value = profileData.macId || '';
-            if (studentNumberInput) studentNumberInput.value = profileData.studentNumber || '';
-            if (hourlyRateInput) hourlyRateInput.value = profileData.hourlyRate || '';
-            if (passwordInput) passwordInput.value = profileData.password || '';
-            if (confirmPasswordInput) confirmPasswordInput.value = profileData.password || '';
-
-            setRole(profileData.role);
-            setSubjects(profileData.subjectExpertise || []);
-            setSelectedDays(profileData.preferredDays || []);
-            setProfilePhoto(profileData.profilePhoto || null); 
+        if (userProfile) {
+            // Fill basic fields
+            document.getElementById('fname').value = userProfile.firstName || '';
+            document.getElementById('lname').value = userProfile.lastName || '';
+            document.getElementById('macId').value = userProfile.macId || '';
+            document.getElementById('studentNumber').value = userProfile.studentNumber || '';
+            
+            // Fill tutor-specific fields if user is a tutor
+            if (userProfile.role === 'Tutor' && document.getElementById('hourlyRate')) {
+                document.getElementById('hourlyRate').value = userProfile.hourlyRate || '';
+            }
         }
-    }, []);
-
+    }, [userProfile]);
 
     function saveProfileData(e) {
         e.preventDefault();
+    
+        // TODO: Change to interact with DOM, not alerts
+        if (!checkPassword()) {
+            alert("Passwords don't match!");
+            return;
+        }
+    
+        const email = userProfile.email;
     
         const profileData = {
             role,
@@ -90,25 +82,62 @@ function Profile({userProfile}){
             preferredDays: role === 'Tutor' ? selectedDays : [],
             subjectExpertise: role === 'Tutor' ? subjects : [],
             password: document.getElementById('password').value,
-            profilePhoto // Save photo data into local storage
+            profilePhoto: profilePhoto || null,
+            email
         };
-
-        console.log("Saving profile data:", profileData); // Debugging log
-        localStorage.setItem('profileData', JSON.stringify(profileData));
-        alert('Profile updated successfully!');
+    
+        console.log("Sending to server:", profileData); // Log what we're sending
+    
+        fetch('http://localhost/tutormatch/server/profile/createProfile.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(profileData)
+        })
+        .then(async response => {
+            // Get raw response text regardless of content type
+            const responseText = await response.text();
+    
+            // Try to parse as JSON
+            try {
+                const data = JSON.parse(responseText);               
+                return data;
+            } catch (error) {
+                console.error("Failed to parse JSON. Raw response was:", responseText);
+                throw new Error(`Invalid JSON response: ${responseText}`);
+            }
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Profile updated successfully!');
+                console.log("Server response data:", data);
+                window.location.reload();
+            } else {
+                alert('Failed to update profile: ' + (data.message || 'Unknown error'));
+                console.warn("Server reported failure:", data);
+            }
+        })
+        .catch(err => {
+            console.error("Full error details:", {
+                error: err,
+                message: err.message,
+                stack: err.stack
+            });
+        });
     }
 
-    return(
+    return (
         <div className='Profile'>
             <div className='top'>
                 <h1> Edit Profile </h1>
             </div>
 
             <Card>
-                <ProfilePhotoBlock 
-                    initialPhoto={profilePhoto} // Pass initial photo
-                    onPhotoChange={setProfilePhoto} // Pass callback
-                    userProfile = {userProfile}
+                <ProfilePhotoBlock
+                    initialPhoto={profilePhoto}
+                    onPhotoChange={setProfilePhoto}
+                    userProfile={userProfile}
                 />
             </Card>
 
@@ -120,31 +149,31 @@ function Profile({userProfile}){
                 </div>
 
                 <h1> User Details</h1>
-                <form className = "userDetails">
+                <form className="userDetails">
                     <div className='userContainer'>
-                        <label for='fname'>First Name:</label>
-                        <input type='text' id='fname' name='fname' placeholder='First Name' required></input>
+                        <label htmlFor='fname'>First Name:</label>
+                        <input type='text' id='fname' name='fname' placeholder='First Name' required />
 
-                        <label for='lname'>Last Name:</label>
-                        <input type='text' id='lname' name='lname' placeholder='Last Name' required></input>
+                        <label htmlFor='lname'>Last Name:</label>
+                        <input type='text' id='lname' name='lname' placeholder='Last Name' required />
                     </div>
 
                     <div className="userContainer">
-                        <label for='macId'>McMaster ID:</label>
-                        <input type='text' id='macId' name='macId' placeholder='macId' required></input>
+                        <label htmlFor='macId'>McMaster ID:</label>
+                        <input type='text' id='macId' name='macId' placeholder='macId' required />
 
-                        <label for='studentNumber'>Student Number:</label>
-                        <input type='number' id='studentNumber' name='studentNumber' placeholder='Student Number' required></input>
+                        <label htmlFor='studentNumber'>Student Number:</label>
+                        <input type='number' id='studentNumber' name='studentNumber' placeholder='Student Number' required />
                     </div>
 
-                    <div className="TutorDetails"> 
+                    <div className="TutorDetails">
                         <div className="formGroup">
-                            <label for='hourlyRate'>Hourly Rate</label>
-                            <input style={{ width: '50%' }} type='number' id='hourlyRate' name='hourlyRate' placeholder='10' required></input>
+                            <label htmlFor='hourlyRate'>Hourly Rate</label>
+                            <input style={{ width: '50%' }} type='number' id='hourlyRate' name='hourlyRate' placeholder='10' required />
                         </div>
 
                         <div className="formGroup">
-                            <label for="preferredDays">Preferred Days</label>
+                            <label htmlFor="preferredDays">Preferred Days</label>
                             <div className="days-grid">
                                 {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
                                     <button
@@ -165,10 +194,19 @@ function Profile({userProfile}){
                         </div>
 
                         <div className="formGroup">
-                            <label for='subjectExpertise'>Subject Expertise</label>
-                            <input style={{ width: '50%' }} type='text' id='subjectExpertise' name='subjectExpertise' placeholder='Add a subject and press Enter' value={subject} onChange={(e) => setSubject(e.target.value)} onKeyDown={handleSubjectKeyDown} />
+                            <label htmlFor='subjectExpertise'>Subject Expertise</label>
+                            <input
+                                style={{ width: '50%' }}
+                                type='text'
+                                id='subjectExpertise'
+                                name='subjectExpertise'
+                                placeholder='Add a subject and press Enter'
+                                value={subject}
+                                onChange={(e) => setSubject(e.target.value)}
+                                onKeyDown={handleSubjectKeyDown}
+                            />
                         </div>
-                        
+
                         <div className="tagsContainer">
                             {subjects.map((subj, idx) => (
                                 <span key={idx} className="tag">
@@ -178,18 +216,17 @@ function Profile({userProfile}){
                             ))}
                         </div>
                     </div>
-                    
-                    
-                    <label for='password'>Password:</label>
-                    <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='password' name='password' placeholder='Password' required></input>
 
-                    <label for='confirmPassword'>Confirm Password:</label>
-                    <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='confirmPassword' name='confirmPassword' placeholder='Confirm Password' required></input>
-                    <p style = {{"color" : "red" }} id = "warning"> </p>
+                    <label htmlFor='password'>Password:</label>
+                    <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='password' name='password' placeholder='Password' required />
 
-                    <div className="buttonGroup"> 
-                        <button className = "btn delete" type = "reset"> Cancel</button>
-                        <button className = "btn" type='submit' onClick={saveProfileData}>Update</button>
+                    <label htmlFor='confirmPassword'>Confirm Password:</label>
+                    <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='confirmPassword' name='confirmPassword' placeholder='Confirm Password' required />
+                    <p style={{ color: "red" }} id="warning"> </p>
+
+                    <div className="buttonGroup">
+                        <button className="btn delete" type="reset"> Cancel</button>
+                        <button className="btn" type='submit' onClick={saveProfileData}>Update</button>
                     </div>
                 </form>
             </Card>
