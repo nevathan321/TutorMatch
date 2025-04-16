@@ -1,5 +1,5 @@
-import Card from "../../../components/card/card";
-import ProfilePhotoBlock from "../../../components/profilephoto/profilePhoto";
+import Card from "../../components/card/card";
+import ProfilePhotoBlock from "../../components/profilephoto/profilePhoto";
 import { useState, useEffect } from 'react';
 import './profile.css';
 

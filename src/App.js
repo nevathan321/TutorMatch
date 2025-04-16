@@ -3,20 +3,20 @@ import "./App.css";
 import Dashboard from "./TUTEE/pages/dashboard/Dashboard";
 import Nav from "./TUTEE/components/nav/Nav";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Profile from "./pages/profile/profile";
-import Inbox from "./pages/inbox/inbox";
-import Match from "./pages/Match/match";
-import { NotificationProvider } from "./context/NotificationContext";
-import ToastContainer from "./components/ToastContainer/ToastContainer";
-import Login from "./pages/login/login";
-import Signup from "./pages/login/Singup";
+import Profile from "./TUTEE/pages/profile/profile";
+import Inbox from "./TUTEE/pages/inbox/inbox";
+import Match from "./TUTEE/pages/Match/match";
+import { NotificationProvider } from "./TUTEE/context/NotificationContext";
+import ToastContainer from "./TUTEE/components/ToastContainer/ToastContainer";
+import Login from "./TUTEE/pages/login/login";
+import Signup from "./TUTEE/pages/login/Singup";
 // switch root path when uploading to filezilla
 const ROOT_PATH = "/";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userProfile, setUserProfile] = useState(null) ;
-  /* if (!isLoggedIn) {
+  const [userProfile, setUserProfile] = useState(null);
+  if (!isLoggedIn) {
     return (
       <Router basename={ROOT_PATH}>
         <Routes>
@@ -26,8 +26,8 @@ function App() {
         </Routes>
       </Router>
     );
-  } */
-  console.log(userProfile)
+  }
+  console.log(userProfile);
   return (
     <NotificationProvider>
       <div className="App">
@@ -36,10 +36,10 @@ function App() {
             <Nav />
             <div className="page">
               <Routes>
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/*" element={<Dashboard />} />
-                <Route path="/inbox" element={<Inbox />} />
-                <Route path="/match" element={<Match />} />
+                <Route path="TUTEE/profile" element={<Profile />} />
+                <Route path="TUTEE/*" element={<Dashboard />} />
+                <Route path="TUTEE/inbox" element={<Inbox />} />
+                <Route path="TUTEE/match" element={<Match />} />
               </Routes>
             </div>
           </Router>
