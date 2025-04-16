@@ -3,11 +3,12 @@ import ProfilePhotoBlock from "../../components/profilephoto/profilePhoto";
 import { useState, useEffect } from 'react';
 import './profile.css';
 
-function Profile(){
+function Profile({userProfile}){
     const [role, setRole] = useState('Tutee');
     const [subject, setSubject] = useState('');
     const [subjects, setSubjects] = useState([]);
     const [profilePhoto, setProfilePhoto] = useState(null); // State to store photo data
+    const [selectedDays, setSelectedDays] = useState([]);
 
     function checkPassword(){
         var password = document.getElementById('password').value;
@@ -34,10 +35,9 @@ function Profile(){
         }
       };
       
-
-      const removeSubject = (index) => {
+    const removeSubject = (index) => {
         setSubjects(subjects.filter((_, i) => i !== index));
-      };
+    };
 
     useEffect(() => {
         if (role === 'Tutor') {
@@ -71,6 +71,7 @@ function Profile(){
 
             setRole(profileData.role);
             setSubjects(profileData.subjectExpertise || []);
+            setSelectedDays(profileData.preferredDays || []);
             setProfilePhoto(profileData.profilePhoto || null); 
         }
     }, []);
@@ -86,7 +87,7 @@ function Profile(){
             macId: document.getElementById('macId').value,
             studentNumber: document.getElementById('studentNumber').value,
             hourlyRate: role === 'Tutor' ? document.getElementById('hourlyRate').value : null,
-            preferredDays: role === 'Tutor' ? Array.from(document.getElementById('preferredDays').selectedOptions).map(option => option.value) : [],
+            preferredDays: role === 'Tutor' ? selectedDays : [],
             subjectExpertise: role === 'Tutor' ? subjects : [],
             password: document.getElementById('password').value,
             profilePhoto // Save photo data into local storage
@@ -107,6 +108,7 @@ function Profile(){
                 <ProfilePhotoBlock 
                     initialPhoto={profilePhoto} // Pass initial photo
                     onPhotoChange={setProfilePhoto} // Pass callback
+                    userProfile = {userProfile}
                 />
             </Card>
 
@@ -141,19 +143,25 @@ function Profile(){
                             <input style={{ width: '50%' }} type='number' id='hourlyRate' name='hourlyRate' placeholder='10' required></input>
                         </div>
 
-
                         <div className="formGroup">
-                            <label htmlFor="preferredDays">Preferred Days</label>
-                            <select
-                                name="preferredDays"
-                                id="preferredDays"
-                                multiple
-                                className="styledSelect"
-                            >
-                                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
-                                <option key={day} value={day}>{day}</option>
+                            <label for="preferredDays">Preferred Days</label>
+                            <div className="days-grid">
+                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                    <button
+                                        key={day}
+                                        type="button"
+                                        className={`day-button ${selectedDays.includes(day) ? "selected" : ""}`}
+                                        onClick={() => {
+                                            const newSelectedDays = selectedDays.includes(day)
+                                                ? selectedDays.filter((d) => d !== day)
+                                                : [...selectedDays, day];
+                                            setSelectedDays(newSelectedDays);
+                                        }}
+                                    >
+                                        {day.substring(0, 3)}
+                                    </button>
                                 ))}
-                            </select>
+                            </div>
                         </div>
 
                         <div className="formGroup">
@@ -186,8 +194,6 @@ function Profile(){
                 </form>
             </Card>
         </div>
-
-
     )
 }
 
