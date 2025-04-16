@@ -1,9 +1,9 @@
 // src/pages/dashboard/Dashboard.js
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Review from '../../../components/review/Review';
-import Transaction from '../../../components/transaction/Transaction';
-import MyCalendar from '../../../components/calendar/MyCalendar';
+import Review from '../../components/review/Review';
+import Transaction from '../../components/transaction/Transaction';
+import MyCalendar from '../../components/calendar/MyCalendar';
 import './Dashboard.css';
 
 function Dashboard() {

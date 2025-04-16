@@ -1,6 +1,5 @@
 // src/pages/inbox/inbox.js
 import React, { useState, useEffect } from "react";
-import { useGmailApi } from "../../utils/gmailAPI";
 import Card from "../../components/card/card";
 import "./inbox.css";
 
@@ -15,7 +14,6 @@ function Inbox() {
   const [selectedTutor, setSelectedTutor] = useState(null);
   const [emailContent, setEmailContent] = useState({ subject: "", message: "" });
   const [showEmailModal, setShowEmailModal] = useState(false);
-  const { sendEmail } = useGmailApi();
   const [emailStatus, setEmailStatus] = useState({ type: "", message: "" });
 
   const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -43,7 +41,7 @@ function Inbox() {
           {
             id: 1,
             name: "John Smith",
-            email: "john.smith@example.com",
+            email: "adrianciepli@gmail.com",
             subjects: ["Mathematics", "Physics"],
             rating: 4.8,
             hourlyRate: 45,
@@ -57,7 +55,7 @@ function Inbox() {
           {
             id: 2,
             name: "Emily Johnson",
-            email: "emily.johnson@example.com",
+            email: "nevathan321@gmail.com",
             subjects: ["Chemistry", "Biology"],
             rating: 4.9,
             hourlyRate: 50,
@@ -71,7 +69,7 @@ function Inbox() {
           {
             id: 3,
             name: "Michael Chen",
-            email: "michael.chen@example.com",
+            email: "liyuxiao2@gmail.com",
             subjects: ["Computer Science", "Mathematics"],
             rating: 4.7,
             hourlyRate: 55,
@@ -85,7 +83,7 @@ function Inbox() {
           {
             id: 4,
             name: "Sarah Williams",
-            email: "sarah.williams@example.com",
+            email: "liyuxiao2@gmail.com",
             subjects: ["English Literature", "History"],
             rating: 4.6,
             hourlyRate: 40,
@@ -99,7 +97,7 @@ function Inbox() {
           {
             id: 5,
             name: "David Rodriguez",
-            email: "david.rodriguez@example.com",
+            email: "liyuxiao2@gmail.com",
             subjects: ["Spanish", "French"],
             rating: 4.9,
             hourlyRate: 45,
@@ -148,35 +146,86 @@ function Inbox() {
     setShowEmailModal(true);
   };
 
-  // Handle sending an email (placeholder functionality)
   const handleSendEmail = async () => {
+    setEmailStatus({ type: "loading", message: "Sending email..." });
+  
     try {
-      setEmailStatus({ type: "loading", message: "Sending email..." });
       
-      // This uses our placeholder Gmail API
-      await sendEmail(
-        selectedTutor.email,
-        emailContent.subject,
-        emailContent.message
-      );
+      const emailEndpoint = "http://localhost/TutorMatch/server/email/email.php";
       
-      setEmailStatus({ type: "success", message: "Email sent successfully!" });
-      
-      // Close modal after 2 seconds
-      setTimeout(() => {
-        setShowEmailModal(false);
-        setEmailStatus({ type: "", message: "" });
-      }, 2000);
+      const response = await fetch(emailEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Include cookies/session data
+        body: JSON.stringify({
+          to: selectedTutor.email,
+          subject: emailContent.subject,
+          message: emailContent.message,
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        setEmailStatus({ type: "success", message: "Email sent successfully!" });
+        setTimeout(() => {
+          setShowEmailModal(false);
+          setEmailStatus({ type: "", message: "" });
+        }, 2000);
+      } else {
+        // Check if we need to authenticate first
+        if (result.redirect) {
+          setEmailStatus({ type: "info", message: "Authentication required. Redirecting to Google login..." });
+          
+          // Open authentication in a new window
+          const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
+          
+          // Check when authentication window is closed
+          const checkAuthWindow = setInterval(() => {
+            if (authWindow.closed) {
+              clearInterval(checkAuthWindow);
+              setEmailStatus({ type: "info", message: "Authentication completed. Trying to send email again..." });
+              
+              // Try sending email again after a short delay
+              setTimeout(() => {
+                handleSendEmail();
+              }, 1000);
+            }
+          }, 500);
+        } else {
+          setEmailStatus({ type: "error", message: result.error || "Failed to send email. Please try again." });
+        }
+      }
     } catch (error) {
       console.error("Error sending email:", error);
-      setEmailStatus({ type: "error", message: "Failed to send email. Please try again." });
+      setEmailStatus({ type: "error", message: "An error occurred while sending the email." });
     }
   };
+ 
 
   const handleSendChatMessage = () => {
-    if (chatInput.trim() === "") return;
-    setChatHistory([...chatHistory, { sender: "user", message: chatInput }]);
+    if (chatInput.trim() === "") {
+      return; // Do nothing if the input is empty
+    }
+  
+    // Add the user's message to the chat history
+    setChatHistory((prevHistory) => [
+      ...prevHistory,
+      { sender: "user", message: chatInput.trim() },
+    ]);
+  
+    // Clear the chat input field
     setChatInput("");
+  
+    // Simulate a response from the tutor
+    setTimeout(() => {
+      setChatHistory((prevHistory) => [
+        ...prevHistory,
+        { sender: "tutor", message: "Thanks for your message! I'll get back to you soon." },
+      ]);
+    }, 1000); // Simulate a 1-second delay
   };
 
   if (loading) {
@@ -306,60 +355,56 @@ function Inbox() {
       </div>
       
       {showEmailModal && (
-        <div className="email-modal-overlay">
-          <div className="email-modal">
-            <div className="email-modal-header">
-              <h3>Email {selectedTutor.name}</h3>
-              <button className="close-button" onClick={() => setShowEmailModal(false)}>×</button>
+      <div className="email-modal-overlay">
+        <div className="email-modal">
+          <div className="email-modal-header">
+            <h3>Email {selectedTutor.name}</h3>
+            <button className="close-button" onClick={() => setShowEmailModal(false)}>×</button>
+          </div>
+          <div className="email-modal-content">
+            <div className="form-group">
+              <label htmlFor="email-subject">Subject</label>
+              <input
+                type="text"
+                id="email-subject"
+                value={emailContent.subject}
+                onChange={(e) => setEmailContent({ ...emailContent, subject: e.target.value })}
+              />
             </div>
-            
-            <div className="email-modal-content">
-              <div className="form-group">
-                <label htmlFor="email-subject">Subject</label>
-                <input 
-                  type="text" 
-                  id="email-subject" 
-                  value={emailContent.subject}
-                  onChange={(e) => setEmailContent({...emailContent, subject: e.target.value})}
-                />
+            <div className="form-group">
+              <label htmlFor="email-message">Message</label>
+              <textarea
+                id="email-message"
+                rows="8"
+                value={emailContent.message}
+                onChange={(e) => setEmailContent({ ...emailContent, message: e.target.value })}
+              ></textarea>
+            </div>
+            {emailStatus.message && (
+              <div className={`email-status ${emailStatus.type}`}>
+                {emailStatus.message}
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="email-message">Message</label>
-                <textarea 
-                  id="email-message" 
-                  rows="8"
-                  value={emailContent.message}
-                  onChange={(e) => setEmailContent({...emailContent, message: e.target.value})}
-                ></textarea>
-              </div>
-              
-              {emailStatus.message && (
-                <div className={`email-status ${emailStatus.type}`}>
-                  {emailStatus.message}
-                </div>
-              )}
-            </div>
-            
-            <div className="email-modal-footer">
-              <button 
-                className="cancel-button" 
-                onClick={() => setShowEmailModal(false)}
-                disabled={emailStatus.type === "loading"}
-              >
-                Cancel
-              </button>
-              <button 
-                className="send-button" 
-                onClick={handleSendEmail}
-                disabled={emailStatus.type === "loading"}
-              >
-                Send Email
-              </button>
-            </div>
+            )}
+          </div>
+          <div className="email-modal-footer">
+            <button
+              className="cancel-button"
+              onClick={() => setShowEmailModal(false)}
+              disabled={emailStatus.type === "loading"}
+            >
+              Cancel
+            </button>
+            <button
+              className="send-button"
+              onClick={handleSendEmail}
+              disabled={emailStatus.type === "loading"}
+            >
+              Send Email
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
 
       {showCalendarModal && (
@@ -395,26 +440,31 @@ function Inbox() {
     )}
 
     {showChatModal && (
-        <div className="email-modal-overlay">
-          <div className="email-modal chat">
-            <div className="email-modal-header">
-              <h3>Chat with {chatTutor?.name}</h3>
-              <button className="close-button" onClick={() => setShowChatModal(false)}>×</button>
-            </div>
-            <div className="email-modal-content">
-              <div className="chat-messages">
-                {chatHistory.map((msg, idx) => (
-                  <div key={idx} className={`chat-message ${msg.sender}`}>{msg.message}</div>
-                ))}
-              </div>
-            </div>
-            <div className="chat-input">
-              <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Type a message..." />
-              <button onClick={handleSendChatMessage}>Send</button>
+      <div className="email-modal-overlay">
+        <div className="email-modal chat">
+          <div className="email-modal-header">
+            <h3>Chat with {chatTutor?.name}</h3>
+            <button className="close-button" onClick={() => setShowChatModal(false)}>×</button>
+          </div>
+          <div className="email-modal-content">
+            <div className="chat-messages">
+              {chatHistory.map((msg, idx) => (
+                <div key={idx} className={`chat-message ${msg.sender}`}>{msg.message}</div>
+              ))}
             </div>
           </div>
+          <div className="chat-input">
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="Type a message..."
+            />
+            <button onClick={handleSendChatMessage}>Send</button>
+          </div>
         </div>
-      )}
+      </div>
+    )}
 
     </div>
     
