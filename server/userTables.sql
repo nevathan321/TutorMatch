@@ -12,5 +12,6 @@ CREATE TABLE Users (
   wage FLOAT,
   year_of_study INT,
   dob DATE,
-  user_type VARCHAR(10) CHECK (user_type IN ('tutor', 'tutee'))
+  user_type VARCHAR(10) CHECK (user_type IN ('tutor', 'tutee')),
+  profile_image LONGTEXT
 );
