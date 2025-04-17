@@ -17,11 +17,9 @@ function Inbox() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarTutor, setCalendarTutor] = useState(null);
 
-  const [showChatModal, setShowChatModal] = useState(false);
-  const [chatTutor, setChatTutor] = useState(null);
-
-  const [chatInput, setChatInput] = useState("");
-  const [chatHistory, setChatHistory] = useState([]);
+  const [startTime, setStartTime] = useState('10:00');
+  const [endTime, setEndTime] = useState('11:00');
+  const [timeZone, setTimeZone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
   // Fetch matched tutors
   useEffect(() => {
@@ -104,11 +102,7 @@ function Inbox() {
             unread: false
           }
         ];
-        
-        // INTEGRATION POINT: In your actual implementation, you would:
-        // 1. Fetch matches from your backend API
-        // 2. Connect to the matches created in your match section
-        // 3. Store match data in your database
+      
         
         setMatches(mockMatches);
         setLoading(false);
@@ -121,7 +115,6 @@ function Inbox() {
     fetchMatches();
   }, []);
 
-  // Handle search input change
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -131,7 +124,6 @@ function Inbox() {
     match.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Handle selecting a tutor to email
   const handleSelectTutor = (tutor) => {
     setSelectedTutor(tutor);
     setEmailContent({
@@ -198,30 +190,74 @@ function Inbox() {
       setEmailStatus({ type: "error", message: "An error occurred while sending the email." });
     }
   };
- 
-
-  const handleSendChatMessage = () => {
-    if (chatInput.trim() === "") {
-      return; // Do nothing if the input is empty
+  const sendCalendarInvite = async (tutor, date, startTimeValue, endTimeValue) => {
+    setEmailStatus({ type: "loading", message: "Creating calendar event..." });
+    
+    try {
+      // Format date with selected times
+      const startDate = new Date(date);
+      const [startHours, startMinutes] = startTimeValue.split(':');
+      startDate.setHours(parseInt(startHours, 10), parseInt(startMinutes, 10));
+      
+      const endDate = new Date(date);
+      const [endHours, endMinutes] = endTimeValue.split(':');
+      endDate.setHours(parseInt(endHours, 10), parseInt(endMinutes, 10));
+      
+      const startTime = startDate.toISOString();
+      const endTime = endDate.toISOString();
+      
+      const calendarEndpoint = "http://localhost/TutorMatch/server/calendar/calendar.php";
+      
+      const response = await fetch(calendarEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          tutorEmail: tutor.email,
+          tutorName: tutor.name,
+          startTime: startTime,
+          endTime: endTime,
+          timeZone: timeZone,
+          summary: `Tutoring Session with ${tutor.name}`,
+          description: `Tutoring session for ${tutor.subjects.join(', ')}.`
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        return { 
+          success: true, 
+          message: "Calendar invite sent successfully!",
+          eventLink: result.eventLink 
+        };
+      } else {
+        if (result.redirect) {
+          const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
+          
+          return new Promise((resolve) => {
+            const checkAuthWindow = setInterval(() => {
+              if (authWindow.closed) {
+                clearInterval(checkAuthWindow);
+                setTimeout(async () => {
+                  const retryResult = await sendCalendarInvite(tutor, date, startTimeValue, endTimeValue);
+                  resolve(retryResult);
+                }, 1000);
+              }
+            }, 500);
+          });
+        } else {
+          return { success: false, error: result.error || "Failed to create calendar event." };
+        }
+      }
+    } catch (error) {
+      console.error("Error creating calendar event:", error);
+      return { success: false, error: "An error occurred while creating the calendar event." };
     }
-  
-    // Add the user's message to the chat history
-    setChatHistory((prevHistory) => [
-      ...prevHistory,
-      { sender: "user", message: chatInput.trim() },
-    ]);
-  
-    // Clear the chat input field
-    setChatInput("");
-  
-    // Simulate a response from the tutor
-    setTimeout(() => {
-      setChatHistory((prevHistory) => [
-        ...prevHistory,
-        { sender: "tutor", message: "Thanks for your message! I'll get back to you soon." },
-      ]);
-    }, 1000); // Simulate a 1-second delay
   };
+ 
 
   if (loading) {
     return (
@@ -324,15 +360,6 @@ function Inbox() {
                   </svg>
                   Schedule
                 </button>
-                <button className="action-button secondary" onClick={ () => {
-                  setChatTutor(match);
-                  setShowChatModal(true);
-                }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                  Chat
-                </button>
               </div>
             </div>
           ))
@@ -401,66 +428,75 @@ function Inbox() {
       </div>
     )}
 
-
-      {showCalendarModal && (
+    {showCalendarModal && (
       <div className="email-modal-overlay">
         <div className="email-modal">
           <div className="email-modal-header">
             <h3>Schedule with {calendarTutor?.name}</h3>
+            <button className="close-button" onClick={() => setShowCalendarModal(false)}>×</button>
           </div>
           
           <div className="email-body">
             <label style={{textAlign: "center"}}>Select a date:</label>
             <MyCalendar 
-                selectedDate={selectedDate}
-                onDateChange={(date) => setSelectedDate(date)}
-                context="modal"
-              />
+              selectedDate={selectedDate}
+              onDateChange={(date) => setSelectedDate(date)}
+              context="modal"
+            />
+            
+            <div className="time-selection">
+              <div className="form-group">
+                <label htmlFor="start-time">Start Time:</label>
+                <input 
+                  type="time" 
+                  id="start-time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="end-time">End Time:</label>
+                <input 
+                  type="time" 
+                  id="end-time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                />
+              </div>
+            </div>
+            
+            {emailStatus.message && (
+              <div className={`email-status ${emailStatus.type}`}>
+                {emailStatus.message}
+              </div>
+            )}
           </div>
           
           <div className="email-modal-footer">
-            <button className = "cancel-button" onClick={() => setShowCalendarModal(false)}>Cancel</button>
+            <button className="cancel-button" onClick={() => setShowCalendarModal(false)}>Cancel</button>
             <button
               className="send-button"
-              onClick={() => {
-                alert(`Scheduled session with ${calendarTutor?.name} on ${selectedDate.toDateString()}`);
-                setShowCalendarModal(false);
+              onClick={async () => {
+                const result = await sendCalendarInvite(calendarTutor, selectedDate, startTime, endTime);
+                
+                if (result.success) {
+                  setEmailStatus({ type: "success", message: "Calendar invite sent!" });
+                  setTimeout(() => {
+                    setShowCalendarModal(false);
+                    setEmailStatus({ type: "", message: "" });
+                  }, 2000);
+                } else {
+                  setEmailStatus({ type: "error", message: result.error });
+                }
               }}
             >
-              Confirm Date
+              Send Calendar Invite
             </button>
           </div>
         </div>
       </div>
     )}
-
-    {showChatModal && (
-      <div className="email-modal-overlay">
-        <div className="email-modal chat">
-          <div className="email-modal-header">
-            <h3>Chat with {chatTutor?.name}</h3>
-            <button className="close-button" onClick={() => setShowChatModal(false)}>×</button>
-          </div>
-          <div className="email-modal-content">
-            <div className="chat-messages">
-              {chatHistory.map((msg, idx) => (
-                <div key={idx} className={`chat-message ${msg.sender}`}>{msg.message}</div>
-              ))}
-            </div>
-          </div>
-          <div className="chat-input">
-            <input
-              type="text"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Type a message..."
-            />
-            <button onClick={handleSendChatMessage}>Send</button>
-          </div>
-        </div>
-      </div>
-    )}
-
     </div>
     
   );
