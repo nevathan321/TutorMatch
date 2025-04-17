@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Nav from "./components/nav/Nav";
@@ -17,18 +17,21 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState(null);//should be null
 
-   useEffect(() => {
+ 
+
+  useEffect(() => {
     const email = localStorage.getItem("email");
     if (email == null) {
       setIsLoggedIn(false)
       return
     }
-    loginOnLoad({email : email})
-    
+    loginOnLoad({ email: email })
+
   }, []);
 
   const loginOnLoad = async (email) => {
   try {
+
       const response = await fetch("http://localhost/tutorMatch/server/login/googleLogin.php", {//use this endpoint cause doesn't require password
         method: "POST",
         headers: {
@@ -37,32 +40,36 @@ function App() {
         body: new URLSearchParams(email).toString(),
       });
       const loginResult = await response.json();
-  
+
       if (loginResult.success) {
         console.log("Auto Login Successfull:", loginResult);
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
-        
+
         return;
       }
       setIsLoggedIn(false)
     } catch (err) {
-        console.error("Login error:", err);
-      }
+      console.error("Login error:", err);
     }
-  //if (isLoggedIn == null) return
+
+  }
+
+  if (isLoggedIn == null) return
   if (!isLoggedIn) {
     return (
       <Router basename={ROOT_PATH}>
         <Routes>
-          <Route path="/" element={<Login setIsLoggedIn={setIsLoggedIn}  setUserProfile={setUserProfile}/>} />
-          <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUserProfile={setUserProfile} />}/>
-          <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} setUserProfile={setUserProfile}/>} />
+          <Route path="/" element={<Login setIsLoggedIn={setIsLoggedIn} setUserProfile={setUserProfile} />} />
+          <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUserProfile={setUserProfile} />} />
+          <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} setUserProfile={setUserProfile} />} />
         </Routes>
       </Router>
     );
+
   } 
   
+
   return (
     <NotificationProvider>
       <div className="App">
@@ -71,7 +78,7 @@ function App() {
             <Nav />
             <div className="page">
               <Routes>
-                <Route path="/profile" element={<Profile userProfile={userProfile} />} />
+                <Route path="/profile" element={<Profile userProfile={userProfile} setUserProfile={setUserProfile} />} />
                 <Route path="*" element={<Dashboard />} />
                 <Route path="/inbox" element={<Inbox />} />
                 <Route path="/match" element={<Match userProfile={userProfile}/>} />

@@ -11,6 +11,11 @@
 }
 
 
+.passwords {
+  width: 100%;
+  padding: 0;
+}
+
 
 
 
@@ -25,21 +30,9 @@
 }
 
 /* Card Styles */
-.top,
-.userDetails {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 2rem;
-  margin-bottom: 2rem;
-  width: 100%;
-  transition: box-shadow 0.3s ease;
-}
 
-.top:hover,
-.userDetails:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-}
+
+
 
 /* Profile Header */
 .top {
@@ -124,7 +117,7 @@ button,
 .userContainer {
   display: flex;
   flex-wrap: wrap;
-  margin: 0 -1rem;
+  /* margin: 0 -1rem; */
 }
 
 .userContainer > div {
@@ -214,7 +207,7 @@ input::placeholder {
 }
 
 /* Tutor Details */
-.TutorDetails {
+/* .TutorDetails {
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -222,10 +215,45 @@ input::placeholder {
   margin-bottom: 2rem;
   width: 100%;
   transition: box-shadow 0.3s ease;
+} */
+
+/* Notification Styles */
+.profile-notification {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin: 10px 0;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.3s ease;
 }
 
-.TutorDetails:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+.disabled {
+  background-color: gray;
+}
+
+.disabled:hover {
+  background-color: gray;
+}
+
+.profile-notification.success {
+  background-color: #e6f7e6;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.profile-notification.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.hidden {
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
 }
 
 .tagsContainer {
