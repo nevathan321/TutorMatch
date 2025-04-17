@@ -51,8 +51,8 @@ function App() {
         console.error("Login error:", err);
       }
     }
-  //if (isLoggedIn == null) return
-  /** if (!isLoggedIn) {
+  if (isLoggedIn == null) return
+  if (!isLoggedIn) {
     return (
       <Router basename={ROOT_PATH}>
         <Routes>
@@ -62,7 +62,7 @@ function App() {
         </Routes>
       </Router>
     );
-  }  **/
+  } 
   
   return (
     <NotificationProvider>

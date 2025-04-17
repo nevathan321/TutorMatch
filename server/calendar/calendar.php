@@ -1,17 +1,9 @@
 <?php
-require_once __DIR__ . '/vendor/autoload.php';
-use Google\Client;
-use Google\Service\Calendar;
-use Google\Service\Calendar\Event;
-use Google\Service\Calendar\EventDateTime;
-use Google\Service\Calendar\EventAttendee;
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+// Enable error logging
 error_reporting(E_ALL);
-
-// Always return JSON
-header("Content-Type: application/json");
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/calendar_errors.log');
 
 // Handle CORS
 if (isset($_SERVER['HTTP_ORIGIN'])) {
@@ -20,122 +12,115 @@ if (isset($_SERVER['HTTP_ORIGIN'])) {
     header("Access-Control-Allow-Credentials: true");
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header("Access-Control-Allow-Methods: POST, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization");
-    http_response_code(204);
-    exit(0);
-}
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json");
 
-// Start session
+// Start session first
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once '../vendor/autoload.php';
+use Google\Client;
+use Google\Service\Calendar;
+
 try {
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(200);
+        exit;
+    }
 
-    // Validate method
+    // Check if it's a POST request
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        http_response_code(405);
-        echo json_encode(["success" => false, "error" => "Only POST requests are allowed"]);
-        exit;
+        throw new Exception('Only POST method is allowed');
     }
 
-    // Validate input
-    $data = json_decode(file_get_contents("php://input"), true);
-    if (!isset($data['tutorEmail'], $data['startTime'], $data['endTime'], $data['summary'])) {
-        http_response_code(400);
-        echo json_encode(["success" => false, "error" => "Missing required fields"]);
-        exit;
+    // Get and validate input
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!$input) {
+        throw new Exception('No input data received');
     }
 
-    // Ensure session tokens are present
-    if (!isset($_SESSION['access_token']) || !isset($_SESSION['refresh_token'])) {
+    // Validate required fields
+    if (!isset($input['tutorEmail'], $input['startTime'], $input['endTime'], $input['summary'])) {
+        throw new Exception('Missing required fields');
+    }
+
+    // Check authentication
+    if (!isset($_SESSION['access_token'])) {
         echo json_encode([
-            "success" => false,
-            "error" => "Not authenticated. Please authenticate first.",
-            "redirect" => "http://localhost/TutorMatch/server/authenticate.php"
+            'success' => false,
+            'error' => 'Not authenticated',
+            'redirect' => 'http://localhost/TutorMatch/server/authenticate.php'
         ]);
         exit;
     }
 
-    // Use session tokens
-    $accessToken = $_SESSION['access_token'];
-    $refreshToken = $_SESSION['refresh_token'];
-
     $client = new Google_Client();
-    $client->setAuthConfig('/Applications/XAMPP/xamppfiles/htdocs/TutorMatch/server/credentials.json');
-    
-    // Make sure to add the Calendar scope
-    $client->addScope(Google\Service\Gmail::GMAIL_SEND);
-    $client->addScope(Google\Service\Calendar::CALENDAR_EVENTS);
-    
-    $client->setAccessToken(['access_token' => $accessToken]);
+    $client->setAuthConfig('../credentials.json');
+    $client->addScope(Calendar::CALENDAR_EVENTS);
+    $client->setAccessToken($_SESSION['access_token']);
 
     // Refresh token if expired
     if ($client->isAccessTokenExpired()) {
-        $client->fetchAccessTokenWithRefreshToken($refreshToken);
-        $newAccessToken = $client->getAccessToken();
-
-        if (isset($newAccessToken['error'])) {
+        if (isset($_SESSION['refresh_token'])) {
+            $client->fetchAccessTokenWithRefreshToken($_SESSION['refresh_token']);
+            $newAccessToken = $client->getAccessToken();
+            $_SESSION['access_token'] = $newAccessToken['access_token'];
+        } else {
             echo json_encode([
-                "success" => false,
-                "error" => "Token refresh failed: " . $newAccessToken['error'],
-                "redirect" => "http://localhost/TutorMatch/server/authenticate.php"
+                'success' => false,
+                'error' => 'Session expired',
+                'redirect' => 'http://localhost/TutorMatch/server/authenticate.php'
             ]);
             exit;
         }
-
-        $_SESSION['access_token'] = $newAccessToken['access_token'];
-        if (isset($newAccessToken['refresh_token'])) {
-            $_SESSION['refresh_token'] = $newAccessToken['refresh_token'];
-        }
-        $accessToken = $newAccessToken['access_token'];
     }
 
-    $calendarService = new Calendar($client);
+    // Create Calendar service
+    $service = new Calendar($client);
+
     
-    // Create calendar event
     $event = new Google\Service\Calendar\Event([
-        'summary' => $data['summary'],
-        'description' => $data['description'] ?? 'Tutoring session with ' . $data['tutorName'],
+        'summary' => $input['summary'],
+        'description' => $input['description'] ?? 'Tutoring session',
         'start' => [
-            'dateTime' => $data['startTime'],
-            'timeZone' => $data['timeZone'] ?? 'America/New_York',
+            'dateTime' => $input['startTime'],
+            'timeZone' => 'America/Toronto' // You can change this based on your region
         ],
         'end' => [
-            'dateTime' => $data['endTime'],
-            'timeZone' => $data['timeZone'] ?? 'America/New_York',
+            'dateTime' => $input['endTime'],
+            'timeZone' => 'America/Toronto'
         ],
         'attendees' => [
-            ['email' => $data['tutorEmail']],
-        ],
-        'reminders' => [
-            'useDefault' => false,
-            'overrides' => [
-                ['method' => 'email', 'minutes' => 24 * 60],
-                ['method' => 'popup', 'minutes' => 30],
+            [
+                'email' => $input['tutorEmail'],
+                'useDefault' => false,
+                'responseStatus' => 'needsAction'
             ],
-        ],
-    ]);
-
-    // Insert the event
-    $calendarId = 'primary'; // use primary calendar
-    $event = $calendarService->events->insert($calendarId, $event, ['sendUpdates' => 'all']);
-
-    echo json_encode([
-        "success" => true, 
-        "message" => "Calendar invite sent successfully",
-        "eventId" => $event->getId(),
-        "eventLink" => $event->getHtmlLink()
+            [
+                'email' => 'liyuxiao2@gmail.com',
+                'useDefault' => false,
+                'responseStatus' => 'needsAction'
+            ]
+        ]
     ]);
     
+
+    $calendarId = 'primary';
+    $event = $service->events->insert($calendarId, $event, ['sendUpdates' => 'all']);
+
+    echo json_encode([
+        'success' => true,
+        'eventId' => $event->getId(),
+        'eventLink' => $event->getHtmlLink()
+    ]);
+
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
-        "success" => false,
-        "error" => "Server Error",
-        "message" => $e->getMessage(),
-        "trace" => $e->getTraceAsString()
+        'success' => false,
+        'error' => $e->getMessage()
     ]);
 }
