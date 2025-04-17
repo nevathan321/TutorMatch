@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Review from '../../components/review/Review';
 import Transaction from '../../components/transaction/Transaction';
+import MyCalendar from '../../components/calendar/MyCalendar';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -21,39 +22,17 @@ function Dashboard() {
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
 
-  const [googleEvents, setGoogleEvents] = useState([]);
-
   useEffect(() => {
-    const fetchGoogleEvents = async () => {
-      try {
-        const res = await fetch('http://localhost/TutorMatch/server/calendar/fetchEvents.php', {
-          credentials: 'include',
-        });
-        const data = await res.json();
-  
-        if (data.success) {
-          setGoogleEvents(data.events); // ✅ Access the 'events' array
-        } else {
-          console.error("Google Calendar API error:", data.error || "Unknown error");
-        }
-      } catch (err) {
-        console.error('Failed to load calendar events:', err);
-      }
-    };
-  
-    fetchGoogleEvents();
-  }, []);
-  
-
-  useEffect(() => {
-
+    // In a real app, fetch this data from your API
+    // For now, we'll simulate loading and use mock data
     const fetchDashboardData = () => {
-    
+      // Simulate API call
       setTimeout(() => {
-        
+        // Get user role from localStorage (set during login/role selection)
         const role = localStorage.getItem('userRole') || 'tutee';
         setUserRole(role);
-      
+        
+        // Mock data based on role
         if (role === 'tutor') {
         // Get user role from localStorage (set during login/role selection)
         const role = localStorage.getItem("userRole") || "tutee"
@@ -368,18 +347,8 @@ function Dashboard() {
           </div>
 
           <div className="calendar-container">
-            {googleEvents.length > 0 ? (
-              googleEvents.map((event, index) => (
-                <div key={index} className="event">
-                  <strong>{event.summary}</strong>
-                  <p>{new Date(event.start).toLocaleString()} - {new Date(event.end).toLocaleString()}</p>
-                </div>
-              ))
-            ) : (
-              <p>No upcoming events found.</p>
-            )}
+            <MyCalendar />
           </div>
-
         </div>
 
         <div className="dashboard-card reviews full-width">
