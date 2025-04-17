@@ -74,13 +74,13 @@ function Match({ userProfile }) {
 
     if (updatedTutors.length === 0) {
       // No more tutors to show
-      setTutors([]);
-      setAllTutorsViewed(true);
+      setTutors([])
+      setAllTutorsViewed(true)
     } else {
-      setTutors(updatedTutors);
+      setTutors(updatedTutors)
       // If we're at the end of the list, go back to the first tutor
       if (currentTutorIndex >= updatedTutors.length) {
-        setCurrentTutorIndex(0);
+        setCurrentTutorIndex(0)
       }
     }
   };
@@ -98,18 +98,18 @@ function Match({ userProfile }) {
     setAcceptedTutors((prev) => [...prev, acceptedTutor]);
 
     // Remove the current tutor from the list
-    const updatedTutors = [...tutors];
-    updatedTutors.splice(currentTutorIndex, 1);
-    
+    const updatedTutors = [...tutors]
+    updatedTutors.splice(currentTutorIndex, 1)
+
     if (updatedTutors.length === 0) {
       // No more tutors to show
-      setTutors([]);
-      setAllTutorsViewed(true);
+      setTutors([])
+      setAllTutorsViewed(true)
     } else {
-      setTutors(updatedTutors);
+      setTutors(updatedTutors)
       // If we're at the end of the list, go back to the first tutor
       if (currentTutorIndex >= updatedTutors.length) {
-        setCurrentTutorIndex(0);
+        setCurrentTutorIndex(0)
       }
     }
 
@@ -247,7 +247,7 @@ function Match({ userProfile }) {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 export default Match;

@@ -619,6 +619,31 @@
   color: #0369a1;
 }
 
+.time-selection {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  gap: 15px;
+}
+
+.time-selection .form-group {
+  flex: 1;
+}
+
+.time-selection label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.time-selection input[type="time"] {
+  width: 75%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

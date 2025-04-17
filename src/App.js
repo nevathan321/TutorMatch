@@ -50,7 +50,7 @@ function App() {
         console.error("Login error:", err);
       }
     }
-  //if (isLoggedIn == null) return
+  if (isLoggedIn == null) return
   if (!isLoggedIn) {
     return (
       <Router basename={ROOT_PATH}>
