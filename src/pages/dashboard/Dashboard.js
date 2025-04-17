@@ -345,7 +345,7 @@ function Dashboard() {
           <div className="card-header">
             <h2>Upcoming Sessions</h2>
           </div>
-
+          
           <div className="calendar-container">
             <MyCalendar />
           </div>
