@@ -50,7 +50,9 @@ function App() {
     } catch (err) {
       console.error("Login error:", err);
     }
+
   }
+
   if (isLoggedIn == null) return
   if (!isLoggedIn) {
     return (
@@ -62,7 +64,9 @@ function App() {
         </Routes>
       </Router>
     );
-  }
+
+  } 
+  
 
   return (
     <NotificationProvider>

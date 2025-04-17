@@ -12,6 +12,7 @@ try {
     $client = new Google_Client();
     $client->setAuthConfig('/Applications/XAMPP/xamppfiles/htdocs/TutorMatch/server/credentials.json');
     $client->addScope(Gmail::GMAIL_SEND);
+    $client->addScope(Google\Service\Calendar::CALENDAR_EVENTS);
     $client->setRedirectUri('http://localhost/TutorMatch/server/authenticate.php');
 
     // Request offline access to get a refresh token
