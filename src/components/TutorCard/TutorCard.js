@@ -1,9 +1,34 @@
 import React from 'react';
 import './TutorCard.css';
 
+const getYearOfStudyString = (year) => {
+  switch (year) {
+    case 1:
+      return "1st Year";
+    case 2:
+      return "2nd Year";
+    case 3:
+      return "3rd Year";
+    case 4:
+      return "4th Year";
+    case 5:
+      return "5th Year";
+    default:
+      return "N/A";
+  }
+};
+
+const review = {
+  title: 'AMAZING',
+  text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.',
+  reviewerName: 'Ashley',
+  reviewerImage: '/placeholder-avatar.png',
+  date: 'March 23, 2024'
+}
+
 function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
-  const { name, subjects, priceRange, education, rating, image, review } = tutor;
-  
+  const subjects = JSON.parse(tutor.main_subjects)//parse from json string
+ 
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -39,14 +64,14 @@ function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
       <div className="tutor-info">
         <div className="tutor-image-container">
           <img 
-            src={image || '/placeholder-tutor.png'} 
-            alt={`Tutor ${name}`} 
+            src={'/placeholder-tutor.png'} 
+            alt={`Tutor ${tutor.full_name}`} 
             className="tutor-image"
           />
         </div>
         
         <div className="tutor-details">
-          <h2 className="tutor-name">{name}</h2>
+          <h2 className="tutor-name">{tutor.full_name}</h2>
           
           <div className="tutor-subjects">
             {subjects.map((subject, index) => (
@@ -59,9 +84,9 @@ function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
             ))}
           </div>
           
-          <div className="tutor-price">{priceRange}</div>
+          <div className="tutor-price">${tutor.wage}/Hr</div>
           
-          <div className="tutor-education">{education}</div>
+          <div className="tutor-education">{tutor.major} - {getYearOfStudyString(tutor.year_of_study)}</div>
           
           <button 
             className="see-more-button"
@@ -71,7 +96,7 @@ function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
           </button>
           
           <div className="tutor-rating">
-            {renderStars(rating)}
+            {renderStars(tutor.rating)}
           </div>
           
           {review && (

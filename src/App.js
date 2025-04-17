@@ -14,8 +14,10 @@ import Signup from "./pages/login/Singup";
 const ROOT_PATH = "/";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [userProfile, setUserProfile] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);//should be null
+
+ 
 
   useEffect(() => {
     const email = localStorage.getItem("email");
@@ -28,8 +30,8 @@ function App() {
   }, []);
 
   const loginOnLoad = async (email) => {
+  try {
 
-    try {
       const response = await fetch("http://localhost/tutorMatch/server/login/googleLogin.php", {//use this endpoint cause doesn't require password
         method: "POST",
         headers: {
@@ -79,7 +81,7 @@ function App() {
                 <Route path="/profile" element={<Profile userProfile={userProfile} setUserProfile={setUserProfile} />} />
                 <Route path="*" element={<Dashboard />} />
                 <Route path="/inbox" element={<Inbox />} />
-                <Route path="/match" element={<Match />} />
+                <Route path="/match" element={<Match userProfile={userProfile}/>} />
               </Routes>
             </div>
           </Router>

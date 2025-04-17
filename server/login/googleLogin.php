@@ -26,20 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo json_encode([
             "success" => true,
-            "user_profile" => [
-                "email" => $user['email'],
-                "firstName" => $user['first_name'],
-                "lastName" => $user['last_name'],
-                "fullName" => $user['full_name'],
-                "macId" => $user['macid'],
-                "studentNumber" => $user['student_number'],
-                "role" => ucfirst($user['user_type']), // 'tutor' -> 'Tutor'
-                "hourlyRate" => $user['wage'],
-                "preferredDays" => $preferredDays,
-                "subjectExpertise" => $subjectExpertise,
-                "profilePhoto" => $user['profile_image'],
-                // Add other fields as needed
-            ]
+            "user_profile" => $user
         ]);
     } else {
         echo json_encode([

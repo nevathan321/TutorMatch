@@ -41,11 +41,11 @@ function addUserToDatabase($dbh, $userData, $user_type)
   try {
     $insertUserQuery = "INSERT INTO users (
         first_name, last_name, full_name, email, account_password,
-        macid, student_number, major, main_subject, wage,
+        macid, student_number, major, main_subjects, wage,
         year_of_study, dob, user_type
     ) VALUES (
         :first_name, :last_name, :full_name, :email, :account_password,
-        :macid, :student_number, :major, :main_subject, :wage,
+        :macid, :student_number, :major, :main_subjects, :wage,
         :year_of_study, :dob, :user_type
     )";
 
@@ -61,15 +61,19 @@ function addUserToDatabase($dbh, $userData, $user_type)
       'macid' => $macid,
       'student_number' => $student_number,
       'major' => $major,
-      'main_subject' => $main_subject,
+      'main_subjects' => $main_subject,
       'wage' => $wage, // or NULL if tutee
       'year_of_study' => $year_of_study,
       'dob' => $dob,
       'user_type' => $user_type // or 'tutee'
-  ];
+    ];
     $stmt->execute($data);
+    $lastInsertId = $dbh->lastInsertId();
+    $stmt = $dbh->prepare("SELECT * FROM Users WHERE id = :id");
+    $stmt->execute([':id' => $lastInsertId]);
+    $newUser = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    echo json_encode(["user_exists" => false, "status" => "success", "message" => "User added successfully"]);
+    echo json_encode(["user_exists" => false, "status" => "success", "user" => $newUser]);
   } catch (PDOException $e) {
     die("Error inserting into the database: " . $e->getMessage());
   }

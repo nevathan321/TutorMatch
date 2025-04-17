@@ -71,7 +71,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
       } else if (result.status === "success") {
         console.log("Registration successful!");
 
-        setUserProfile(userData)
+        setUserProfile(result.user)
         setIsLoggedIn(true)
         navigate("/")
       } else {
