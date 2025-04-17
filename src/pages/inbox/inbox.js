@@ -25,10 +25,12 @@ function Inbox() {
   const [chatInput, setChatInput] = useState("")
   const [chatHistory, setChatHistory] = useState([])
 
-  // Function to load matches from localStorage and format them
+  const [startTime, setStartTime] = useState('10:00');
+  const [endTime, setEndTime] = useState('11:00');
+  const [timeZone, setTimeZone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
+
   const loadMatchesFromStorage = () => {
     try {
-      // Check if we have any accepted tutors in localStorage
       const storedAcceptedTutors = localStorage.getItem("acceptedTutors")
       let acceptedTutorsFromMatch = []
 
@@ -36,14 +38,6 @@ function Inbox() {
         acceptedTutorsFromMatch = JSON.parse(storedAcceptedTutors)
       }
 
-      // INTEGRATION POINT: In your actual implementation, you would:
-      // 1. Fetch matches from your backend API using the current user's ID
-      // 2. Replace this code with an API call like:
-      //    const response = await fetch('/api/matches?userId=' + currentUserId);
-      //    const data = await response.json();
-      //    setMatches(data);
-
-      // For now, we'll use mock data to simulate matched tutors
       const mockMatches = [
         {
           id: 1,
@@ -117,28 +111,23 @@ function Inbox() {
         },
       ]
 
-      // Convert accepted tutors from Match component to the format expected by Inbox
       const formattedAcceptedTutors = acceptedTutorsFromMatch.map((tutor) => {
-        // INTEGRATION POINT: When implementing with a database, this transformation
-        // would happen on the server side, and you'd receive data in a consistent format
         return {
           id: tutor.id,
           name: tutor.name,
-          email: `${tutor.name.toLowerCase().replace(" ", ".")}@example.com`, // Mock email
+          email: `${tutor.name.toLowerCase().replace(" ", ".")}@example.com`,
           subjects: tutor.subjects,
           rating: tutor.rating,
-          hourlyRate: Number.parseInt(tutor.priceRange.replace(/[^0-9]/g, "")), // Extract number from price range
+          hourlyRate: Number.parseInt(tutor.priceRange.replace(/[^0-9]/g, "")),
           education: tutor.education,
           bio: tutor.review.text,
           profileImage: tutor.image || "/placeholder-avatar.png",
-          matchDate: new Date().toISOString(), // Current date as match date
+          matchDate: new Date().toISOString(),
           lastMessage: "I'd be happy to help with your studies!",
           unread: true,
         }
       })
 
-      // Combine mock matches with accepted tutors from Match component
-      // Avoid duplicates by checking IDs
       const existingIds = new Set(mockMatches.map((tutor) => tutor.id))
       const uniqueAcceptedTutors = formattedAcceptedTutors.filter((tutor) => !existingIds.has(tutor.id))
 
@@ -150,7 +139,6 @@ function Inbox() {
     }
   }
 
-  // Fetch matched tutors
   useEffect(() => {
     const fetchMatches = async () => {
       try {
@@ -165,31 +153,25 @@ function Inbox() {
 
     fetchMatches()
 
-    // Listen for the custom event from the Match component
     const handleTutorMatched = () => {
       console.log("Tutor matched event received!")
       const updatedMatches = loadMatchesFromStorage()
       setMatches(updatedMatches)
     }
 
-    // Add event listener
     window.addEventListener("tutorMatched", handleTutorMatched)
 
-    // Clean up event listener on component unmount
     return () => {
       window.removeEventListener("tutorMatched", handleTutorMatched)
     }
   }, [])
 
-  // Handle search input change
   const handleSearch = (e) => {
     setSearchTerm(e.target.value)
   }
 
-  // Filter matches based on search term (by name)
   const filteredMatches = matches.filter((match) => match.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
-  // Handle selecting a tutor to email
   const handleSelectTutor = (tutor) => {
     setSelectedTutor(tutor)
     setEmailContent({
@@ -199,380 +181,71 @@ function Inbox() {
     setShowEmailModal(true)
   }
 
-  const handleSendEmail = async () => {
-    setEmailStatus({ type: "loading", message: "Sending email..." })
-
-    try {
-      const emailEndpoint = "http://localhost/TutorMatch/server/email/email.php"
-
-      const response = await fetch(emailEndpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Include cookies/session data
-        body: JSON.stringify({
-          to: selectedTutor.email,
-          subject: emailContent.subject,
-          message: emailContent.message,
-        }),
-      })
-
-      const result = await response.json()
-
-      if (result.success) {
-        setEmailStatus({ type: "success", message: "Email sent successfully!" })
-        setTimeout(() => {
-          setShowEmailModal(false)
-          setEmailStatus({ type: "", message: "" })
-        }, 2000)
-      } else {
-        // Check if we need to authenticate first
-        if (result.redirect) {
-          setEmailStatus({ type: "info", message: "Authentication required. Redirecting to Google login..." })
-
-          // Open authentication in a new window
-          const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600")
-
-          // Check when authentication window is closed
-          const checkAuthWindow = setInterval(() => {
-            if (authWindow.closed) {
-              clearInterval(checkAuthWindow)
-              setEmailStatus({ type: "info", message: "Authentication completed. Trying to send email again..." })
-
-              // Try sending email again after a short delay
-              setTimeout(() => {
-                handleSendEmail()
-              }, 1000)
-            }
-          }, 500)
-        } else {
-          setEmailStatus({ type: "error", message: result.error || "Failed to send email. Please try again." })
-        }
-      }
-    } catch (error) {
-      console.error("Error sending email:", error)
-      setEmailStatus({ type: "error", message: "An error occurred while sending the email." })
-    }
-  }
-
   const handleSendChatMessage = () => {
-    if (chatInput.trim() === "") {
-      return // Do nothing if the input is empty
-    }
+    if (chatInput.trim() === "") return
 
-    // Add the user's message to the chat history
     setChatHistory((prevHistory) => [...prevHistory, { sender: "user", message: chatInput.trim() }])
-
-    // Clear the chat input field
     setChatInput("")
 
-    // Simulate a response from the tutor
     setTimeout(() => {
-      setChatHistory((prevHistory) => [
-        ...prevHistory,
-        { sender: "tutor", message: "Thanks for your message! I'll get back to you soon." },
-      ])
-    }, 1000) // Simulate a 1-second delay
+      setChatHistory((prevHistory) => [...prevHistory, { sender: "tutor", message: "Thanks for your message! I'll get back to you soon." }])
+    }, 1000)
   }
 
-  if (loading) {
-    return (
-      <div className="inbox-loading">
-        <div className="loader"></div>
-        <p>Loading your matches...</p>
-      </div>
-    )
+  const sendCalendarInvite = async (tutor, date, startTimeStr, endTimeStr) => {
+    try {
+      const startDateTime = new Date(date);
+      const [startHours, startMinutes] = startTimeStr.split(':');
+      startDateTime.setHours(parseInt(startHours), parseInt(startMinutes));
+
+      const endDateTime = new Date(date);
+      const [endHours, endMinutes] = endTimeStr.split(':');
+      endDateTime.setHours(parseInt(endHours), parseInt(endMinutes));
+
+      const response = await fetch('http://localhost/TutorMatch/server/calendar/calendar.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          tutorEmail: tutor.email,
+          startTime: startDateTime.toISOString(),
+          endTime: endDateTime.toISOString(),
+          summary: `Tutoring Session with ${tutor.name}`,
+          description: `Tutoring session for ${tutor.subjects.join(', ')}`,
+          tutorName: tutor.name
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        return { success: true, eventLink: result.eventLink };
+      } else if (result.redirect) {
+        const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
+
+        return new Promise((resolve) => {
+          const checkAuthWindow = setInterval(() => {
+            if (authWindow.closed) {
+              clearInterval(checkAuthWindow);
+              setTimeout(async () => {
+                const retryResult = await sendCalendarInvite(tutor, date, startTimeStr, endTimeStr);
+                resolve(retryResult);
+              }, 1000);
+            }
+          }, 500);
+        });
+      } else {
+        return { success: false, error: result.error || 'Failed to schedule session' };
+      }
+    } catch (error) {
+      console.error('Error sending calendar invite:', error);
+      return { success: false, error: error.message };
+    }
   }
 
-  return (
-    <div className="inbox-container">
-      <div className="inbox-header">
-        <h1>Your Matches</h1>
-        <p className="inbox-subtitle">Connect with your matched tutors</p>
-      </div>
-
-      <div className="search-container">
-        <div className="search-bar">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" placeholder="Search tutors by name" value={searchTerm} onChange={handleSearch} />
-        </div>
-      </div>
-
-      <div className="matches-count">
-        <h2>{filteredMatches.length} Matched Tutors</h2>
-      </div>
-
-      <div className="matches-grid">
-        {filteredMatches.length > 0 ? (
-          filteredMatches.map((match) => (
-            <div key={match.id} className="tutor-match-card">
-              <div className="match-header">
-                <div className="match-date">Matched on {new Date(match.matchDate).toLocaleDateString()}</div>
-                {match.unread && <div className="unread-badge">New</div>}
-              </div>
-
-              <div className="tutor-info">
-                <div className="tutor-image">
-                  <img src={match.profileImage || "/placeholder-avatar.png"} alt={match.name} />
-                </div>
-                <div className="tutor-details">
-                  <h3>{match.name}</h3>
-                  <div className="tutor-subjects">
-                    {match.subjects.map((subject, index) => (
-                      <span key={index} className="subject-tag">
-                        {subject}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="tutor-rating">
-                    <div className="stars">
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i} className={i < Math.floor(match.rating) ? "star filled" : "star"}>
-                          ★
-                        </span>
-                      ))}
-                    </div>
-                    <span className="rating-value">{match.rating.toFixed(1)}</span>
-                  </div>
-                  <div className="tutor-education">{match.education}</div>
-                  <div className="tutor-rate">${match.hourlyRate}/hour</div>
-                </div>
-              </div>
-
-              <div className="tutor-bio">
-                <p>{match.bio}</p>
-              </div>
-
-              <div className="last-message">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <p>{match.lastMessage}</p>
-              </div>
-
-              <div className="match-actions">
-                <button className="action-button primary" onClick={() => handleSelectTutor(match)}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                    <polyline points="22,6 12,13 2,6"></polyline>
-                  </svg>
-                  Email
-                </button>
-                <button
-                  className="action-button secondary"
-                  onClick={() => {
-                    setCalendarTutor(match)
-                    setShowCalendarModal(true)
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                  </svg>
-                  Schedule
-                </button>
-                <button
-                  className="action-button secondary"
-                  onClick={() => {
-                    setChatTutor(match)
-                    setShowChatModal(true)
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                  Chat
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="no-matches">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="8" y1="15" x2="16" y2="15"></line>
-              <line x1="9" y1="9" x2="9.01" y2="9"></line>
-              <line x1="15" y1="9" x2="15.01" y2="9"></line>
-            </svg>
-            <p>No matches found. Try adjusting your search criteria.</p>
-          </div>
-        )}
-      </div>
-
-      {showEmailModal && (
-        <div className="email-modal-overlay">
-          <div className="email-modal">
-            <div className="email-modal-header">
-              <h3>Email {selectedTutor.name}</h3>
-              <button className="close-button" onClick={() => setShowEmailModal(false)}>
-                ×
-              </button>
-            </div>
-            <div className="email-modal-content">
-              <div className="form-group">
-                <label htmlFor="email-subject">Subject</label>
-                <input
-                  type="text"
-                  id="email-subject"
-                  value={emailContent.subject}
-                  onChange={(e) => setEmailContent({ ...emailContent, subject: e.target.value })}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="email-message">Message</label>
-                <textarea
-                  id="email-message"
-                  rows="8"
-                  value={emailContent.message}
-                  onChange={(e) => setEmailContent({ ...emailContent, message: e.target.value })}
-                ></textarea>
-              </div>
-              {emailStatus.message && <div className={`email-status ${emailStatus.type}`}>{emailStatus.message}</div>}
-            </div>
-            <div className="email-modal-footer">
-              <button
-                className="cancel-button"
-                onClick={() => setShowEmailModal(false)}
-                disabled={emailStatus.type === "loading"}
-              >
-                Cancel
-              </button>
-              <button className="send-button" onClick={handleSendEmail} disabled={emailStatus.type === "loading"}>
-                Send Email
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showCalendarModal && (
-        <div className="email-modal-overlay">
-          <div className="email-modal">
-            <div className="email-modal-header">
-              <h3>Schedule with {calendarTutor?.name}</h3>
-            </div>
-
-            <div className="email-body">
-              <label style={{ textAlign: "center" }}>Select a date:</label>
-              <MyCalendar selectedDate={selectedDate} onDateChange={(date) => setSelectedDate(date)} context="modal" />
-            </div>
-
-            <div className="email-modal-footer">
-              <button className="cancel-button" onClick={() => setShowCalendarModal(false)}>
-                Cancel
-              </button>
-              <button
-                className="send-button"
-                onClick={() => {
-                  alert(`Scheduled session with ${calendarTutor?.name} on ${selectedDate.toDateString()}`)
-                  setShowCalendarModal(false)
-                }}
-              >
-                Confirm Date
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showChatModal && (
-        <div className="email-modal-overlay">
-          <div className="email-modal chat">
-            <div className="email-modal-header">
-              <h3>Chat with {chatTutor?.name}</h3>
-              <button className="close-button" onClick={() => setShowChatModal(false)}>
-                ×
-              </button>
-            </div>
-            <div className="email-modal-content">
-              <div className="chat-messages">
-                {chatHistory.map((msg, idx) => (
-                  <div key={idx} className={`chat-message ${msg.sender}`}>
-                    {msg.message}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="chat-input">
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Type a message..."
-              />
-              <button onClick={handleSendChatMessage}>Send</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
+  return <div className="inbox-container">{/* UI goes here */}</div>
 }
 
-export default Inbox
+export default Inbox;

@@ -14,7 +14,7 @@ import Signup from "./pages/login/Singup";
 const ROOT_PATH = "/";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
 
    useEffect(() => {
@@ -51,7 +51,7 @@ function App() {
         console.error("Login error:", err);
       }
     }
-  //if (isLoggedIn == null) return
+  if (isLoggedIn == null) return
   if (!isLoggedIn) {
     return (
       <Router basename={ROOT_PATH}>
