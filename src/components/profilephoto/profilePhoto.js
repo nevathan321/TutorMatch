@@ -3,17 +3,30 @@ import './profilePhoto.css';
 import { useState, useEffect } from 'react';
 
 function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
-    const [imageSrc, setImageSrc] = useState(initialPhoto || userProfile?.profilePhoto || profile);
+    // Initialize with default profile image
+    const [imageSrc, setImageSrc] = useState(profile);
+
 
     useEffect(() => {
-        setImageSrc(initialPhoto || userProfile?.profilePhoto || profile);
+        // Use the explicitly passed photo
+        if (initialPhoto && initialPhoto !== profile) {
+            setImageSrc(initialPhoto);
+        } 
+        // Fall back to userProfile's photo
+        else if (userProfile?.profilePhoto) {
+            setImageSrc(userProfile.profilePhoto);
+        }
+        // Default image
+        else {
+            setImageSrc(profile);
+        }
     }, [initialPhoto, userProfile]);
 
     function uploadPhoto(event) {
         const file = event.target.files[0];
         const reader = new FileReader();
 
-        reader.onloadend = function() {
+        reader.onloadend = function () {
             setImageSrc(reader.result);
             onPhotoChange(reader.result); // Notify parent component
         };
@@ -39,15 +52,14 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
 
     return (
         <div className="profile-photo">
-            <img 
-                className="image" 
-                src={imageSrc} 
-                alt="Profile" 
-                onError={handleImageError} 
+            <img
+                className="image"
+                src={imageSrc}
+                alt="Profile"
+                onError={handleImageError}
             />
             <div className="profile-header">
-                <h2>{userProfile?.fullname || 'User'}</h2>
-                {userProfile?.major && <p>{userProfile.major}</p>}
+            <h2>Change Profile Icon</h2>
                 <div className="options">
                     <input
                         id="fileInput"

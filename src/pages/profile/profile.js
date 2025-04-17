@@ -3,17 +3,61 @@ import ProfilePhotoBlock from "../../components/profilephoto/profilePhoto";
 import { useState, useEffect } from 'react';
 import './profile.css';
 
-function Profile({ userProfile }) {
+function Profile({ userProfile, setUserProfile }) {
 
-    const [role, setRole] = useState(userProfile?.role || 'Tutee');
+    const [role, setRole] = useState('Tutee');
     const [subject, setSubject] = useState('');
-    const [subjects, setSubjects] = useState(userProfile?.subjectExpertise || []);
-    const [profilePhoto, setProfilePhoto] = useState(userProfile?.profilePhoto || null);
-    const [selectedDays, setSelectedDays] = useState(userProfile?.preferredDays || []);
+    const [subjects, setSubjects] = useState([]);
+    const [profilePhoto, setProfilePhoto] = useState(null);
+    const [selectedDays, setSelectedDays] = useState([]);
 
-    
-    // Debug
-    console.log("User profile data:", userProfile);
+    // useEffect to handle all initialization
+    useEffect(() => {
+        if (userProfile) {
+            setRole(userProfile.role || 'Tutee');
+            setSubjects(userProfile.subjectExpertise || []);
+            setProfilePhoto(userProfile.profilePhoto || userProfile.profile_image || profile);
+            setSelectedDays(userProfile.preferredDays || []);
+
+            // Directly set form values
+            const fields = {
+                fname: userProfile.firstName || userProfile.first_name || '',
+                lname: userProfile.lastName || userProfile.last_name || '',
+                macId: userProfile.macId || userProfile.macid || '',
+                studentNumber: userProfile.studentNumber || userProfile.student_number || '',
+                hourlyRate: userProfile.hourlyRate || userProfile.wage || ''
+            };
+
+            Object.entries(fields).forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                if (element) element.value = value;
+            });
+        }
+    }, [userProfile]);
+
+
+    function showNotification(message, isSuccess) {
+
+        const notification = document.getElementById('profileNotification');
+        notification.textContent = message;
+        notification.className = `profile-notification ${isSuccess ? 'success' : 'error'}`;
+        document.getElementById("submit").disabled = true;
+        document.getElementById("submit").classList.add("disabled");
+
+        setTimeout(() => {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        }, 0);
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            document.getElementById("submit").disabled = false;
+            document.getElementById("submit").classList.remove("disabled");
+            notification.classList.add('hidden');
+        }, 5000);
+    }
 
     function checkPassword() {
         var password = document.getElementById('password').value;
@@ -50,29 +94,38 @@ function Profile({ userProfile }) {
         }
     }, [role]);
 
-    useEffect(() => {
-        if (userProfile) {
-            // Fill basic fields
-            document.getElementById('fname').value = userProfile.firstName || '';
-            console.log(userProfile.firstName);
-            document.getElementById('lname').value = userProfile.lastName || '';
-            document.getElementById('macId').value = userProfile.macId || '';
-            document.getElementById('studentNumber').value = userProfile.studentNumber || '';
 
-            // Fill tutor-specific fields if user is a tutor
-            if (userProfile.role === 'Tutor' && document.getElementById('hourlyRate')) {
-                document.getElementById('hourlyRate').value = userProfile.hourlyRate || '';
-            }
-        }
-    }, [userProfile]);
 
     function saveProfileData(e) {
         e.preventDefault();
 
         // TODO: Change to interact with DOM, not alerts
         if (!checkPassword()) {
-            alert("Passwords don't match!");
+            showNotification("Passwords don't match!", false);
             return;
+        }
+
+        const requiredFields = [
+            { id: 'fname', label: 'First Name' },
+            { id: 'lname', label: 'Last Name' },
+            { id: 'macId', label: 'McMaster ID' },
+            { id: 'studentNumber', label: 'Student Number' },
+            { id: 'password', label: 'Password' },
+            { id: 'confirmPassword', label: 'Confirm Password' }
+        ];
+    
+        if (role === 'Tutor') {
+            requiredFields.push(
+                { id: 'hourlyRate', label: 'Hourly Rate' }
+            );
+        }
+    
+        for (const field of requiredFields) {
+            const el = document.getElementById(field.id);
+            if (!el || el.value.trim() === '') {
+                showNotification(`${field.label} is required.`, false);
+                return;
+            }
         }
 
         const email = userProfile.email;
@@ -91,7 +144,7 @@ function Profile({ userProfile }) {
             email
         };
 
-        console.log("Sending to server:", profileData); // Log what we're sending
+        console.log("Sent to server"); // Debug
 
         fetch('http://localhost/tutormatch/server/profile/createProfile.php', {
             method: 'POST',
@@ -115,11 +168,51 @@ function Profile({ userProfile }) {
             })
             .then(data => {
                 if (data.success) {
-                    alert('Profile updated successfully!');
-                    console.log("Server response data:", data);
-                    window.location.reload();
+                    showNotification("Profile updated successfully!", true);
+                    document.getElementById('confirmPassword').value = "";
+
+                    // Update all form fields with the new data
+                    document.getElementById("fname").value = data.user_profile.first_name || "";
+                    document.getElementById("lname").value = data.user_profile.last_name || "";
+                    document.getElementById("macId").value = data.user_profile.macid || "";
+                    document.getElementById("studentNumber").value = data.user_profile.student_number || "";
+
+                    if (role === "Tutor") {
+                        document.getElementById("hourlyRate").value = data.user_profile.wage || "";
+                        document.getElementById("subjectExpertise").value = data.user_profile.subject_expertise || "";
+                        
+                    }
+
+                    // Update React component state
+                    setProfilePhoto(data.user_profile.profile_image || profile);
+                    setSubjects(data.user_profile.subject_expertise || []);
+                    setSelectedDays(data.user_profile.preferred_days || []);
+
+                    // Update the parent component's userProfile state
+                    if (typeof setUserProfile === 'function') {
+                        setUserProfile(prev => ({
+                            ...prev,
+                            firstName: data.user_profile.first_name,
+                            lastName: data.user_profile.last_name,
+                            fullName: `${data.user_profile.first_name} ${data.user_profile.last_name}`,
+                            macId: data.user_profile.macid,
+                            studentNumber: data.user_profile.student_number,
+                            role: data.user_profile.user_type === 'tutor' ? 'Tutor' : 'Tutee',
+                            wage: data.user_profile.wage,
+                            hourlyRate: data.user_profile.wage,
+                            profilePhoto: data.user_profile.profile_image,
+                            profile_image: data.user_profile.profile_image, // Maintain both if needed
+                            subjectExpertise: data.user_profile.subject_expertise || [],
+                            preferredDays: data.user_profile.preferred_days || [],
+                            // Preserve any existing fields not being updated
+                            email: prev.email,
+                            major: prev.major,
+                            ...(prev.user_type && { user_type: prev.user_type }) // Preserve if exists
+                        }));
+                    }
+
                 } else {
-                    alert('Failed to update profile: ' + (data.message || 'Unknown error'));
+                    showNotification(`Failed to update profile: ${data.message || 'Unknown error'}`, false);
                     console.warn("Server reported failure:", data);
                 }
             })
@@ -137,6 +230,7 @@ function Profile({ userProfile }) {
             <div className='top'>
                 <h1> Edit Profile </h1>
             </div>
+            
 
             <div className="card">
                 <ProfilePhotoBlock
@@ -221,20 +315,25 @@ function Profile({ userProfile }) {
                             ))}
                         </div>
                     </div>
+                    <div className="passwords">
+                        <label htmlFor='password'>Password:</label>
+                        <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='password' name='password' placeholder='Password' required />
 
-                    <label htmlFor='password'>Password:</label>
-                    <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='password' name='password' placeholder='Password' required />
-
-                    <label htmlFor='confirmPassword'>Confirm Password:</label>
-                    <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='confirmPassword' name='confirmPassword' placeholder='Confirm Password' required />
-                    <p style={{ color: "red" }} id="warning"> </p>
+                        <label htmlFor='confirmPassword'>Confirm Password:</label>
+                        <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='confirmPassword' name='confirmPassword' placeholder='Confirm Password' required />
+                        <p style={{ color: "red" }} id="warning"> </p>
+                    </div>
 
                     <div className="buttonGroup">
-                        <button className="btn delete" type="reset"> Cancel</button>
-                        <button className="btn" type='submit' onClick={saveProfileData}>Update</button>
+                        <button className="btn" id="submit" type='submit' onClick={saveProfileData}>Update</button>
+                        
+
                     </div>
+                    
                 </form>
+                
             </div>
+            <div id="profileNotification" className="profile-notification hidden"></div>
         </div>
     )
 }

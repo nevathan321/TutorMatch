@@ -1,99 +1,87 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Origin: *"); // or specify your frontend origin: 'http://localhost:3000'
+header("Access-Control-Allow-Methods: POST, OPTIONS"); // allow POST and OPTIONS
+header("Access-Control-Allow-Headers: Content-Type"); // allow Content-Type header for POST
 
-// Handle preflight requests
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    header("HTTP/1.1 200 OK");
-    exit();
-}
+
 header("Content-Type: application/json");
 require_once '../connect.php';
 
-// Get the raw POST data
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
-
-if (json_last_error() !== JSON_ERROR_NONE) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Invalid JSON data'
-    ]);
+// If this is a preflight request, respond with a 200 OK
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
     exit;
 }
 
-$email = $data['email'] ?? null;
+// Decode JSON input
+$data = json_decode(file_get_contents("php://input"), true);
+
+if (!$data) {
+    http_response_code(400);
+    echo json_encode(["error" => "Invalid JSON input."]);
+    exit;
+}
+
+// Extract data
+$email = $data['email'];
+$firstName = $data['firstName'];
+$lastName = $data['lastName'];
+$macId = $data['macId'];
+$studentNumber = $data['studentNumber'];
+$role = strtolower($data['role']);
+$password = $data['password'];
+$hourlyRate = $data['hourlyRate'] ?? null;  // Used instead of wage
 $profilePhoto = $data['profilePhoto'] ?? null;
 
-if (!$email) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Email is required'
-    ]);
+// Build dynamic SQL
+$sql = "UPDATE Users SET 
+    first_name = ?, 
+    last_name = ?, 
+    full_name = CONCAT(?, ' ', ?), 
+    macid = ?, 
+    student_number = ?, 
+    user_type = ?, 
+    account_password = ?, 
+    wage = ?";
+
+$params = [
+    $firstName,
+    $lastName,
+    $firstName,
+    $lastName,
+    $macId,
+    $studentNumber,
+    $role,
+    password_hash($password, PASSWORD_DEFAULT),
+    $hourlyRate
+];
+
+// Add profile image if provided
+if ($profilePhoto) {
+    $sql .= ", profile_image = ?";
+    $params[] = $profilePhoto;
+}
+
+$sql .= " WHERE email = ?";
+$params[] = $email;
+
+// Prepare and execute
+$stmt = $dbh->prepare($sql);
+$stmt->execute($params);
+
+// Fetch updated user
+$query = "SELECT first_name, last_name, macid, student_number, user_type, wage, profile_image FROM Users WHERE email = ?";
+$stmt = $dbh->prepare($query);
+$stmt->execute([$email]);
+$updatedUser = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$updatedUser) {
+    echo json_encode(["error" => "User not found after update."]);
     exit;
 }
 
-try {
-    // Prepare the SQL query
-    $sql = "UPDATE Users SET 
-            first_name = ?,
-            last_name = ?,
-            full_name = CONCAT(?, ' ', ?), 
-            macid = ?,
-            student_number = ?,
-            user_type = ?,
-            account_password = ?";
-    
-    // Add profile image if provided
-    if ($profilePhoto) {
-        $sql .= ", profile_image = ?";
-    }
-    
-    $sql .= " WHERE email = ?";
-    
-    // Prepare the statement
-    $stmt = $dbh->prepare($sql);
-    
-    // Create parameters array
-    $params = [
-        $data['firstName'],
-        $data['lastName'],
-        $data['firstName'],
-        $data['lastName'],
-        $data['macId'],
-        $data['studentNumber'],
-        strtolower($data['role']),
-        password_hash($data['password'], PASSWORD_DEFAULT)
-    ];
-    
-    // Add profile photo if exists
-    if ($profilePhoto) {
-        $params[] = $profilePhoto;
-    }
-    
-    $params[] = $email;
-    $success = $stmt->execute($params);
-    
-    if ($success) {
-        echo json_encode([
-            'success' => true,
-            'message' => 'Profile updated successfully'
-        ]);
-    } else {
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Failed to update profile'
-        ]);
-    }
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Database error: ' . $e->getMessage()
-    ]);
-}
+// Return updated profile
+echo json_encode([
+    "success" => true,
+    "user_profile" => $updatedUser
+]);
