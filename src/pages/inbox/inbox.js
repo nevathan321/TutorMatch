@@ -19,15 +19,9 @@ function Inbox() {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [calendarTutor, setCalendarTutor] = useState(null)
 
-  const [showChatModal, setShowChatModal] = useState(false)
-  const [chatTutor, setChatTutor] = useState(null)
-
-  const [chatInput, setChatInput] = useState("")
-  const [chatHistory, setChatHistory] = useState([])
-
   const [startTime, setStartTime] = useState('10:00');
   const [endTime, setEndTime] = useState('11:00');
-  const [timeZone, setTimeZone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  
 
   const loadMatchesFromStorage = () => {
     try {
@@ -181,17 +175,6 @@ function Inbox() {
     setShowEmailModal(true)
   }
 
-  const handleSendChatMessage = () => {
-    if (chatInput.trim() === "") return
-
-    setChatHistory((prevHistory) => [...prevHistory, { sender: "user", message: chatInput.trim() }])
-    setChatInput("")
-
-    setTimeout(() => {
-      setChatHistory((prevHistory) => [...prevHistory, { sender: "tutor", message: "Thanks for your message! I'll get back to you soon." }])
-    }, 1000)
-  }
-
   const sendCalendarInvite = async (tutor, date, startTimeStr, endTimeStr) => {
     try {
       const startDateTime = new Date(date);
@@ -245,7 +228,289 @@ function Inbox() {
     }
   }
 
-  return <div className="inbox-container">{/* UI goes here */}</div>
+  const handleSendEmail = async () => {
+    setEmailStatus({ type: "loading", message: "Sending email..." });
+  
+    try {
+      const emailEndpoint = "http://localhost/TutorMatch/server/email/email.php";
+      
+      const response = await fetch(emailEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          to: selectedTutor.email,
+          subject: emailContent.subject,
+          message: emailContent.message,
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        setEmailStatus({ type: "success", message: "Email sent successfully!" });
+        setTimeout(() => {
+          setShowEmailModal(false);
+          setEmailStatus({ type: "", message: "" });
+        }, 2000);
+      } else {
+        if (result.redirect) {
+          setEmailStatus({ type: "info", message: "Authentication required. Redirecting to Google login..." });
+          const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
+          
+          const checkAuthWindow = setInterval(() => {
+            if (authWindow.closed) {
+              clearInterval(checkAuthWindow);
+              setEmailStatus({ type: "info", message: "Authentication completed. Trying to send email again..." });
+              setTimeout(() => {
+                handleSendEmail();
+              }, 1000);
+            }
+          }, 500);
+        } else {
+          setEmailStatus({ type: "error", message: result.error || "Failed to send email. Please try again." });
+        }
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      setEmailStatus({ type: "error", message: "An error occurred while sending the email." });
+    }
+  };
+
+  return (
+    <div className="inbox-container">
+      <div className="inbox-header">
+        <h1>Your Matches</h1>
+        <p className="inbox-subtitle">Connect with your matched tutors</p>
+      </div>
+      
+      <div className="search-container">
+        <div className="search-bar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="text" 
+            placeholder="Search tutors by name" 
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </div>
+      </div>
+      
+      <div className="matches-count">
+        <h2>{filteredMatches.length} Matched Tutors</h2>
+      </div>
+      
+      <div className="matches-grid">
+        {filteredMatches.length > 0 ? (
+          filteredMatches.map(match => (
+            <div key={match.id} className="tutor-match-card">
+              <div className="match-header">
+                <div className="match-date">
+                  Matched on {new Date(match.matchDate).toLocaleDateString()}
+                </div>
+                {match.unread && <div className="unread-badge">New</div>}
+              </div>
+              
+              <div className="tutor-info">
+                <div className="tutor-image">
+                  <img src={match.profileImage || "/placeholder-avatar.png"} alt={match.name} />
+                </div>
+                <div className="tutor-details">
+                  <h3>{match.name}</h3>
+                  <div className="tutor-subjects">
+                    {match.subjects.map((subject, index) => (
+                      <span key={index} className="subject-tag">{subject}</span>
+                    ))}
+                  </div>
+                  <div className="tutor-rating">
+                    <div className="stars">
+                      {[...Array(5)].map((_, i) => (
+                        <span key={i} className={i < Math.floor(match.rating) ? "star filled" : "star"}>★</span>
+                      ))}
+                    </div>
+                    <span className="rating-value">{match.rating.toFixed(1)}</span>
+                  </div>
+                  <div className="tutor-education">{match.education}</div>
+                  <div className="tutor-rate">${match.hourlyRate}/hour</div>
+                </div>
+              </div>
+              
+              <div className="tutor-bio">
+                <p>{match.bio}</p>
+              </div>
+              
+              <div className="last-message">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <p>{match.lastMessage}</p>
+              </div>
+              
+              <div className="match-actions">
+                <button className="action-button primary" onClick={() => handleSelectTutor(match)}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                  Email
+                </button>
+                <button className="action-button secondary" onClick={ () => {
+                  setCalendarTutor(match);
+                  setShowCalendarModal(true);
+                }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  Schedule
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="no-matches">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="8" y1="15" x2="16" y2="15"></line>
+              <line x1="9" y1="9" x2="9.01" y2="9"></line>
+              <line x1="15" y1="9" x2="15.01" y2="9"></line>
+            </svg>
+            <p>No matches found. Try adjusting your search criteria.</p>
+          </div>
+        )}
+      </div>
+      
+      {showEmailModal && (
+      <div className="email-modal-overlay">
+        <div className="email-modal">
+          <div className="email-modal-header">
+            <h3>Email {selectedTutor.name}</h3>
+            <button className="close-button" onClick={() => setShowEmailModal(false)}>×</button>
+          </div>
+          <div className="email-modal-content">
+            <div className="form-group">
+              <label htmlFor="email-subject">Subject</label>
+              <input
+                type="text"
+                id="email-subject"
+                value={emailContent.subject}
+                onChange={(e) => setEmailContent({ ...emailContent, subject: e.target.value })}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email-message">Message</label>
+              <textarea
+                id="email-message"
+                rows="8"
+                value={emailContent.message}
+                onChange={(e) => setEmailContent({ ...emailContent, message: e.target.value })}
+              ></textarea>
+            </div>
+            {emailStatus.message && (
+              <div className={`email-status ${emailStatus.type}`}>
+                {emailStatus.message}
+              </div>
+            )}
+          </div>
+          <div className="email-modal-footer">
+            <button
+              className="cancel-button"
+              onClick={() => setShowEmailModal(false)}
+              disabled={emailStatus.type === "loading"}
+            >
+              Cancel
+            </button>
+            <button
+              className="send-button"
+              onClick={handleSendEmail}
+              disabled={emailStatus.type === "loading"}
+            >
+              Send Email
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {showCalendarModal && (
+      <div className="email-modal-overlay">
+        <div className="email-modal">
+          <div className="email-modal-header">
+            <h3>Schedule with {calendarTutor?.name}</h3>
+            <button className="close-button" onClick={() => setShowCalendarModal(false)}>×</button>
+          </div>
+          
+          <div className="email-body">
+            <label style={{textAlign: "center"}}>Select a date:</label>
+            <MyCalendar 
+              selectedDate={selectedDate}
+              onDateChange={(date) => setSelectedDate(date)}
+              context="modal"
+            />
+            
+            <div className="time-selection">
+              <div className="form-group">
+                <label htmlFor="start-time">Start Time:</label>
+                <input 
+                  type="time" 
+                  id="start-time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="end-time">End Time:</label>
+                <input 
+                  type="time" 
+                  id="end-time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                />
+              </div>
+            </div>
+            
+            {emailStatus.message && (
+              <div className={`email-status ${emailStatus.type}`}>
+                {emailStatus.message}
+              </div>
+            )}
+          </div>
+          
+          <div className="email-modal-footer">
+            <button className="cancel-button" onClick={() => setShowCalendarModal(false)}>Cancel</button>
+            <button
+              className="send-button"
+              onClick={async () => {
+                const result = await sendCalendarInvite(calendarTutor, selectedDate, startTime, endTime);
+                
+                if (result && result.success) {
+                  setEmailStatus({ type: "success", message: "Calendar invite sent!" });
+                  setTimeout(() => {
+                    setShowCalendarModal(false);
+                    setEmailStatus({ type: "", message: "" });
+                  }, 2000);
+                } else {
+                  setEmailStatus({ type: "error", message: result?.error || "Failed to send calendar invite" });
+                }
+              }}
+            >
+              Send Calendar Invite
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </div>
+    
+  );
 }
 
 export default Inbox;
