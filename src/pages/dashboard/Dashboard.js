@@ -302,7 +302,6 @@ function Dashboard() {
         <div className="dashboard-card schedule">
           <div className="card-header">
             <h2>Upcoming Sessions</h2>
-            <button className="schedule-button">+ New Session</button>
           </div>
           
           <div className="calendar-container">
