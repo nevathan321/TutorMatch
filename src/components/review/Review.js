@@ -12,12 +12,12 @@ function Review({ id, rating, title, body, author, date, pfp }) {
 
         // Add full stars
         for (let i = 0; i < fullStars; i++) {
-            stars.push(<img key={`fullstar-${i}`} src={fullstar} alt="★" className='star'></img>);
+            stars.push(<img src={fullstar} alt="★" className='star'></img>);
         }
 
         // Add empty stars
         for (let i = 0; i < emptyStars; i++) {
-            stars.push(<img key={`emptystar-${i}`} src={emptystar} alt="☆" className='star'></img>);
+            stars.push(<img src={emptystar} alt="☆" className='star'></img>);
         }
 
         return stars;

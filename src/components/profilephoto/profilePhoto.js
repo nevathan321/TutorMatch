@@ -3,45 +3,40 @@ import './profilePhoto.css';
 import { useState, useEffect } from 'react';
 
 function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
-    const [imageSrc, setImageSrc] = useState(initialPhoto || userProfile?.profilePhoto || profile);
+    // Initialize with default profile image
+    const [imageSrc, setImageSrc] = useState(profile);
+
 
     useEffect(() => {
-        setImageSrc(initialPhoto || userProfile?.profilePhoto || profile);
+        // Use the explicitly passed photo
+        if (initialPhoto && initialPhoto !== profile) {
+            setImageSrc(initialPhoto);
+        } 
+        // Fall back to userProfile's photo
+        else if (userProfile?.profilePhoto) {
+            setImageSrc(userProfile.profilePhoto);
+        }
+        // Default image
+        else {
+            setImageSrc(profile);
+        }
     }, [initialPhoto, userProfile]);
 
-    const getYearOfStudyString = (year) => {
-        switch (year) {
-          case 1:
-            return "1st Year";
-          case 2:
-            return "2nd Year";
-          case 3:
-            return "3rd Year";
-          case 4:
-            return "4th Year";
-          case 5:
-            return "5th Year";
-          default:
-            return "N/A";
-        }
-      };
-    
-
-    function uploadPhoto(event){
+    function uploadPhoto(event) {
         const file = event.target.files[0];
         const reader = new FileReader();
 
-        reader.onloadend = function(){
+        reader.onloadend = function () {
             setImageSrc(reader.result);
             onPhotoChange(reader.result); // Notify parent component
-        }
+        };
 
-        if(file){
+        if (file) {
             reader.readAsDataURL(file);
         }
     }
 
-    function deletePhoto(){
+    function deletePhoto() {
         setImageSrc(profile);
         onPhotoChange(profile); // Notify parent component
     }
@@ -57,17 +52,15 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
 
     return (
         <div className="profile-photo">
-            <img 
-                className="image" 
-                src={imageSrc} 
-                alt="Profile" 
-                onError={handleImageError} 
+            <img
+                className="image"
+                src={imageSrc}
+                alt="Profile"
+                onError={handleImageError}
             />
             <div className="profile-header">
-                <h2>{userProfile.full_name}</h2>
-                <p>{userProfile.major} - {getYearOfStudyString(userProfile.year_of_study)}</p>
+            <h2>Change Profile Icon</h2>
                 <div className="options">
-
                     <input
                         id="fileInput"
                         type="file"
@@ -75,7 +68,6 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
                         onChange={uploadPhoto}
                         style={{ display: 'none' }}
                     />
-
                     <button className="btn" onClick={triggerFileInput}>Upload Photo</button>
                     <button className="btn delete" onClick={deletePhoto}>Delete Photo</button>
                 </div>
