@@ -19,7 +19,7 @@ function Inbox() {
 
   const [startTime, setStartTime] = useState('10:00');
   const [endTime, setEndTime] = useState('11:00');
-  const [timeZone, setTimeZone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const [timeZone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
   // Fetch matched tutors
   useEffect(() => {
@@ -62,7 +62,7 @@ function Inbox() {
           {
             id: 3,
             name: "Michael Chen",
-            email: "liyuxiao2@gmail.com",
+            email: "liyuxiao2006@gmail.com",
             subjects: ["Computer Science", "Mathematics"],
             rating: 4.7,
             hourlyRate: 55,
@@ -190,82 +190,61 @@ function Inbox() {
       setEmailStatus({ type: "error", message: "An error occurred while sending the email." });
     }
   };
-  const sendCalendarInvite = async (tutor, date, startTimeValue, endTimeValue) => {
-    setEmailStatus({ type: "loading", message: "Creating calendar event..." });
-    
+  
+  const sendCalendarInvite = async (tutor, date, startTimeStr, endTimeStr) => {
     try {
-      // Format date with selected times
-      const startDate = new Date(date);
-      const [startHours, startMinutes] = startTimeValue.split(':');
-      startDate.setHours(parseInt(startHours, 10), parseInt(startMinutes, 10));
-      
-      const endDate = new Date(date);
-      const [endHours, endMinutes] = endTimeValue.split(':');
-      endDate.setHours(parseInt(endHours, 10), parseInt(endMinutes, 10));
-      
-      const startTime = startDate.toISOString();
-      const endTime = endDate.toISOString();
-      
-      const calendarEndpoint = "http://localhost/TutorMatch/server/calendar/calendar.php";
-      
-      const response = await fetch(calendarEndpoint, {
-        method: "POST",
+      // Format the date and times for the calendar
+      const startDateTime = new Date(date);
+      const [startHours, startMinutes] = startTimeStr.split(':');
+      startDateTime.setHours(parseInt(startHours), parseInt(startMinutes));
+  
+      const endDateTime = new Date(date);
+      const [endHours, endMinutes] = endTimeStr.split(':');
+      endDateTime.setHours(parseInt(endHours), parseInt(endMinutes));
+  
+      const response = await fetch('http://localhost/TutorMatch/server/calendar/calendar.php', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
-        credentials: "include",
+        credentials: 'include',
         body: JSON.stringify({
           tutorEmail: tutor.email,
-          tutorName: tutor.name,
-          startTime: startTime,
-          endTime: endTime,
-          timeZone: timeZone,
+          startTime: startDateTime.toISOString(),
+          endTime: endDateTime.toISOString(),
           summary: `Tutoring Session with ${tutor.name}`,
-          description: `Tutoring session for ${tutor.subjects.join(', ')}.`
-        }),
+          description: `Tutoring session for ${tutor.subjects.join(', ')}`,
+          tutorName: tutor.name
+        })
       });
-  
+
       const result = await response.json();
-  
+      
       if (result.success) {
-        return { 
-          success: true, 
-          message: "Calendar invite sent successfully!",
-          eventLink: result.eventLink 
-        };
+        return { success: true, eventLink: result.eventLink };
+      } else if (result.redirect) {
+        // Handle authentication redirect
+        const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
+        
+        return new Promise((resolve) => {
+          const checkAuthWindow = setInterval(() => {
+            if (authWindow.closed) {
+              clearInterval(checkAuthWindow);
+              // Try sending calendar invite again after authentication
+              setTimeout(async () => {
+                const retryResult = await sendCalendarInvite(tutor, date, startTimeStr, endTimeStr);
+                resolve(retryResult);
+              }, 1000);
+            }
+          }, 500);
+        });
       } else {
-        if (result.redirect) {
-          const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
-          
-          return new Promise((resolve) => {
-            const checkAuthWindow = setInterval(() => {
-              if (authWindow.closed) {
-                clearInterval(checkAuthWindow);
-                setTimeout(async () => {
-                  const retryResult = await sendCalendarInvite(tutor, date, startTimeValue, endTimeValue);
-                  resolve(retryResult);
-                }, 1000);
-              }
-            }, 500);
-          });
-        } else {
-          return { success: false, error: result.error || "Failed to create calendar event." };
-        }
+        return { success: false, error: result.error || 'Failed to schedule session' };
       }
     } catch (error) {
-      console.error("Error creating calendar event:", error);
-      return { success: false, error: "An error occurred while creating the calendar event." };
+      console.error('Error sending calendar invite:', error);
+      return { success: false, error: error.message };
     }
-  };
- 
-
-  if (loading) {
-    return (
-      <div className="inbox-loading">
-        <div className="loader"></div>
-        <p>Loading your matches...</p>
-      </div>
-    );
   }
 
   return (
@@ -480,14 +459,14 @@ function Inbox() {
               onClick={async () => {
                 const result = await sendCalendarInvite(calendarTutor, selectedDate, startTime, endTime);
                 
-                if (result.success) {
+                if (result && result.success) {
                   setEmailStatus({ type: "success", message: "Calendar invite sent!" });
                   setTimeout(() => {
                     setShowCalendarModal(false);
                     setEmailStatus({ type: "", message: "" });
                   }, 2000);
                 } else {
-                  setEmailStatus({ type: "error", message: result.error });
+                  setEmailStatus({ type: "error", message: result?.error || "Failed to send calendar invite" });
                 }
               }}
             >
