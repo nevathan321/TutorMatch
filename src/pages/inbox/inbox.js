@@ -223,6 +223,7 @@ function Inbox({userProfile}) {
         credentials: 'include',
         body: JSON.stringify({
           tutorEmail: tutor.email,
+          senderEmail: localStorage.getItem("userEmail"),
           startTime: startDateTime.toISOString(),
           endTime: endDateTime.toISOString(),
           summary: `Tutoring Session with ${tutor.full_name}`,
@@ -236,7 +237,11 @@ function Inbox({userProfile}) {
       if (result.success) {
         return { success: true, eventLink: result.eventLink };
       } else if (result.redirect) {
-        const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
+        const authWindow = window.open(
+          "https://cs.1xd3.mcmaster.ca/~yourUsername/TutorMatch/server/authenticate.php",
+          "googleAuth",
+          "width=600,height=600"
+        );
 
         return new Promise((resolve) => {
           const checkAuthWindow = setInterval(() => {
@@ -263,6 +268,7 @@ function Inbox({userProfile}) {
   
     try {
       const emailEndpoint = "http://localhost/TutorMatch/server/email/email.php";
+    
       
       const response = await fetch(emailEndpoint, {
         method: "POST",
@@ -288,7 +294,11 @@ function Inbox({userProfile}) {
       } else {
         if (result.redirect) {
           setEmailStatus({ type: "info", message: "Authentication required. Redirecting to Google login..." });
-          const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
+          const authWindow = window.open(
+            "https://cs.1xd3.mcmaster.ca/~yourUsername/TutorMatch/server/authenticate.php",
+            "googleAuth",
+            "width=600,height=600"
+          );
           
           const checkAuthWindow = setInterval(() => {
             if (authWindow.closed) {
