@@ -17,8 +17,6 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfile, setUserProfile] = useState(null);//should be null
 
- 
-
   useEffect(() => {
     const email = localStorage.getItem("email");
     if (email == null) {
@@ -80,7 +78,7 @@ function App() {
               <Routes>
                 <Route path="/profile" element={<Profile userProfile={userProfile} setUserProfile={setUserProfile} />} />
                 <Route path="*" element={<Dashboard />} />
-                <Route path="/inbox" element={<Inbox />} />
+                <Route path="/inbox" element={<Inbox userProfile={userProfile} />} />
                 <Route path="/match" element={<Match userProfile={userProfile}/>} />
               </Routes>
             </div>

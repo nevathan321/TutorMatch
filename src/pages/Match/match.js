@@ -14,7 +14,6 @@ function Match({ userProfile }) {
   const { addNotification, initializeAudio } = useNotifications();
 
   const fetchTutors = async () => {
-    //regular login
     try {
       const response = await fetch(
         "http://localhost/tutorMatch/server/match/getTutors.php",
@@ -35,8 +34,6 @@ function Match({ userProfile }) {
   };
 
   const updatedMatchedTutors = async (tutorID) => {
-    console.log(tutorID)
-    console.log(userProfile.id)
     try {
       const response = await fetch(
         `http://localhost/tutorMatch/server/match/updateMatches.php?tutorID=${tutorID}&tuteeID=${userProfile.id}`,
