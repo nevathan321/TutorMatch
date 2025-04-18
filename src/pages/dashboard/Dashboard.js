@@ -469,35 +469,7 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Reviews section moved outside the grid to span full width */}
-      <div className="dashboard-card reviews full-width">
-        <div className="card-header">
-          <h2>Latest Reviews</h2>
-        </div>
-
-        <div className="reviews-list">
-          {reviews.length > 0 ? (
-            reviews.map((review) => (
-              <Review
-                key={review.id}
-                rating={review.rating}
-                title={review.title}
-                body={review.body}
-                author={review.author}
-                date={review.date}
-                pfp={review.pfp}
-                tutorName={review.tutorName} // Add tutorName prop
-              />
-            ))
-          ) : (
-            <div className="no-data">
-              <p>No reviews yet.</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* New Review Form Section */}
+      {/* New Review Form Section - Moved before the reviews section */}
       <div className="dashboard-card create-review full-width">
         <div className="card-header">
           <h2>Write a Review</h2>
@@ -570,6 +542,34 @@ function Dashboard() {
               Submit Review
             </button>
           </form>
+        </div>
+      </div>
+
+      {/* Reviews section moved after the create-review section */}
+      <div className="dashboard-card reviews full-width">
+        <div className="card-header">
+          <h2>Latest Reviews</h2>
+        </div>
+
+        <div className="reviews-list">
+          {reviews.length > 0 ? (
+            reviews.map((review) => (
+              <Review
+                key={review.id}
+                rating={review.rating}
+                title={review.title}
+                body={review.body}
+                author={review.author}
+                date={review.date}
+                pfp={review.pfp}
+                tutorName={review.tutorName}
+              />
+            ))
+          ) : (
+            <div className="no-data">
+              <p>No reviews yet.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
