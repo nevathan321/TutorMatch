@@ -8,14 +8,14 @@ function Profile({ userProfile, setUserProfile }) {
     const [role, setRole] = useState('Tutee');
     const [subject, setSubject] = useState('');
     const [subjects, setSubjects] = useState([]);
-    const [profilePhoto, setProfilePhoto] = useState(null);
+    const [profilePhoto, setProfilePhoto] = useState(profile);
     const [selectedDays, setSelectedDays] = useState([]);
 
     // useEffect to handle all initialization
     useEffect(() => {
         if (userProfile) {
             setRole(userProfile.role || 'Tutee');
-            setSubjects(userProfile.subjectExpertise || []);
+            setSubjects(userProfile.main_subjects || userProfile.subjectExpertise || []);
             setProfilePhoto(userProfile.profilePhoto || userProfile.profile_image || profile);
             setSelectedDays(userProfile.preferredDays || []);
 
@@ -63,21 +63,21 @@ function Profile({ userProfile, setUserProfile }) {
         const form = document.querySelector('.userDetails');
         const notification = document.getElementById('profileNotification');
         const submitButton = document.getElementById("submit");
-    
+
         const handleFormChange = () => {
             // Hide notification and re-enable button
             notification.classList.add('hidden');
             submitButton.disabled = false;
             submitButton.classList.remove("disabled");
         };
-    
+
         // Add event listeners to all form inputs
         const inputs = form.querySelectorAll('input, textarea, select');
         inputs.forEach(input => {
             input.addEventListener('change', handleFormChange);
             input.addEventListener('input', handleFormChange);
         });
-    
+
         // Cleanup
         return () => {
             inputs.forEach(input => {
@@ -127,7 +127,6 @@ function Profile({ userProfile, setUserProfile }) {
     function saveProfileData(e) {
         e.preventDefault();
 
-        // TODO: Change to interact with DOM, not alerts
         if (!checkPassword()) {
             showNotification("Passwords don't match!", false);
             return;
@@ -141,13 +140,13 @@ function Profile({ userProfile, setUserProfile }) {
             { id: 'password', label: 'Password' },
             { id: 'confirmPassword', label: 'Confirm Password' }
         ];
-    
+
         if (role === 'Tutor') {
             requiredFields.push(
                 { id: 'hourlyRate', label: 'Hourly Rate' }
             );
         }
-    
+
         for (const field of requiredFields) {
             const el = document.getElementById(field.id);
             if (!el || el.value.trim() === '') {
@@ -166,7 +165,7 @@ function Profile({ userProfile, setUserProfile }) {
             studentNumber: document.getElementById('studentNumber').value,
             hourlyRate: role === 'Tutor' ? document.getElementById('hourlyRate').value : null,
             preferredDays: role === 'Tutor' ? selectedDays : [],
-            subjectExpertise: role === 'Tutor' ? subjects : [],
+            main_subjects: role === 'Tutor' ? subjects : [],
             password: document.getElementById('password').value,
             profilePhoto: profilePhoto || null,
             email
@@ -207,13 +206,13 @@ function Profile({ userProfile, setUserProfile }) {
 
                     if (role === "Tutor") {
                         document.getElementById("hourlyRate").value = data.user_profile.wage || "";
-                        document.getElementById("subjectExpertise").value = data.user_profile.subject_expertise || "";
-                        
+                        document.getElementById("subjectExpertise").value = data.user_profile.main_subjects || "";
+
                     }
 
                     // Update React component state
                     setProfilePhoto(data.user_profile.profile_image || profile);
-                    setSubjects(data.user_profile.subject_expertise || []);
+                    setSubjects(data.user_profile.main_subjects || []);
                     setSelectedDays(data.user_profile.preferred_days || []);
 
                     // Update the parent component's userProfile state
@@ -230,7 +229,8 @@ function Profile({ userProfile, setUserProfile }) {
                             hourlyRate: data.user_profile.wage,
                             profilePhoto: data.user_profile.profile_image,
                             profile_image: data.user_profile.profile_image, // Maintain both if needed
-                            subjectExpertise: data.user_profile.subject_expertise || [],
+                            main_subjects: data.user_profile.main_subjects || [],
+                            subjectExpertise: data.user_profile.main_subjects || [], // Keep both for backward compatibility
                             preferredDays: data.user_profile.preferred_days || [],
                             // Preserve any existing fields not being updated
                             email: prev.email,
@@ -258,7 +258,7 @@ function Profile({ userProfile, setUserProfile }) {
             <div className='top'>
                 <h1> Edit Profile </h1>
             </div>
-            
+
 
             <div className="card">
                 <ProfilePhotoBlock
@@ -354,12 +354,12 @@ function Profile({ userProfile, setUserProfile }) {
 
                     <div className="buttonGroup">
                         <button className="btn" id="submit" type='submit' onClick={saveProfileData}>Update</button>
-                        
+
 
                     </div>
-                    
+
                 </form>
-                
+
             </div>
             <div id="profileNotification" className="profile-notification hidden"></div>
         </div>
