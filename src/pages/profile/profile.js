@@ -51,13 +51,41 @@ function Profile({ userProfile, setUserProfile }) {
             });
         }, 0);
 
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            document.getElementById("submit").disabled = false;
-            document.getElementById("submit").classList.remove("disabled");
-            notification.classList.add('hidden');
-        }, 5000);
+        // // Auto-hide after 5 seconds
+        // setTimeout(() => {
+        //     document.getElementById("submit").disabled = false;
+        //     document.getElementById("submit").classList.remove("disabled");
+        //     notification.classList.add('hidden');
+        // }, 5000);
     }
+
+    useEffect(() => {
+        const form = document.querySelector('.userDetails');
+        const notification = document.getElementById('profileNotification');
+        const submitButton = document.getElementById("submit");
+    
+        const handleFormChange = () => {
+            // Hide notification and re-enable button
+            notification.classList.add('hidden');
+            submitButton.disabled = false;
+            submitButton.classList.remove("disabled");
+        };
+    
+        // Add event listeners to all form inputs
+        const inputs = form.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('change', handleFormChange);
+            input.addEventListener('input', handleFormChange);
+        });
+    
+        // Cleanup
+        return () => {
+            inputs.forEach(input => {
+                input.removeEventListener('change', handleFormChange);
+                input.removeEventListener('input', handleFormChange);
+            });
+        };
+    }, []); // Empty dependency array means this runs once on mount
 
     function checkPassword() {
         var password = document.getElementById('password').value;
@@ -169,7 +197,7 @@ function Profile({ userProfile, setUserProfile }) {
             .then(data => {
                 if (data.success) {
                     showNotification("Profile updated successfully!", true);
-                    document.getElementById('confirmPassword').value = "";
+                    // REMOVED document.getElementById('confirmPassword').value = "";
 
                     // Update all form fields with the new data
                     document.getElementById("fname").value = data.user_profile.first_name || "";
