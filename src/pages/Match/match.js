@@ -16,7 +16,7 @@ function Match({ userProfile }) {
   const fetchTutors = async () => {
     try {
       const response = await fetch(
-        "http://localhost/tutorMatch/server/match/getTutors.php",
+        `http://localhost/tutorMatch/server/match/getTutors.php?tuteeID=${userProfile.id}`,
         {
           method: "GET",
           headers: {
@@ -33,7 +33,7 @@ function Match({ userProfile }) {
     }
   };
 
-  const updatedMatchedTutors = async (tutorID) => {
+  const updateMatchedTutors = async (tutorID) => {
     try {
       const response = await fetch(
         `http://localhost/tutorMatch/server/match/updateMatches.php?tutorID=${tutorID}&tuteeID=${userProfile.id}`,
@@ -51,6 +51,24 @@ function Match({ userProfile }) {
     }
   };
 
+  const updateRejectedTutors = async (tutorID) => {
+    try {
+      const response = await fetch(
+        `http://localhost/tutorMatch/server/match/updateRejectedTutors.php?tutorID=${tutorID}&tuteeID=${userProfile.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      const result = await response.json();
+      
+    } catch (err) {
+      console.error("Login error:", err);
+    }
+  };
+
   useEffect(() => {
     //run on load
     fetchTutors();
@@ -59,7 +77,7 @@ function Match({ userProfile }) {
   // Handle rejecting a tutor (swipe left)
   const handleReject = () => {
     if (tutors.length === 0) return;
-
+    updateRejectedTutors(tutors[currentTutorIndex].id)
     const rejectedTutor = tutors[currentTutorIndex];
 
     // Add to rejected list
@@ -85,7 +103,7 @@ function Match({ userProfile }) {
   // Handle accepting a tutor (swipe right)
   const handleAccept = () => {
     if (tutors.length === 0) return;
-    updatedMatchedTutors(tutors[currentTutorIndex].id)
+    updateMatchedTutors(tutors[currentTutorIndex].id)
     // Initialize audio on user interaction
     initializeAudio();
 
