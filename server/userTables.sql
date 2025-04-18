@@ -17,6 +17,7 @@ CREATE TABLE Users (
   dob DATE,
   user_type VARCHAR(10) CHECK (user_type IN ('tutor', 'tutee')),
   matched_tutors JSON,
+  rejected_tutors JSON,
   profile_image LONGTEXT,
   bio TEXT
 );
