@@ -16,6 +16,7 @@ function Profile({ userProfile, setUserProfile }) {
         if (userProfile) {
             setRole(userProfile.role || 'Tutee');
             setSubjects(userProfile.main_subjects || userProfile.subjectExpertise || []);
+            console.log("subjects: ", subjects);
             setProfilePhoto(userProfile.profilePhoto || userProfile.profile_image || profile);
             setSelectedDays(userProfile.preferredDays || []);
 
@@ -24,8 +25,7 @@ function Profile({ userProfile, setUserProfile }) {
                 fname: userProfile.firstName || userProfile.first_name || '',
                 lname: userProfile.lastName || userProfile.last_name || '',
                 macId: userProfile.macId || userProfile.macid || '',
-                studentNumber: userProfile.studentNumber || userProfile.student_number || '',
-                hourlyRate: userProfile.hourlyRate || userProfile.wage || ''
+                studentNumber: userProfile.studentNumber || userProfile.student_number || ''
             };
 
             Object.entries(fields).forEach(([id, value]) => {
@@ -85,7 +85,21 @@ function Profile({ userProfile, setUserProfile }) {
                 input.removeEventListener('input', handleFormChange);
             });
         };
-    }, []); // Empty dependency array means this runs once on mount
+    }, []); // This runs once on mount
+
+
+    // Handle profile photo changes
+    useEffect(() => {
+        const notification = document.getElementById('profileNotification');
+        const submitButton = document.getElementById("submit");
+
+        // Only run this effect if profilePhoto changes and notification exists
+        if (notification && submitButton) {
+            notification.classList.add('hidden');
+            submitButton.disabled = false;
+            submitButton.classList.remove("disabled");
+        }
+    }, [profilePhoto]); // Will run whenever profilePhoto state changes
 
     function checkPassword() {
         var password = document.getElementById('password').value;
@@ -99,30 +113,6 @@ function Profile({ userProfile, setUserProfile }) {
             return true;
         }
     }
-
-    const handleSubjectKeyDown = (e) => {
-        if (e.key === 'Enter' && subject.trim()) {
-            e.preventDefault();
-            if (!subjects.includes(subject.trim())) {
-                setSubjects([...subjects, subject.trim()]);
-                setSubject('');
-            }
-        }
-    };
-
-    const removeSubject = (index) => {
-        setSubjects(subjects.filter((_, i) => i !== index));
-    };
-
-    useEffect(() => {
-        if (role === 'Tutor') {
-            document.querySelector('.TutorDetails').style.display = 'block';
-        } else {
-            document.querySelector('.TutorDetails').style.display = 'none';
-        }
-    }, [role]);
-
-
 
     function saveProfileData(e) {
         e.preventDefault();
@@ -150,7 +140,7 @@ function Profile({ userProfile, setUserProfile }) {
         for (const field of requiredFields) {
             const el = document.getElementById(field.id);
             if (!el || el.value.trim() === '') {
-                showNotification(`${field.label} is required.`, false);
+                showNotification(`${field.label} is required in correct format.`, false);
                 return;
             }
         }
@@ -204,16 +194,8 @@ function Profile({ userProfile, setUserProfile }) {
                     document.getElementById("macId").value = data.user_profile.macid || "";
                     document.getElementById("studentNumber").value = data.user_profile.student_number || "";
 
-                    if (role === "Tutor") {
-                        document.getElementById("hourlyRate").value = data.user_profile.wage || "";
-                        document.getElementById("subjectExpertise").value = data.user_profile.main_subjects || "";
-
-                    }
-
                     // Update React component state
                     setProfilePhoto(data.user_profile.profile_image || profile);
-                    setSubjects(data.user_profile.main_subjects || []);
-                    setSelectedDays(data.user_profile.preferred_days || []);
 
                     // Update the parent component's userProfile state
                     if (typeof setUserProfile === 'function') {
@@ -269,11 +251,7 @@ function Profile({ userProfile, setUserProfile }) {
             </div>
 
             <div className="card">
-                <div className="toggleWrapper">
-                    <div className={`toggleSwitch ${role === 'Tutor' ? 'tutor' : 'tutee'}`} onClick={() => setRole(role === 'Tutee' ? 'Tutor' : 'Tutee')}>
-                        <div className="toggleThumb">{role}</div>
-                    </div>
-                </div>
+
 
                 <h1> User Details</h1>
                 <form className="userDetails">
@@ -293,58 +271,9 @@ function Profile({ userProfile, setUserProfile }) {
                         <input type='number' id='studentNumber' name='studentNumber' placeholder='Student Number' required />
                     </div>
 
-                    <div className="TutorDetails">
-                        <div className="formGroup">
-                            <label htmlFor='hourlyRate'>Hourly Rate</label>
-                            <input style={{ width: '50%' }} type='number' id='hourlyRate' name='hourlyRate' placeholder='10' required />
-                        </div>
 
-                        <div className="formGroup">
-                            <label htmlFor="preferredDays">Preferred Days</label>
-                            <div className="days-grid">
-                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                    <button
-                                        key={day}
-                                        type="button"
-                                        className={`day-button ${selectedDays.includes(day) ? "selected" : ""}`}
-                                        onClick={() => {
-                                            const newSelectedDays = selectedDays.includes(day)
-                                                ? selectedDays.filter((d) => d !== day)
-                                                : [...selectedDays, day];
-                                            setSelectedDays(newSelectedDays);
-                                        }}
-                                    >
-                                        {day.substring(0, 3)}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="formGroup">
-                            <label htmlFor='subjectExpertise'>Subject Expertise</label>
-                            <input
-                                style={{ width: '50%' }}
-                                type='text'
-                                id='subjectExpertise'
-                                name='subjectExpertise'
-                                placeholder='Add a subject and press Enter'
-                                value={subject}
-                                onChange={(e) => setSubject(e.target.value)}
-                                onKeyDown={handleSubjectKeyDown}
-                            />
-                        </div>
-
-                        <div className="tagsContainer">
-                            {subjects.map((subj, idx) => (
-                                <span key={idx} className="tag">
-                                    {subj}
-                                    <button type="button" className="removeTag" onClick={() => removeSubject(idx)}>×</button>
-                                </span>
-                            ))}
-                        </div>
-                    </div>
                     <div className="passwords">
-                        <label htmlFor='password'>Password:</label>
+                        <label htmlFor='password'>New Password:</label>
                         <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='password' name='password' placeholder='Password' required />
 
                         <label htmlFor='confirmPassword'>Confirm Password:</label>
