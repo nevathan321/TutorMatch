@@ -281,68 +281,79 @@ input::placeholder {
   font-size: 1rem;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .top {
-    text-align: center;
-  }
 
-  .buttonGroup {
-    flex-direction: column;
+@media (min-width: 600px) {
+  .Profile {
+    padding: 0 2rem;
   }
-
-  .buttonGroup button {
-    width: 100%;
-    margin: 0.5rem 0;
+  
+  .card {
+    padding: 2rem;
   }
-
+  
   .userContainer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  
+  .userContainer > div {
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  .passwords input {
+    width: 50%;
+  }
+}
+
+@media (min-width: 768px) {
+  .Profile {
+    margin: 2rem auto;
+  }
+  
+  .top h1 {
+    font-size: 1.75rem;
+  }
+  
+  .card {
+    margin: 2rem auto;
+  }
+}
+
+@media (min-width: 900px) {
+  .Profile {
+    max-width: 900px;
+  }
+}
+
+/* Adjust layout when navbar is present */
+@media (max-width: 1024px) {
+  .tile {
     flex-direction: column;
   }
-}
-
-/* Interactive Preferred Days Styling */
-.days-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  margin-top: 10px;
-}
-
-@media (max-width: 768px) {
-  .days-grid {
-    grid-template-columns: repeat(4, 1fr);
+  
+  .Nav {
+    width: 100%;
+  }
+  
+  .page {
+    margin-left: 0;
+    padding: 0 1rem;
   }
 }
 
-@media (max-width: 480px) {
-  .days-grid {
-    grid-template-columns: repeat(3, 1fr);
+/* Very small devices */
+@media (max-width: 400px) {
+  .card {
+    padding: 1rem;
   }
-}
-
-.day-button {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  color: #555;
-}
-
-.day-button:hover {
-  background-color: #f0f0f0;
-  border-color: #d0d0d0;
-}
-
-.day-button.selected {
-  background-color: #2196f3;
-  color: white;
-  border-color: #2196f3;
-}
-
-.day-button.selected:hover {
-  background-color: #0d8bf2;
+  
+  input {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+  }
 }
