@@ -1,4 +1,3 @@
-/* src/pages/dashboard/Dashboard.css */
 .dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -104,6 +103,7 @@
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: auto auto;
   gap: 1.5rem;
+  margin-bottom: 1.5rem; /* Add margin to separate from the full-width reviews section */
 }
 
 /* Add full-width class for reviews section */
@@ -118,12 +118,18 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+/* Add full-width class for the reviews section */
+.full-width {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: none; /* Remove the border */
 }
 
 .card-header h2 {
@@ -262,19 +268,143 @@
   background: #bfdbfe;
 }
 
-/* Enhanced reviews list for full-width display */
+/* Add these styles to the CSS file to style the tutor select dropdown and update the review section */
+
+/* Tutor Select Dropdown */
+.tutor-select {
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  width: 100%;
+  background-color: white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tutor-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Update Review Card Styling */
 .reviews-list {
   padding: 1.25rem;
-  max-height: 400px;
+  max-height: 450px;
   overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
 }
 
-/* Make sure review components adapt to the grid layout */
-.reviews-list > div {
+/* Remove the border between reviews and add more spacing */
+.review {
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  background-color: white;
+  transition: box-shadow 0.2s ease;
+}
+
+.review:last-child {
+  margin-bottom: 0;
+}
+
+/* Add a subtle hover effect to reviews */
+.review:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.review-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0.5rem 0;
+}
+
+.review-body {
+  font-size: 0.9rem;
+  color: #475569;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.review-author {
+  display: flex;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 0.75rem;
+  background-color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.author-avatar img {
+  width: 100%;
   height: 100%;
+  object-fit: cover;
+}
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.author-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.review-date {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.review-tutor-name {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+/* Star rating styles to match the yellow stars in the screenshot */
+.star-rating {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.star {
+  color: #d1d5db;
+  font-size: 1.25rem;
+}
+
+.star.selected {
+  color: #fbbf24; /* Brighter yellow to match screenshot */
+}
+
+/* Update the dashboard card for reviews */
+.dashboard-card.reviews {
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.transactions-list {
+  padding: 1.25rem;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .no-data {
@@ -341,6 +471,74 @@
   color: #64748b;
 }
 
+/* NEW: Review Form Styles */
+.review-form-container {
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 0 0 12px 12px;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.form-group input,
+.form-group textarea,
+.tutor-select {
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  width: 100%;
+  background-color: white;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.tutor-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: none;
+}
+
+/* Update Submit Button to be more subtle */
+.submit-review-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  box-shadow: none;
+}
+
+.submit-review-button:hover {
+  background-color: #2563eb;
+  transform: none;
+  box-shadow: none;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .stats-container {
@@ -390,8 +588,13 @@
     height: 320px;
   }
 
-  /* Single column for reviews on mobile */
-  .reviews-list {
-    grid-template-columns: 1fr;
+  /* Adjust review form for small screens */
+  .star-rating {
+    font-size: 1.5rem;
+  }
+
+  .submit-review-button {
+    width: 100%;
+    align-self: center;
   }
 }

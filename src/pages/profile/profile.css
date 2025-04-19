@@ -10,14 +10,10 @@
   gap: 0;
 }
 
-
 .passwords {
   width: 100%;
   padding: 0;
 }
-
-
-
 
 /* Container styles */
 .Profile {
@@ -30,9 +26,6 @@
 }
 
 /* Card Styles */
-
-
-
 
 /* Profile Header */
 .top {
@@ -159,12 +152,9 @@ input::placeholder {
   color: #aaa;
 }
 
-/* Toggle Switch */
+/* Toggle Switch - Removed from UI but kept styles for backward compatibility */
 .toggleWrapper {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-bottom: 1.5rem;
+  display: none; /* Hide the toggle switch */
 }
 
 .toggleSwitch {
@@ -206,16 +196,10 @@ input::placeholder {
   left: 60px;
 }
 
-/* Tutor Details */
-/* .TutorDetails {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 2rem;
-  margin-bottom: 2rem;
-  width: 100%;
-  transition: box-shadow 0.3s ease;
-} */
+/* Tutor Details - Hidden by default */
+.TutorDetails {
+  display: none !important; /* Force hide the tutor details section */
+}
 
 /* Notification Styles */
 .profile-notification {
@@ -301,7 +285,7 @@ input::placeholder {
   }
 }
 
-/* Interactive Preferred Days Styling */
+/* Interactive Preferred Days Styling - kept for compatibility but not used */
 .days-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);

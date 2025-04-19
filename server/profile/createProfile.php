@@ -1,13 +1,11 @@
 <?php
-header("Access-Control-Allow-Origin: *"); // or specify your frontend origin: 'http://localhost:3000'
-header("Access-Control-Allow-Methods: POST, OPTIONS"); // allow POST and OPTIONS
-header("Access-Control-Allow-Headers: Content-Type"); // allow Content-Type header for POST
-
-
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 require_once '../connect.php';
 
-// If this is a preflight request, respond with a 200 OK
+// Handle preflight request
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -30,8 +28,9 @@ $macId = $data['macId'];
 $studentNumber = $data['studentNumber'];
 $role = strtolower($data['role']);
 $password = $data['password'];
-$hourlyRate = $data['hourlyRate'] ?? null;  // Used instead of wage
+$hourlyRate = $data['hourlyRate'] ?? null;
 $profilePhoto = $data['profilePhoto'] ?? null;
+$mainSubjects = $data['main_subjects'] ?? null; // Add this line
 
 // Build dynamic SQL
 $sql = "UPDATE Users SET 
@@ -56,10 +55,15 @@ $params = [
     $hourlyRate
 ];
 
-// Add profile image if provided
+// Add optional fields
 if ($profilePhoto) {
     $sql .= ", profile_image = ?";
     $params[] = $profilePhoto;
+}
+
+if ($mainSubjects) {
+    $sql .= ", main_subjects = ?";
+    $params[] = json_encode($mainSubjects); // Encode as JSON for database storage
 }
 
 $sql .= " WHERE email = ?";
@@ -67,10 +71,15 @@ $params[] = $email;
 
 // Prepare and execute
 $stmt = $dbh->prepare($sql);
-$stmt->execute($params);
+if (!$stmt->execute($params)) {
+    echo json_encode(["error" => "Failed to update profile: " . implode(" ", $stmt->errorInfo())]);
+    exit;
+}
 
 // Fetch updated user
-$query = "SELECT first_name, last_name, macid, student_number, user_type, wage, profile_image FROM Users WHERE email = ?";
+$query = "SELECT first_name, last_name, macid, student_number, user_type, wage, profile_image, 
+          main_subjects, email, major 
+          FROM Users WHERE email = ?";
 $stmt = $dbh->prepare($query);
 $stmt->execute([$email]);
 $updatedUser = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -79,6 +88,9 @@ if (!$updatedUser) {
     echo json_encode(["error" => "User not found after update."]);
     exit;
 }
+
+// Decode JSON fields
+$updatedUser['main_subjects'] = json_decode($updatedUser['main_subjects'] ?? '[]', true);
 
 // Return updated profile
 echo json_encode([
