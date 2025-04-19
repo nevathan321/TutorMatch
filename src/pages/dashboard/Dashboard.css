@@ -237,12 +237,14 @@
 
 .calendar-container {
   padding: 1.25rem;
-  /* Modified: Increased height to fit calendar properly */
-  height: 400px;
-  overflow-y: auto; /* Added scrollbar for overflow content */
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: inherit;
 }
 
-/* Added styles for calendar responsive behavior */
 .calendar-container .react-calendar {
   width: 100%;
   border: none;
@@ -537,6 +539,47 @@
   background-color: #2563eb;
   transform: none;
   box-shadow: none;
+}
+
+.event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.event-item {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1rem 0;
+  transition: background-color 0.2s ease;
+}
+
+.event-item:last-child {
+  border-bottom: none;
+}
+
+.event-item:hover {
+  background-color: #f9fafb;
+  border-radius: 8px;
+}
+
+.event-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.event-time {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.no-events {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #94a3b8;
+  padding: 1rem 0;
 }
 
 /* Responsive adjustments */

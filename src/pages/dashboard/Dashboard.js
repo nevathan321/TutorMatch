@@ -16,6 +16,7 @@ function Dashboard({userProfile}) {
     earnings: 0,
     matches: 0,
   });
+
   const [totalMatches, setTotalMatches] = useState(null)
   const [recentMatches, setRecentMatches] = useState([]);
   const [reviews, setReviews] = useState([]);
@@ -88,21 +89,7 @@ function Dashboard({userProfile}) {
     setLoading(false)
   }, []);
 
-  // Add this useEffect to fetch tutors
-  useEffect(() => {
-    // In a real app, fetch tutors from your API
-    // For now, we'll use mock data
-    const mockTutors = [
-      { id: 1, name: "Dr. Michael Chen", subject: "Computer Science" },
-      { id: 2, name: "Prof. Emily Johnson", subject: "Biology" },
-      { id: 3, name: "Dr. Richard Doe", subject: "Mathematics" },
-      { id: 4, name: "Prof. Kelly Johnson", subject: "Physics" },
-    ];
 
-    setTutors(mockTutors);
-  }, []);
-
-  // Handle input changes for the review form
   const handleReviewChange = (e) => {
     const { name, value } = e.target;
     setNewReview((prev) => ({
@@ -386,17 +373,36 @@ function Dashboard({userProfile}) {
 
           <div className="calendar-container">
             {googleEvents.length > 0 ? (
-              googleEvents.map((event, index) => (
-                <div key={index} className="event">
-                  <strong>{event.summary}</strong>
-                  <p>
-                    {new Date(event.start).toLocaleString()} -{" "}
-                    {new Date(event.end).toLocaleString()}
-                  </p>
-                </div>
-              ))
+              <ul className="event-list">
+                {googleEvents.map((event, index) => {
+                  const start = new Date(event.start);
+                  const end = new Date(event.end);
+
+                  const dateOptions = { weekday: 'short', month: 'short', day: 'numeric' };
+                  const timeOptions = { hour: '2-digit', minute: '2-digit' };
+
+                  const formattedDate = start.toLocaleDateString(undefined, dateOptions);
+                  const startTime = start.toLocaleTimeString(undefined, timeOptions);
+                  const endTime = end.toLocaleTimeString(undefined, timeOptions);
+
+                  return (
+                    <li key={index} className="event-item">
+                      <div className="event-date">
+                        <span className="event-day">{formattedDate} , </span>
+                        <span className="event-time-range">{startTime} – {endTime}</span>
+                      </div>
+                      <div className="event-details">
+                        <strong className="event-title">{event.summary}</strong>
+                        {event.location && (
+                          <p className="event-location">{event.location}</p>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             ) : (
-              <p>No upcoming events found.</p>
+              <p className="no-events">No upcoming events found.</p>
             )}
           </div>
 
