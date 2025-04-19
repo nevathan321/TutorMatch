@@ -266,7 +266,7 @@ input::placeholder {
 }
 
 /* Responsive Adjustments */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .top {
     text-align: center;
   }
@@ -283,7 +283,7 @@ input::placeholder {
   .userContainer {
     flex-direction: column;
   }
-}
+} */
 
 /* Interactive Preferred Days Styling - kept for compatibility but not used */
 .days-grid {
@@ -329,4 +329,80 @@ input::placeholder {
 
 .day-button.selected:hover {
   background-color: #0d8bf2;
+}
+
+@media (min-width: 600px) {
+  .Profile {
+    padding: 0 2rem;
+  }
+  
+  .card {
+    padding: 2rem;
+  }
+  
+  .userContainer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  
+  .userContainer > div {
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  .passwords input {
+    width: 50%;
+  }
+}
+
+@media (min-width: 768px) {
+  .Profile {
+    margin: 2rem auto;
+  }
+  
+  .top h1 {
+    font-size: 1.75rem;
+  }
+  
+  .card {
+    margin: 2rem auto;
+  }
+}
+
+@media (min-width: 900px) {
+  .Profile {
+    max-width: 900px;
+  }
+}
+
+/* Adjust layout when navbar is present */
+@media (max-width: 1024px) {
+  .tile {
+    flex-direction: column;
+  }
+  
+  .Nav {
+    width: 100%;
+  }
+  
+  .page {
+    margin-left: 0;
+    padding: 0 1rem;
+  }
+}
+
+/* Very small devices */
+@media (max-width: 400px) {
+  .card {
+    padding: 1rem;
+  }
+  
+  input {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+  }
 }
