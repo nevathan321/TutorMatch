@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 // Enable error logging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -22,8 +24,12 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once '../vendor/autoload.php';
+
 use Google\Client;
 use Google\Service\Calendar;
+
+$tutorEmail = filter_var($input['tutorEmail'], FILTER_SANITIZE_EMAIL);
+
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -31,16 +37,16 @@ try {
         exit;
     }
 
-    // Check if it's a POST request
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Only POST method is allowed');
     }
-
     // Get and validate input
     $input = json_decode(file_get_contents('php://input'), true);
+
     if (!$input) {
         throw new Exception('No input data received');
     }
+
 
     // Validate required fields
     if (!isset($input['tutorEmail'], $input['startTime'], $input['endTime'], $input['summary'])) {
@@ -56,6 +62,7 @@ try {
         ]);
         exit;
     }
+
 
     $client = new Google_Client();
     $client->setAuthConfig('../credentials.json');
@@ -78,9 +85,10 @@ try {
         }
     }
 
-    // Create Calendar service
     $service = new Calendar($client);
 
+    $tutorEmail = filter_var($input['tutorEmail'], FILTER_SANITIZE_EMAIL);
+    $senderEmail = filter_var($input['tutorEmail'], FILTER_SANITIZE_EMAIL);
     
     $event = new Google\Service\Calendar\Event([
         'summary' => $input['summary'],
@@ -95,13 +103,14 @@ try {
         ],
         'attendees' => [
             [
-                'email' => $input['tutorEmail'],
+                'email' => $tutorEmail,
                 'responseStatus' => 'needsAction'
             ],
             [
-                'email' => 'liyuxiao2@gmail.com',
-                'responseStatus' => 'accepted'
+                'email' => $senderEmail,
+                'responseStatus' => 'needsAction'
             ]
+        
         ]
     ]);
     
@@ -109,6 +118,7 @@ try {
     $calendarId = 'primary';
     $event = $service->events->insert($calendarId, $event, ['sendUpdates' => 'all']);
 
+    ob_end_clean();
     echo json_encode([
         'success' => true,
         'eventId' => $event->getId(),
@@ -117,6 +127,7 @@ try {
 
 } catch (Exception $e) {
     http_response_code(500);
+    ob_end_clean();
     echo json_encode([
         'success' => false,
         'error' => $e->getMessage()

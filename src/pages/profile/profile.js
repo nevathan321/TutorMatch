@@ -4,16 +4,12 @@ import { useState, useEffect } from 'react';
 import './profile.css';
 
 function Profile({ userProfile, setUserProfile }) {
-    // Keep only the state variables that are actually being used
     const [profilePhoto, setProfilePhoto] = useState(null);
 
-    // useEffect to handle all initialization
     useEffect(() => {
         if (userProfile) {
-            // Remove the unused setSubjects call
             setProfilePhoto(userProfile.profilePhoto || userProfile.profile_image || profile);
 
-            // Directly set form values
             const fields = {
                 fname: userProfile.firstName || userProfile.first_name || '',
                 lname: userProfile.lastName || userProfile.last_name || '',
@@ -41,14 +37,43 @@ function Profile({ userProfile, setUserProfile }) {
                 behavior: 'smooth'
             });
         }, 0);
-
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            document.getElementById("submit").disabled = false;
-            document.getElementById("submit").classList.remove("disabled");
-            notification.classList.add('hidden');
-        }, 5000);
     }
+
+    useEffect(() => {
+        const form = document.querySelector('.userDetails');
+        const notification = document.getElementById('profileNotification');
+        const submitButton = document.getElementById("submit");
+
+        const handleFormChange = () => {
+            notification.classList.add('hidden');
+            submitButton.disabled = false;
+            submitButton.classList.remove("disabled");
+        };
+
+        const inputs = form.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('change', handleFormChange);
+            input.addEventListener('input', handleFormChange);
+        });
+
+        return () => {
+            inputs.forEach(input => {
+                input.removeEventListener('change', handleFormChange);
+                input.removeEventListener('input', handleFormChange);
+            });
+        };
+    }, []);
+
+    useEffect(() => {
+        const notification = document.getElementById('profileNotification');
+        const submitButton = document.getElementById("submit");
+
+        if (notification && submitButton) {
+            notification.classList.add('hidden');
+            submitButton.disabled = false;
+            submitButton.classList.remove("disabled");
+        }
+    }, [profilePhoto]);
 
     function checkPassword() {
         var password = document.getElementById('password').value;
@@ -63,9 +88,7 @@ function Profile({ userProfile, setUserProfile }) {
         }
     }
 
-    // Hide Tutor details on initial load
     useEffect(() => {
-        // Hide Tutor details completely
         const tutorDetails = document.querySelector('.TutorDetails');
         if (tutorDetails) {
             tutorDetails.style.display = 'none';
@@ -75,7 +98,6 @@ function Profile({ userProfile, setUserProfile }) {
     function saveProfileData(e) {
         e.preventDefault();
 
-        // TODO: Change to interact with DOM, not alerts
         if (!checkPassword()) {
             showNotification("Passwords don't match!", false);
             return;
@@ -89,11 +111,11 @@ function Profile({ userProfile, setUserProfile }) {
             { id: 'password', label: 'Password' },
             { id: 'confirmPassword', label: 'Confirm Password' }
         ];
-    
+
         for (const field of requiredFields) {
             const el = document.getElementById(field.id);
             if (!el || el.value.trim() === '') {
-                showNotification(`${field.label} is required.`, false);
+                showNotification(`${field.label} is required in correct format.`, false);
                 return;
             }
         }
@@ -101,7 +123,7 @@ function Profile({ userProfile, setUserProfile }) {
         const email = userProfile.email;
 
         const profileData = {
-            role: 'Tutee', // Always set as Tutee
+            role: 'Tutee',
             firstName: document.getElementById('fname').value,
             lastName: document.getElementById('lname').value,
             macId: document.getElementById('macId').value,
@@ -111,8 +133,6 @@ function Profile({ userProfile, setUserProfile }) {
             email
         };
 
-        console.log("Sent to server"); // Debug
-
         fetch('http://localhost/tutormatch/server/profile/createProfile.php', {
             method: 'POST',
             headers: {
@@ -121,10 +141,7 @@ function Profile({ userProfile, setUserProfile }) {
             body: JSON.stringify(profileData)
         })
             .then(async response => {
-                // Get raw response text regardless of content type
                 const responseText = await response.text();
-
-                // Try to parse as JSON
                 try {
                     const data = JSON.parse(responseText);
                     return data;
@@ -136,18 +153,13 @@ function Profile({ userProfile, setUserProfile }) {
             .then(data => {
                 if (data.success) {
                     showNotification("Profile updated successfully!", true);
-                    document.getElementById('confirmPassword').value = "";
-
-                    // Update all form fields with the new data
                     document.getElementById("fname").value = data.user_profile.first_name || "";
                     document.getElementById("lname").value = data.user_profile.last_name || "";
                     document.getElementById("macId").value = data.user_profile.macid || "";
                     document.getElementById("studentNumber").value = data.user_profile.student_number || "";
 
-                    // Update React component state
                     setProfilePhoto(data.user_profile.profile_image || profile);
 
-                    // Update the parent component's userProfile state
                     if (typeof setUserProfile === 'function') {
                         setUserProfile(prev => ({
                             ...prev,
@@ -158,17 +170,15 @@ function Profile({ userProfile, setUserProfile }) {
                             studentNumber: data.user_profile.student_number,
                             role: 'Tutee',
                             profilePhoto: data.user_profile.profile_image,
-                            profile_image: data.user_profile.profile_image, // Maintain both if needed
-                            // Preserve any existing fields not being updated
+                            profile_image: data.user_profile.profile_image,
                             email: prev.email,
                             major: prev.major,
-                            ...(prev.user_type && { user_type: prev.user_type }) // Preserve if exists
+                            ...(prev.user_type && { user_type: prev.user_type })
                         }));
                     }
 
                 } else {
                     showNotification(`Failed to update profile: ${data.message || 'Unknown error'}`, false);
-                    console.warn("Server reported failure:", data);
                 }
             })
             .catch(err => {
@@ -185,7 +195,7 @@ function Profile({ userProfile, setUserProfile }) {
             <div className='top'>
                 <h1> Edit Profile </h1>
             </div>
-            
+
             <div className="card">
                 <ProfilePhotoBlock
                     initialPhoto={profilePhoto}
@@ -195,8 +205,6 @@ function Profile({ userProfile, setUserProfile }) {
             </div>
 
             <div className="card">
-                {/* Removed the toggle switch component */}
-                
                 <h1> User Details</h1>
                 <form className="userDetails">
                     <div className='userContainer'>
@@ -215,13 +223,10 @@ function Profile({ userProfile, setUserProfile }) {
                         <input type='number' id='studentNumber' name='studentNumber' placeholder='Student Number' required />
                     </div>
 
-                    {/* Kept TutorDetails in the DOM but hidden via CSS */}
-                    <div className="TutorDetails" style={{ display: 'none' }}>
-                        {/* Tutor-specific fields kept but hidden */}
-                    </div>
-                    
+                    <div className="TutorDetails" style={{ display: 'none' }}></div>
+
                     <div className="passwords">
-                        <label htmlFor='password'>Password:</label>
+                        <label htmlFor='password'>New Password:</label>
                         <input onInput={checkPassword} style={{ width: '50%' }} type='password' id='password' name='password' placeholder='Password' required />
 
                         <label htmlFor='confirmPassword'>Confirm Password:</label>
@@ -232,13 +237,11 @@ function Profile({ userProfile, setUserProfile }) {
                     <div className="buttonGroup">
                         <button className="btn" id="submit" type='submit' onClick={saveProfileData}>Update</button>
                     </div>
-                    
                 </form>
-                
             </div>
             <div id="profileNotification" className="profile-notification hidden"></div>
         </div>
-    )
+    );
 }
 
 export default Profile;

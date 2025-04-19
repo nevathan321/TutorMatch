@@ -6,8 +6,27 @@ import "./inbox.css"
 
 import MyCalendar from "../../components/calendar/MyCalendar"
 
-function Inbox() {
+
+const getYearOfStudyString = (year) => {
+  switch (year) {
+    case 1:
+      return "1st Year";
+    case 2:
+      return "2nd Year";
+    case 3:
+      return "3rd Year";
+    case 4:
+      return "4th Year";
+    case 5:
+      return "5th Year";
+    default:
+      return "N/A";
+  }
+};
+
+function Inbox({userProfile}) {
   const [matches, setMatches] = useState([])
+  const [filteredMatches, setFilteredMatches] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTutor, setSelectedTutor] = useState(null)
@@ -134,18 +153,28 @@ function Inbox() {
   }
 
   useEffect(() => {
-    const fetchMatches = async () => {
+    const fetchMatchedTutors = async () => {
       try {
-        const combinedMatches = loadMatchesFromStorage()
-        setMatches(combinedMatches)
-        setLoading(false)
-      } catch (error) {
-        console.error("Error fetching matches:", error)
-        setLoading(false)
+        const response = await fetch(
+          `http://localhost/tutorMatch/server/match/getMatches.php?tuteeID=${userProfile.id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+  
+        const matchedTutors = await response.json();
+        setMatches(matchedTutors)
+        const filter = matchedTutors.filter((match) => match.full_name.toLowerCase().includes(searchTerm.toLowerCase()))
+        setFilteredMatches(filter)
+      } catch (err) {
+        console.error("Login error:", err);
       }
-    }
+    };
 
-    fetchMatches()
+    fetchMatchedTutors()
 
     const handleTutorMatched = () => {
       console.log("Tutor matched event received!")
@@ -162,15 +191,16 @@ function Inbox() {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value)
+    const filter = matches.filter((match) => match.full_name.toLowerCase().includes(e.target.value.toLowerCase()))
+    setFilteredMatches(filter)
   }
 
-  const filteredMatches = matches.filter((match) => match.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   const handleSelectTutor = (tutor) => {
     setSelectedTutor(tutor)
     setEmailContent({
-      subject: `TutorMatch: Session with ${tutor.name}`,
-      message: `Hi ${tutor.name},\n\nI'd like to schedule a tutoring session with you for ${tutor.subjects[0]}.\n\nBest regards,\n[Your Name]`,
+      subject: `TutorMatch: Session with ${tutor.full_name}`,
+      message: `Hi ${tutor.full_name},\n\nI'd like to schedule a tutoring session with you for ${tutor.subjects[0]}.\n\nBest regards,\n[Your Name]`,
     })
     setShowEmailModal(true)
   }
@@ -193,11 +223,12 @@ function Inbox() {
         credentials: 'include',
         body: JSON.stringify({
           tutorEmail: tutor.email,
+          senderEmail: localStorage.getItem("userEmail"),
           startTime: startDateTime.toISOString(),
           endTime: endDateTime.toISOString(),
-          summary: `Tutoring Session with ${tutor.name}`,
+          summary: `Tutoring Session with ${tutor.full_name}`,
           description: `Tutoring session for ${tutor.subjects.join(', ')}`,
-          tutorName: tutor.name
+          tutorName: tutor.full_name
         })
       });
 
@@ -206,7 +237,11 @@ function Inbox() {
       if (result.success) {
         return { success: true, eventLink: result.eventLink };
       } else if (result.redirect) {
-        const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
+        const authWindow = window.open(
+          "https://cs.1xd3.mcmaster.ca/~yourUsername/TutorMatch/server/authenticate.php",
+          "googleAuth",
+          "width=600,height=600"
+        );
 
         return new Promise((resolve) => {
           const checkAuthWindow = setInterval(() => {
@@ -233,6 +268,7 @@ function Inbox() {
   
     try {
       const emailEndpoint = "http://localhost/TutorMatch/server/email/email.php";
+    
       
       const response = await fetch(emailEndpoint, {
         method: "POST",
@@ -258,7 +294,11 @@ function Inbox() {
       } else {
         if (result.redirect) {
           setEmailStatus({ type: "info", message: "Authentication required. Redirecting to Google login..." });
-          const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
+          const authWindow = window.open(
+            "https://cs.1xd3.mcmaster.ca/~yourUsername/TutorMatch/server/authenticate.php",
+            "googleAuth",
+            "width=600,height=600"
+          );
           
           const checkAuthWindow = setInterval(() => {
             if (authWindow.closed) {
@@ -311,19 +351,19 @@ function Inbox() {
             <div key={match.id} className="tutor-match-card">
               <div className="match-header">
                 <div className="match-date">
-                  Matched on {new Date(match.matchDate).toLocaleDateString()}
+                  Matched
                 </div>
                 {match.unread && <div className="unread-badge">New</div>}
               </div>
               
               <div className="tutor-info">
                 <div className="tutor-image">
-                  <img src={match.profileImage || "/placeholder-avatar.png"} alt={match.name} />
+                  <img src={match.profileImage || "/placeholder-avatar.png"} alt={match.full_name} />
                 </div>
                 <div className="tutor-details">
-                  <h3>{match.name}</h3>
+                  <h3>{match.full_name}</h3>
                   <div className="tutor-subjects">
-                    {match.subjects.map((subject, index) => (
+                    {JSON.parse(match.main_subjects).map((subject, index) => (
                       <span key={index} className="subject-tag">{subject}</span>
                     ))}
                   </div>
@@ -335,8 +375,8 @@ function Inbox() {
                     </div>
                     <span className="rating-value">{match.rating.toFixed(1)}</span>
                   </div>
-                  <div className="tutor-education">{match.education}</div>
-                  <div className="tutor-rate">${match.hourlyRate}/hour</div>
+                  <div className="tutor-education">{match.major} - {getYearOfStudyString(match.year_of_study)}</div>
+                  <div className="tutor-rate">${match.wage}/hour</div>
                 </div>
               </div>
               
@@ -391,7 +431,7 @@ function Inbox() {
       <div className="email-modal-overlay">
         <div className="email-modal">
           <div className="email-modal-header">
-            <h3>Email {selectedTutor.name}</h3>
+            <h3>Email {selectedTutor.full_name}</h3>
             <button className="close-button" onClick={() => setShowEmailModal(false)}>×</button>
           </div>
           <div className="email-modal-content">
@@ -443,7 +483,7 @@ function Inbox() {
       <div className="email-modal-overlay">
         <div className="email-modal">
           <div className="email-modal-header">
-            <h3>Schedule with {calendarTutor?.name}</h3>
+            <h3>Schedule with {calendarTutor?.full_name}</h3>
             <button className="close-button" onClick={() => setShowCalendarModal(false)}>×</button>
           </div>
           
