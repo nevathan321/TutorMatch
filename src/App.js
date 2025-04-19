@@ -77,7 +77,7 @@ function App() {
             <div className="page">
               <Routes>
                 <Route path="/profile" element={<Profile userProfile={userProfile} setUserProfile={setUserProfile} />} />
-                <Route path="*" element={<Dashboard />} />
+                <Route path="*" element={<Dashboard userProfile={userProfile} />} />
                 <Route path="/inbox" element={<Inbox userProfile={userProfile} />} />
                 <Route path="/match" element={<Match userProfile={userProfile}/>} />
               </Routes>
