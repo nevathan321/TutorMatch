@@ -4,28 +4,17 @@ import { useState, useEffect } from 'react';
 import './profile.css';
 
 function Profile({ userProfile, setUserProfile }) {
+    const [profilePhoto, setProfilePhoto] = useState(null);
 
-    const [role, setRole] = useState('Tutee');
-    const [subject, setSubject] = useState('');
-    const [subjects, setSubjects] = useState([]);
-    const [profilePhoto, setProfilePhoto] = useState(profile);
-    const [selectedDays, setSelectedDays] = useState([]);
-
-    // useEffect to handle all initialization
     useEffect(() => {
         if (userProfile) {
-            setRole(userProfile.role || 'Tutee');
-            setSubjects(userProfile.main_subjects || userProfile.subjectExpertise || []);
-            console.log("subjects: ", subjects);
             setProfilePhoto(userProfile.profilePhoto || userProfile.profile_image || profile);
-            setSelectedDays(userProfile.preferredDays || []);
 
-            // Directly set form values
             const fields = {
                 fname: userProfile.firstName || userProfile.first_name || '',
                 lname: userProfile.lastName || userProfile.last_name || '',
                 macId: userProfile.macId || userProfile.macid || '',
-                studentNumber: userProfile.studentNumber || userProfile.student_number || ''
+                studentNumber: userProfile.studentNumber || userProfile.student_number || '',
             };
 
             Object.entries(fields).forEach(([id, value]) => {
@@ -35,9 +24,7 @@ function Profile({ userProfile, setUserProfile }) {
         }
     }, [userProfile]);
 
-
     function showNotification(message, isSuccess) {
-
         const notification = document.getElementById('profileNotification');
         notification.textContent = message;
         notification.className = `profile-notification ${isSuccess ? 'success' : 'error'}`;
@@ -50,13 +37,6 @@ function Profile({ userProfile, setUserProfile }) {
                 behavior: 'smooth'
             });
         }, 0);
-
-        // // Auto-hide after 5 seconds
-        // setTimeout(() => {
-        //     document.getElementById("submit").disabled = false;
-        //     document.getElementById("submit").classList.remove("disabled");
-        //     notification.classList.add('hidden');
-        // }, 5000);
     }
 
     useEffect(() => {
@@ -65,41 +45,35 @@ function Profile({ userProfile, setUserProfile }) {
         const submitButton = document.getElementById("submit");
 
         const handleFormChange = () => {
-            // Hide notification and re-enable button
             notification.classList.add('hidden');
             submitButton.disabled = false;
             submitButton.classList.remove("disabled");
         };
 
-        // Add event listeners to all form inputs
         const inputs = form.querySelectorAll('input, textarea, select');
         inputs.forEach(input => {
             input.addEventListener('change', handleFormChange);
             input.addEventListener('input', handleFormChange);
         });
 
-        // Cleanup
         return () => {
             inputs.forEach(input => {
                 input.removeEventListener('change', handleFormChange);
                 input.removeEventListener('input', handleFormChange);
             });
         };
-    }, []); // This runs once on mount
+    }, []);
 
-
-    // Handle profile photo changes
     useEffect(() => {
         const notification = document.getElementById('profileNotification');
         const submitButton = document.getElementById("submit");
 
-        // Only run this effect if profilePhoto changes and notification exists
         if (notification && submitButton) {
             notification.classList.add('hidden');
             submitButton.disabled = false;
             submitButton.classList.remove("disabled");
         }
-    }, [profilePhoto]); // Will run whenever profilePhoto state changes
+    }, [profilePhoto]);
 
     function checkPassword() {
         var password = document.getElementById('password').value;
@@ -113,6 +87,13 @@ function Profile({ userProfile, setUserProfile }) {
             return true;
         }
     }
+
+    useEffect(() => {
+        const tutorDetails = document.querySelector('.TutorDetails');
+        if (tutorDetails) {
+            tutorDetails.style.display = 'none';
+        }
+    }, []);
 
     function saveProfileData(e) {
         e.preventDefault();
@@ -131,12 +112,6 @@ function Profile({ userProfile, setUserProfile }) {
             { id: 'confirmPassword', label: 'Confirm Password' }
         ];
 
-        if (role === 'Tutor') {
-            requiredFields.push(
-                { id: 'hourlyRate', label: 'Hourly Rate' }
-            );
-        }
-
         for (const field of requiredFields) {
             const el = document.getElementById(field.id);
             if (!el || el.value.trim() === '') {
@@ -148,20 +123,15 @@ function Profile({ userProfile, setUserProfile }) {
         const email = userProfile.email;
 
         const profileData = {
-            role,
+            role: 'Tutee',
             firstName: document.getElementById('fname').value,
             lastName: document.getElementById('lname').value,
             macId: document.getElementById('macId').value,
             studentNumber: document.getElementById('studentNumber').value,
-            hourlyRate: role === 'Tutor' ? document.getElementById('hourlyRate').value : null,
-            preferredDays: role === 'Tutor' ? selectedDays : [],
-            main_subjects: role === 'Tutor' ? subjects : [],
             password: document.getElementById('password').value,
             profilePhoto: profilePhoto || null,
             email
         };
-
-        console.log("Sent to server"); // Debug
 
         fetch('http://localhost/tutormatch/server/profile/createProfile.php', {
             method: 'POST',
@@ -171,10 +141,7 @@ function Profile({ userProfile, setUserProfile }) {
             body: JSON.stringify(profileData)
         })
             .then(async response => {
-                // Get raw response text regardless of content type
                 const responseText = await response.text();
-
-                // Try to parse as JSON
                 try {
                     const data = JSON.parse(responseText);
                     return data;
@@ -186,18 +153,13 @@ function Profile({ userProfile, setUserProfile }) {
             .then(data => {
                 if (data.success) {
                     showNotification("Profile updated successfully!", true);
-                    // REMOVED document.getElementById('confirmPassword').value = "";
-
-                    // Update all form fields with the new data
                     document.getElementById("fname").value = data.user_profile.first_name || "";
                     document.getElementById("lname").value = data.user_profile.last_name || "";
                     document.getElementById("macId").value = data.user_profile.macid || "";
                     document.getElementById("studentNumber").value = data.user_profile.student_number || "";
 
-                    // Update React component state
                     setProfilePhoto(data.user_profile.profile_image || profile);
 
-                    // Update the parent component's userProfile state
                     if (typeof setUserProfile === 'function') {
                         setUserProfile(prev => ({
                             ...prev,
@@ -206,24 +168,17 @@ function Profile({ userProfile, setUserProfile }) {
                             fullName: `${data.user_profile.first_name} ${data.user_profile.last_name}`,
                             macId: data.user_profile.macid,
                             studentNumber: data.user_profile.student_number,
-                            role: data.user_profile.user_type === 'tutor' ? 'Tutor' : 'Tutee',
-                            wage: data.user_profile.wage,
-                            hourlyRate: data.user_profile.wage,
+                            role: 'Tutee',
                             profilePhoto: data.user_profile.profile_image,
-                            profile_image: data.user_profile.profile_image, // Maintain both if needed
-                            main_subjects: data.user_profile.main_subjects || [],
-                            subjectExpertise: data.user_profile.main_subjects || [], // Keep both for backward compatibility
-                            preferredDays: data.user_profile.preferred_days || [],
-                            // Preserve any existing fields not being updated
+                            profile_image: data.user_profile.profile_image,
                             email: prev.email,
                             major: prev.major,
-                            ...(prev.user_type && { user_type: prev.user_type }) // Preserve if exists
+                            ...(prev.user_type && { user_type: prev.user_type })
                         }));
                     }
 
                 } else {
                     showNotification(`Failed to update profile: ${data.message || 'Unknown error'}`, false);
-                    console.warn("Server reported failure:", data);
                 }
             })
             .catch(err => {
@@ -241,7 +196,6 @@ function Profile({ userProfile, setUserProfile }) {
                 <h1> Edit Profile </h1>
             </div>
 
-
             <div className="card">
                 <ProfilePhotoBlock
                     initialPhoto={profilePhoto}
@@ -251,8 +205,6 @@ function Profile({ userProfile, setUserProfile }) {
             </div>
 
             <div className="card">
-
-
                 <h1> User Details</h1>
                 <form className="userDetails">
                     <div className='userContainer'>
@@ -271,6 +223,7 @@ function Profile({ userProfile, setUserProfile }) {
                         <input type='number' id='studentNumber' name='studentNumber' placeholder='Student Number' required />
                     </div>
 
+                    <div className="TutorDetails" style={{ display: 'none' }}></div>
 
                     <div className="passwords">
                         <label htmlFor='password'>New Password:</label>
@@ -283,16 +236,12 @@ function Profile({ userProfile, setUserProfile }) {
 
                     <div className="buttonGroup">
                         <button className="btn" id="submit" type='submit' onClick={saveProfileData}>Update</button>
-
-
                     </div>
-
                 </form>
-
             </div>
             <div id="profileNotification" className="profile-notification hidden"></div>
         </div>
-    )
+    );
 }
 
 export default Profile;
