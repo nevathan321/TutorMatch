@@ -16,7 +16,6 @@ function Profile({ userProfile, setUserProfile }) {
         if (userProfile) {
             setRole(userProfile.role || 'Tutee');
             setSubjects(userProfile.main_subjects || userProfile.subjectExpertise || []);
-            console.log("subjects: ", subjects);
             setProfilePhoto(userProfile.profilePhoto || userProfile.profile_image || profile);
             setSelectedDays(userProfile.preferredDays || []);
 
