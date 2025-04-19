@@ -8,6 +8,7 @@ function Profile({ userProfile, setUserProfile }) {
 
     useEffect(() => {
         if (userProfile) {
+
             setProfilePhoto(userProfile.profilePhoto || userProfile.profile_image || profile);
 
             const fields = {
