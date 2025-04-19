@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
-import TutorCard from "../../components/TutorCard/TutorCard";
-import { useNotifications } from "../../context/NotificationContext";
-import "./match.css";
+"use client"
+
+import { useState, useEffect } from "react"
+import TutorCard from "../../components/TutorCard/TutorCard"
+import { useNotifications } from "../../context/NotificationContext"
+import "./match.css"
 
 // Sample data - replace with API call in a real application
 
@@ -89,13 +91,13 @@ function Match({ userProfile }) {
 
     if (updatedTutors.length === 0) {
       // No more tutors to show
-      setTutors([]);
-      setAllTutorsViewed(true);
+      setTutors([])
+      setAllTutorsViewed(true)
     } else {
-      setTutors(updatedTutors);
+      setTutors(updatedTutors)
       // If we're at the end of the list, go back to the first tutor
       if (currentTutorIndex >= updatedTutors.length) {
-        setCurrentTutorIndex(0);
+        setCurrentTutorIndex(0)
       }
     }
   };
@@ -113,20 +115,21 @@ function Match({ userProfile }) {
     setAcceptedTutors((prev) => [...prev, acceptedTutor]);
 
     // Remove the current tutor from the list
-    const updatedTutors = [...tutors];
-    updatedTutors.splice(currentTutorIndex, 1);
-    
+    const updatedTutors = [...tutors]
+    updatedTutors.splice(currentTutorIndex, 1)
+
     if (updatedTutors.length === 0) {
       // No more tutors to show
-      setTutors([]);
-      setAllTutorsViewed(true);
+      setTutors([])
+      setAllTutorsViewed(true)
     } else {
-      setTutors(updatedTutors);
+      setTutors(updatedTutors)
       // If we're at the end of the list, go back to the first tutor
       if (currentTutorIndex >= updatedTutors.length) {
-        setCurrentTutorIndex(0);
+        setCurrentTutorIndex(0)
       }
     }
+
 
     // Add a notification for the match
     addNotification({
@@ -190,6 +193,7 @@ function Match({ userProfile }) {
     <div className="match-container">
       <h1 className="match-heading">Let's Find Your Perfect Tutor!</h1>
 
+
       <div className="tutor-card-container">
         {tutors.length > 0 ? (
           <div className="tutor-card-with-navigation">
@@ -209,13 +213,16 @@ function Match({ userProfile }) {
               </svg>
             </button>
 
+
             {/* Tutor card */}
             <TutorCard
+            
               tutor={tutors[currentTutorIndex]}
               onSeeMoreReviews={handleSeeMoreReviews}
               onAccept={handleAccept}
               onReject={handleReject}
             />
+
 
             {/* Next button positioned absolutely */}
             <button
@@ -262,7 +269,7 @@ function Match({ userProfile }) {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 export default Match;

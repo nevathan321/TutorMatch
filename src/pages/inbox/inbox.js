@@ -38,9 +38,9 @@ function Inbox({userProfile}) {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [calendarTutor, setCalendarTutor] = useState(null)
 
+
   const [startTime, setStartTime] = useState('10:00');
   const [endTime, setEndTime] = useState('11:00');
-  
 
   const loadMatchesFromStorage = () => {
     try {
@@ -204,7 +204,6 @@ function Inbox({userProfile}) {
     })
     setShowEmailModal(true)
   }
-
   const sendCalendarInvite = async (tutor, date, startTimeStr, endTimeStr) => {
     try {
       const startDateTime = new Date(date);
@@ -268,7 +267,6 @@ function Inbox({userProfile}) {
   
     try {
       const emailEndpoint = "http://localhost/TutorMatch/server/email/email.php";
-    
       
       const response = await fetch(emailEndpoint, {
         method: "POST",
@@ -294,11 +292,7 @@ function Inbox({userProfile}) {
       } else {
         if (result.redirect) {
           setEmailStatus({ type: "info", message: "Authentication required. Redirecting to Google login..." });
-          const authWindow = window.open(
-            "https://cs.1xd3.mcmaster.ca/~yourUsername/TutorMatch/server/authenticate.php",
-            "googleAuth",
-            "width=600,height=600"
-          );
+          const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
           
           const checkAuthWindow = setInterval(() => {
             if (authWindow.closed) {
@@ -553,4 +547,4 @@ function Inbox({userProfile}) {
   );
 }
 
-export default Inbox;
+export default Inbox
