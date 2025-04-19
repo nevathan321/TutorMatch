@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
-import TutorCard from "../../components/TutorCard/TutorCard";
-import { useNotifications } from "../../context/NotificationContext";
-import "./match.css";
+"use client"
+
+import { useState, useEffect } from "react"
+import TutorCard from "../../components/TutorCard/TutorCard"
+import { useNotifications } from "../../context/NotificationContext"
+import "./match.css"
 
 // Sample data - replace with API call in a real application
 
@@ -14,10 +16,9 @@ function Match({ userProfile }) {
   const { addNotification, initializeAudio } = useNotifications();
 
   const fetchTutors = async () => {
-    //regular login
     try {
       const response = await fetch(
-        "http://localhost/tutorMatch/server/match/getTutors.php",
+        `http://localhost/tutorMatch/server/match/getTutors.php?tuteeID=${userProfile.id}`,
         {
           method: "GET",
           headers: {
@@ -34,9 +35,7 @@ function Match({ userProfile }) {
     }
   };
 
-  const updatedMatchedTutors = async (tutorID) => {
-    console.log(tutorID)
-    console.log(userProfile.id)
+  const updateMatchedTutors = async (tutorID) => {
     try {
       const response = await fetch(
         `http://localhost/tutorMatch/server/match/updateMatches.php?tutorID=${tutorID}&tuteeID=${userProfile.id}`,
@@ -54,6 +53,24 @@ function Match({ userProfile }) {
     }
   };
 
+  const updateRejectedTutors = async (tutorID) => {
+    try {
+      const response = await fetch(
+        `http://localhost/tutorMatch/server/match/updateRejectedTutors.php?tutorID=${tutorID}&tuteeID=${userProfile.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      const result = await response.json();
+      
+    } catch (err) {
+      console.error("Login error:", err);
+    }
+  };
+
   useEffect(() => {
     //run on load
     fetchTutors();
@@ -62,7 +79,7 @@ function Match({ userProfile }) {
   // Handle rejecting a tutor (swipe left)
   const handleReject = () => {
     if (tutors.length === 0) return;
-
+    updateRejectedTutors(tutors[currentTutorIndex].id)
     const rejectedTutor = tutors[currentTutorIndex];
 
     // Add to rejected list
@@ -74,13 +91,13 @@ function Match({ userProfile }) {
 
     if (updatedTutors.length === 0) {
       // No more tutors to show
-      setTutors([]);
-      setAllTutorsViewed(true);
+      setTutors([])
+      setAllTutorsViewed(true)
     } else {
-      setTutors(updatedTutors);
+      setTutors(updatedTutors)
       // If we're at the end of the list, go back to the first tutor
       if (currentTutorIndex >= updatedTutors.length) {
-        setCurrentTutorIndex(0);
+        setCurrentTutorIndex(0)
       }
     }
   };
@@ -88,7 +105,7 @@ function Match({ userProfile }) {
   // Handle accepting a tutor (swipe right)
   const handleAccept = () => {
     if (tutors.length === 0) return;
-    updatedMatchedTutors(tutors[currentTutorIndex].id)
+    updateMatchedTutors(tutors[currentTutorIndex].id)
     // Initialize audio on user interaction
     initializeAudio();
 
@@ -98,20 +115,21 @@ function Match({ userProfile }) {
     setAcceptedTutors((prev) => [...prev, acceptedTutor]);
 
     // Remove the current tutor from the list
-    const updatedTutors = [...tutors];
-    updatedTutors.splice(currentTutorIndex, 1);
-    
+    const updatedTutors = [...tutors]
+    updatedTutors.splice(currentTutorIndex, 1)
+
     if (updatedTutors.length === 0) {
       // No more tutors to show
-      setTutors([]);
-      setAllTutorsViewed(true);
+      setTutors([])
+      setAllTutorsViewed(true)
     } else {
-      setTutors(updatedTutors);
+      setTutors(updatedTutors)
       // If we're at the end of the list, go back to the first tutor
       if (currentTutorIndex >= updatedTutors.length) {
-        setCurrentTutorIndex(0);
+        setCurrentTutorIndex(0)
       }
     }
+
 
     // Add a notification for the match
     addNotification({
@@ -175,6 +193,7 @@ function Match({ userProfile }) {
     <div className="match-container">
       <h1 className="match-heading">Let's Find Your Perfect Tutor!</h1>
 
+
       <div className="tutor-card-container">
         {tutors.length > 0 ? (
           <div className="tutor-card-with-navigation">
@@ -194,13 +213,16 @@ function Match({ userProfile }) {
               </svg>
             </button>
 
+
             {/* Tutor card */}
             <TutorCard
+            
               tutor={tutors[currentTutorIndex]}
               onSeeMoreReviews={handleSeeMoreReviews}
               onAccept={handleAccept}
               onReject={handleReject}
             />
+
 
             {/* Next button positioned absolutely */}
             <button
@@ -247,7 +269,7 @@ function Match({ userProfile }) {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 export default Match;
