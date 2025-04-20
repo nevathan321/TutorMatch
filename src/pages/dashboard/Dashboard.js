@@ -62,7 +62,7 @@ function Dashboard({userProfile}) {
     fetchGoogleEvents();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => {//runs on component load, fetches tutors from database
     const fetchMatchedTutors = async () => {
       try {
         const response = await fetch(
@@ -77,9 +77,9 @@ function Dashboard({userProfile}) {
 
         const matchedTutors = await response.json();
        
-        setRecentMatches(matchedTutors.slice(0,4));//show max 4
+        setRecentMatches(matchedTutors.slice(-4));//gets last 4 matches
         setTotalMatches(matchedTutors.length)
-        console.log(matchedTutors)
+    
       } catch (err) {
         console.error("Login error:", err);
       }
@@ -89,12 +89,14 @@ function Dashboard({userProfile}) {
     setLoading(false)
   }, []);
 
+  
 
   const handleReviewChange = (e) => {
     const { name, value } = e.target;
     setNewReview((prev) => ({
       ...prev,
       [name]: value,
+      
     }));
   };
 
@@ -110,32 +112,25 @@ function Dashboard({userProfile}) {
   const handleReviewSubmit = (e) => {
     e.preventDefault();
 
-    // Validate that a tutor is selected
-    if (!newReview.tutorId) {
-      alert("Please select a tutor to review");
-      return;
+
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];
+
+    const getTutorName = (tutorID) => {
+      for (const tutor of recentMatches){
+        console.log(tutor )
+        if (tutor.id === Number(tutorID)) return tutor.full_name
+      }
     }
-    console.log(e);
-    // In a real app, you would send this to your API
-    const currentDate = new Date().toISOString().split("T")[0];
-    const userName = localStorage.getItem("userName") || "You";
-
-    // Find the tutor name based on tutorId
-    const tutor = tutors.find(
-      (t) => t.id.toString() === newReview.tutorId.toString()
-    );
-    const tutorName = tutor ? tutor.name : "Unknown Tutor";
-
     const newReviewObj = {
-      id: reviews.length + 1,
+      authorID: userProfile.id ,
       rating: Number.parseInt(newReview.rating),
       title: newReview.title,
       body: newReview.body,
-      author: userName,
-      date: currentDate,
-      pfp: "/placeholder-avatar.png",
-      tutorId: newReview.tutorId,
-      tutorName: tutorName,
+      authorName: userProfile.full_name,
+      datePosted: formattedDate,
+      tutorID: newReview.tutorId,
+      tutorName: getTutorName(newReview.tutorId),
     };
 
     // Add to reviews list
@@ -149,7 +144,23 @@ function Dashboard({userProfile}) {
       tutorId: "",
     });
 
-    // In a real app, you would save this to a database
+    const uploadReview = async (newReviewObj) => {
+      try {
+        const response = await fetch(`http://localhost/tutorMatch/server/reviews/createReview.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newReviewObj),
+        });
+  
+        //const result = await response.json();
+    
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+    uploadReview(newReviewObj)
     console.log("Review submitted:", newReviewObj);
   };
 
@@ -428,9 +439,9 @@ function Dashboard({userProfile}) {
                 className="tutor-select"
                 required>
                 <option value="">-- Select a Tutor --</option>
-                {tutors.map((tutor) => (
+                {recentMatches.map((tutor) => (
                   <option key={tutor.id} value={tutor.id}>
-                    {tutor.name} - {tutor.subject}
+                    {tutor.full_name} - {JSON.parse(tutor.main_subjects)[0]}
                   </option>
                 ))}
               </select>
