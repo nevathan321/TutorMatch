@@ -1,3 +1,10 @@
+/**
+* TutorMatch Group
+* 
+* Date: April 7, 2025
+* 
+* Navigation Component for switching between pages
+*/
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationContext';
