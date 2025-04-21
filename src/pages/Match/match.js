@@ -28,7 +28,6 @@ function Match({ userProfile }) {
       );
 
       const tutorsResult = await response.json();
-      console.log(tutorsResult);
       setTutors(tutorsResult);
     } catch (err) {
       console.error("Login error:", err);
@@ -47,7 +46,6 @@ function Match({ userProfile }) {
         }
       );
       const result = await response.json();
-      console.log(result);
     } catch (err) {
       console.error("Login error:", err);
     }
@@ -152,7 +150,7 @@ function Match({ userProfile }) {
     if (tutors.length === 0) return;
 
     // No notification for seeing more reviews
-    console.log("Showing more reviews for", tutors[currentTutorIndex].name);
+
   };
 
   // Navigate to previous tutor

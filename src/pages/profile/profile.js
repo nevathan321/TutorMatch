@@ -11,11 +11,12 @@
 import profile from "../../images/profile.png";
 import ProfilePhotoBlock from "../../components/profilephoto/profilePhoto";
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import './profile.css';
 
-function Profile({ userProfile, setUserProfile }) {
+function Profile({ userProfile, setUserProfile, setIsLoggedIn }) {
     const [profilePhoto, setProfilePhoto] = useState(null);
-
+    const navigate = useNavigate();
     /**
     * Initializes profile data when userProfile prop changes
     * 
@@ -48,6 +49,14 @@ function Profile({ userProfile, setUserProfile }) {
     * @param {String} message - Notification message to display
     * @param {Boolean} isSuccess - Determines notification style (success/error)
     */
+
+    const handleLogout = () => {//when logout button is clicked
+        //clear all user information
+        setUserProfile(null)
+        setIsLoggedIn(false)
+        localStorage.removeItem("tutorMatch-email");
+        navigate("/");
+    }
     function showNotification(message, isSuccess) {
         const notification = document.getElementById('profileNotification');
         notification.textContent = message;
@@ -292,7 +301,15 @@ function Profile({ userProfile, setUserProfile }) {
                     </div>
                 </form>
             </div>
+           
             <div id="profileNotification" className="profile-notification hidden"></div>
+            <div className="card">
+               
+                <div className="logout-btn">
+                    <button onClick={handleLogout}>Logout</button>
+                </div >
+                  
+            </div>
         </div>
     );
 }

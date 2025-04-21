@@ -303,6 +303,17 @@ input::placeholder {
     min-width: 250px;
 }
 
+.logout-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+.logout-btn button {
+  background-color: #dc3545;
+  color: white;
+  font-size: 18px;
+}
 
 /* Interactive Preferred Days Styling - kept for compatibility but not used */
 .days-grid {
