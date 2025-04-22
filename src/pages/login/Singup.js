@@ -17,7 +17,6 @@ export default function Signup({ setIsLoggedIn, setUserProfile }) {
     const token = response.credential;
     const userInfo = jwtDecode(token);
 
-    console.log("Decoded token:", userInfo);
     setEmail(userInfo.email)
     setFirstName(userInfo.given_name)
     setLastName(userInfo.family_name)
@@ -75,6 +74,7 @@ export default function Signup({ setIsLoggedIn, setUserProfile }) {
 
           <p className="signup-link">
             Already have an account?{" "}
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a onClick={() => navigate("/login")}>Login</a>
           </p>
         </div>

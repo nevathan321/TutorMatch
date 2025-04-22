@@ -1,4 +1,5 @@
 <?php
+//returns array of all tutors that user hasnt accepted or declined
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
