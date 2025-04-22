@@ -1,32 +1,31 @@
 import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
-// Remove direct import of notification sound
-// import notificationSound from '../assets/notification-sound.mp3';
 
+// Create a context for notifications
 const NotificationContext = createContext();
 
+// Custom hook to access notifications context
 export const useNotifications = () => useContext(NotificationContext);
 
+// NotificationProvider component to provide notification functionality
 export const NotificationProvider = ({ children }) => {
-  const [notifications, setNotifications] = useState([]);
-  const [toasts, setToasts] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const audioRef = useRef(null);
-  const [audioInitialized, setAudioInitialized] = useState(false);
+  const [notifications, setNotifications] = useState([]);  // State for storing notifications
+  const [toasts, setToasts] = useState([]);  // State for storing toast notifications
+  const [unreadCount, setUnreadCount] = useState(0);  // State for unread notifications count
+  const [soundEnabled, setSoundEnabled] = useState(true);  // State for whether sound is enabled
+  const audioRef = useRef(null);  // Ref for audio element
+  const [audioInitialized, setAudioInitialized] = useState(false);  // State to track if audio is initialized
   
-  // Initialize audio only after user interaction
+  // Initialize audio only after user interaction and store sound preference
   useEffect(() => {
-    // Check if sound preference is stored
     const storedSoundPreference = localStorage.getItem('notificationSoundEnabled');
     if (storedSoundPreference !== null) {
       setSoundEnabled(storedSoundPreference === 'true');
     }
     
-    // We'll initialize the audio element but not load the source yet
+    // Initialize audio element but do not load the source yet
     audioRef.current = new Audio();
     audioRef.current.volume = 0.5;
     
-    // Cleanup function
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -38,19 +37,18 @@ export const NotificationProvider = ({ children }) => {
   // Function to initialize audio after user interaction
   const initializeAudio = () => {
     if (!audioInitialized && audioRef.current) {
-      // Set the source only after user interaction
-      audioRef.current.src = '/notification-sound.mp3'; // Adjust path as needed
+      audioRef.current.src = '/notification-sound.mp3';  // Set the audio source only after user interaction
       setAudioInitialized(true);
     }
   };
   
-  // Update unread count when notifications change
+  // Update unread notifications count whenever notifications change
   useEffect(() => {
     const count = notifications.filter(notification => !notification.read).length;
     setUnreadCount(count);
   }, [notifications]);
   
-  // Add a notification
+  // Function to add a new notification
   const addNotification = (notification) => {
     const newNotification = {
       id: Date.now().toString(),
@@ -61,15 +59,11 @@ export const NotificationProvider = ({ children }) => {
     
     setNotifications(prev => [newNotification, ...prev]);
     
-    // Play sound if enabled and audio is initialized
+    // Play notification sound if enabled and audio is initialized
     if (soundEnabled && audioInitialized && audioRef.current) {
-      // Reset audio to beginning if it's already playing
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-      
-      // Use a promise to catch any errors
       const playPromise = audioRef.current.play();
-      
       if (playPromise !== undefined) {
         playPromise.catch(error => {
           console.log('Audio playback was prevented by the browser:', error);
@@ -77,51 +71,47 @@ export const NotificationProvider = ({ children }) => {
       }
     }
     
-    // Also add as toast
+    // Add the notification as a toast
     addToast(newNotification);
   };
   
-  // Mark a notification as read
+  // Function to mark a notification as read
   const markAsRead = (id) => {
     setNotifications(prev => 
       prev.map(notification => 
-        notification.id === id 
-          ? { ...notification, read: true } 
-          : notification
+        notification.id === id ? { ...notification, read: true } : notification
       )
     );
   };
   
-  // Mark all notifications as read
+  // Function to mark all notifications as read
   const markAllAsRead = () => {
     setNotifications(prev => 
       prev.map(notification => ({ ...notification, read: true }))
     );
   };
   
-  // Remove a notification
+  // Function to remove a notification
   const removeNotification = (id) => {
     setNotifications(prev => 
       prev.filter(notification => notification.id !== id)
     );
   };
   
-  // Clear all notifications
+  // Function to clear all notifications
   const clearAllNotifications = () => {
     setNotifications([]);
   };
   
-  // Toggle sound
+  // Function to toggle sound settings
   const toggleSound = () => {
-    // Initialize audio if not already done
     initializeAudio();
-    
     const newSoundEnabled = !soundEnabled;
     setSoundEnabled(newSoundEnabled);
     localStorage.setItem('notificationSoundEnabled', newSoundEnabled.toString());
   };
   
-  // Add a toast notification
+  // Function to add a toast notification
   const addToast = (notification) => {
     const toast = {
       id: notification.id || Date.now().toString(),
@@ -135,7 +125,7 @@ export const NotificationProvider = ({ children }) => {
     setToasts(prev => [...prev, toast]);
   };
   
-  // Remove a toast notification
+  // Function to remove a toast notification
   const removeToast = (id) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
@@ -155,7 +145,7 @@ export const NotificationProvider = ({ children }) => {
         toasts,
         addToast,
         removeToast,
-        initializeAudio // Export this function to be called on user interaction
+        initializeAudio 
       }}
     >
       {children}

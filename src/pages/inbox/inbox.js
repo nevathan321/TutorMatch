@@ -4,7 +4,11 @@
 import { useState, useEffect } from "react";
 import "./inbox.css";
 import MyCalendar from "../../components/calendar/MyCalendar";
+import Modal from "../../components/modal/modal";
+import Reviews from "../../components/Reviews/reviews";
 
+
+// Function to return a string representing the year of study based on the year number
 const getYearOfStudyString = (year) => {
     switch (year) {
         case 1:
@@ -23,6 +27,8 @@ const getYearOfStudyString = (year) => {
 };
 
 function Inbox({ userProfile }) {
+    // State variables for managing data and UI
+
     const [matches, setMatches] = useState([]);
     const [filteredMatches, setFilteredMatches] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -38,6 +44,10 @@ function Inbox({ userProfile }) {
     const [startTime, setStartTime] = useState("10:00");
     const [endTime, setEndTime] = useState("11:00");
 
+    const [showReviewsModal, setShowReviewsModal] = useState(false);
+
+
+    // Function to fetch tutor matches based on the user profile and search term
     useEffect(() => {
         const fetchMatchedTutors = async () => {
             try {
@@ -51,6 +61,8 @@ function Inbox({ userProfile }) {
                     }
                 );
 
+                // Error handling for failed response
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -63,7 +75,6 @@ function Inbox({ userProfile }) {
                 ));
             } catch (err) {
                 console.error("Error fetching matches:", err);
-                // Consider setting an error state to display a message to the user
                 setMatches([]);
                 setFilteredMatches([]);
             }
@@ -79,6 +90,8 @@ function Inbox({ userProfile }) {
         ));
     };
 
+    // Function to handle selecting a tutor for scheduling or emailing
+
     const handleSelectTutor = (tutor) => {
         setSelectedTutor(tutor);
         const subjects = tutor.main_subjects && typeof tutor.main_subjects === 'string'
@@ -90,6 +103,9 @@ function Inbox({ userProfile }) {
         });
         setShowEmailModal(true);
     };
+
+
+    // Function to send a calendar invite to the selected tutor
 
     const sendCalendarInvite = async (tutor, date, startTimeStr, endTimeStr) => {
         try {
@@ -159,6 +175,9 @@ function Inbox({ userProfile }) {
         }
     };
 
+
+    // Function to handle sending the email
+
     const handleSendEmail = async () => {
         setEmailStatus({ type: "loading", message: "Sending email..." });
 
@@ -213,6 +232,9 @@ function Inbox({ userProfile }) {
             setEmailStatus({ type: "error", message: "An error occurred while sending the email." });
         }
     };
+
+   
+
 
     return (
         <div className="inbox-container">
@@ -278,16 +300,15 @@ function Inbox({ userProfile }) {
                                 </div>
                             </div>
 
-                            <div className="tutor-bio">
-                                <p>{match.bio}</p>
+                            <div className="tutor-review">
+                                <button onClick={() => {
+                                    setSelectedTutor(match);
+                                    setShowReviewsModal(true);
+                                }}>
+                                    See Reviews
+                                </button>
                             </div>
 
-                            <div className="last-message">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                                </svg>
-                                <p>{match.lastMessage}</p>
-                            </div>
 
                             <div className="match-actions">
                                 <button className="action-button primary" onClick={() => handleSelectTutor(match)}>
@@ -325,129 +346,123 @@ function Inbox({ userProfile }) {
                 )}
             </div>
 
-            {showEmailModal && (
-                <div className="email-modal-overlay">
-                    <div className="email-modal">
-                        <div className="email-modal-header">
-                            <h3>Email {selectedTutor?.full_name}</h3>
-                            <button className="close-button" onClick={() => setShowEmailModal(false)}>×</button>
-                        </div>
-                        <div className="email-modal-content">
-                            <div className="form-group">
-                                <label htmlFor="email-subject">Subject</label>
-                                <input
-                                    type="text"
-                                    id="email-subject"
-                                    value={emailContent.subject}
-                                    onChange={(e) => setEmailContent({ ...emailContent, subject: e.target.value })}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="email-message">Message</label>
-                                <textarea
-                                    id="email-message"
-                                    rows="8"
-                                    value={emailContent.message}
-                                    onChange={(e) => setEmailContent({ ...emailContent, message: e.target.value })}
-                                ></textarea>
-                            </div>
-                            {emailStatus.message && (
-                                <div className={`email-status ${emailStatus.type}`}>
-                                    {emailStatus.message}
-                                </div>
-                            )}
-                        </div>
-                        <div className="email-modal-footer">
-                            <button
-                                className="cancel-button"
-                                onClick={() => setShowEmailModal(false)}
-                                disabled={emailStatus.type === "loading"}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                className="send-button"
-                                onClick={handleSendEmail}
-                                disabled={emailStatus.type === "loading"}
-                            >
-                                Send Email
-                            </button>
-                        </div>
-                    </div>
+            <Modal
+                isOpen={showEmailModal}
+                onClose={() => setShowEmailModal(false)}
+                title={`Email ${selectedTutor?.full_name}`}
+                footer={
+                    <>
+                        <button
+                            className="cancel-button"
+                            onClick={() => setShowEmailModal(false)}
+                            disabled={emailStatus.type === "loading"}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            className="send-button"
+                            onClick={handleSendEmail}
+                            disabled={emailStatus.type === "loading"}
+                        >
+                            Send Email
+                        </button>
+                    </>
+                }
+            >
+                <div className="form-group">
+                    <label htmlFor="email-subject">Subject</label>
+                    <input
+                        type="text"
+                        id="email-subject"
+                        value={emailContent.subject}
+                        onChange={(e) => setEmailContent({ ...emailContent, subject: e.target.value })}
+                    />
                 </div>
-            )}
+                <div className="form-group">
+                    <label htmlFor="email-message">Message</label>
+                    <textarea
+                        id="email-message"
+                        rows="8"
+                        value={emailContent.message}
+                        onChange={(e) => setEmailContent({ ...emailContent, message: e.target.value })}
+                    ></textarea>
+                </div>
+                {emailStatus.message && (
+                    <div className={`email-status ${emailStatus.type}`}>
+                        {emailStatus.message}
+                    </div>
+                )}
+            </Modal>
 
-            {showCalendarModal && (
-                <div className="email-modal-overlay">
-                    <div className="email-modal">
-                        <div className="email-modal-header">
-                            <h3>Schedule with {calendarTutor?.full_name}</h3>
-                            <button className="close-button" onClick={() => setShowCalendarModal(false)}>×</button>
-                        </div>
+            <Modal
+                isOpen={showCalendarModal}
+                onClose={() => setShowCalendarModal(false)}
+                title={`Schedule with ${calendarTutor?.full_name}`}
+                footer={
+                    <>
+                        <button className="cancel-button" onClick={() => setShowCalendarModal(false)}>
+                            Cancel
+                        </button>
+                        <button
+                            className="send-button"
+                            onClick={async () => {
+                                const result = await sendCalendarInvite(calendarTutor, selectedDate, startTime, endTime);
+                                if (result && result.success) {
+                                    setEmailStatus({ type: "success", message: "Calendar invite sent!" });
+                                    setTimeout(() => {
+                                        setShowCalendarModal(false);
+                                        setEmailStatus({ type: "", message: "" });
+                                    }, 2000);
+                                } else {
+                                    setEmailStatus({ type: "error", message: result?.error || "Failed to send calendar invite" });
+                                }
+                            }}
+                        >
+                            Send Calendar Invite
+                        </button>
+                    </>
+                }
+            > 
 
-                        <div className="email-body">
-                            <label style={{ textAlign: "center" }}>Select a date:</label>
-                            <MyCalendar
-                                selectedDate={selectedDate}
-                                onDateChange={(date) => setSelectedDate(date)}
-                                context="modal"
+            <label style={{ textAlign: "center" }}>Select a date:</label>
+                <MyCalendar
+                    selectedDate={selectedDate}
+                    onDateChange={(date) => setSelectedDate(date)}
+                    context="modal"
+                />
+                    <div className="time-selection">
+                        <div className="form-group">
+                            <label htmlFor="start-time">Start Time:</label>
+                            <input
+                                type="time"
+                                id="start-time"
+                                value={startTime}
+                                onChange={(e) => setStartTime(e.target.value)}
                             />
-
-                            <div className="time-selection">
-                                <div className="form-group">
-                                    <label htmlFor="start-time">Start Time:</label>
-                                    <input
-                                        type="time"
-                                        id="start-time"
-                                        value={startTime}
-                                        onChange={(e) => setStartTime(e.target.value)}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="end-time">End Time:</label>
-                                    <input
-                                        type="time"
-                                        id="end-time"
-                                        value={endTime}
-                                        onChange={(e) => setEndTime(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            {emailStatus.message && (
-                                <div className={`email-status ${emailStatus.type}`}>
-                                    {emailStatus.message}
-                                </div>
-                            )}
                         </div>
-
-                        <div className="email-modal-footer">
-                            <button className="cancel-button" onClick={() => setShowCalendarModal(false)}>Cancel</button>
-                            <button
-                                className="send-button"
-                                onClick={async () => {
-                                    const result = await sendCalendarInvite(calendarTutor, selectedDate, startTime, endTime);
-
-                                    if (result && result.success) {
-                                        setEmailStatus({ type: "success", message: "Calendar invite sent!" });
-                                        setTimeout(() => {
-                                            setShowCalendarModal(false);
-                                            setEmailStatus({ type: "", message: "" });
-                                        }, 2000);
-                                    } else {
-                                        setEmailStatus({ type: "error", message: result?.error || "Failed to send calendar invite" });
-                                    }
-                                }}
-                            >
-                                Send Calendar Invite
-                            </button>
+                        <div className="form-group">
+                            <label htmlFor="end-time">End Time:</label>
+                            <input
+                                type="time"
+                                id="end-time"
+                                value={endTime}
+                                onChange={(e) => setEndTime(e.target.value)}
+                            />
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                {emailStatus.message && (
+                    <div className={`email-status ${emailStatus.type}`}>
+                        {emailStatus.message}
+                    </div>
+                )}
+            </Modal>
 
+            <Reviews 
+                isOpen={showReviewsModal}
+                onClose={() => setShowReviewsModal(false)}
+                tutor={selectedTutor}
+            />
+        </div>
     );
 }
 

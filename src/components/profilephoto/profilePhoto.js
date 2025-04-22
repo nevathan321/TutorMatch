@@ -6,7 +6,6 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
     // Initialize with default profile image
     const [imageSrc, setImageSrc] = useState(profile);
 
-
     useEffect(() => {
         // Use the explicitly passed photo
         if (initialPhoto && initialPhoto !== profile) {
@@ -22,6 +21,7 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
         }
     }, [initialPhoto, userProfile]);
 
+    // Handles the photo upload, reads the file and updates the image source
     function uploadPhoto(event) {
         const file = event.target.files[0];
         const reader = new FileReader();
@@ -36,15 +36,18 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
         }
     }
 
+    // Deletes the uploaded photo and reverts to the default profile image
     function deletePhoto() {
         setImageSrc(profile);
         onPhotoChange(profile); // Notify parent component
     }
 
+    // Triggers the file input to allow photo selection
     function triggerFileInput() {
         document.getElementById('fileInput').click();
     }
 
+    // Handles image loading errors and reverts to the default profile photo
     function handleImageError() {
         setImageSrc(profile); // Reset to default profile image on error
         onPhotoChange(profile); // Notify parent component
@@ -59,7 +62,7 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
                 onError={handleImageError}
             />
             <div className="profile-header">
-            <h2>Change Profile Icon</h2>
+                <h2>Change Profile Icon</h2>
                 <div className="options">
                     <input
                         id="fileInput"

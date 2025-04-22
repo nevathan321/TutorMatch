@@ -1,14 +1,34 @@
+/**
+* TutorMatch Group
+* 
+* Date: April 7, 2025
+* 
+* Profile component for handling user profile editing and updates.
+* Manages user details, profile photo, password changes, and form submission.
+* Communicates with backend API to save profile data.
+*/
+
 import profile from "../../images/profile.png";
 import ProfilePhotoBlock from "../../components/profilephoto/profilePhoto";
 import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import './profile.css';
 
-function Profile({ userProfile, setUserProfile }) {
+function Profile({ userProfile, setUserProfile, setIsLoggedIn }) {
     const [profilePhoto, setProfilePhoto] = useState(null);
+
     useEffect(() => {
         document.getElementById('warning').innerHTML = "Password fields cannot be empty";
     }, []);
 
+    const navigate = useNavigate();
+    /**
+    * Initializes profile data when userProfile prop changes
+    * 
+    * @param {Object} userProfile - User profile data from parent component
+    * @effect Sets initial form values and profile photo
+    * @dependencies userProfile
+    */
     useEffect(() => {
         if (userProfile) {
 
@@ -28,6 +48,20 @@ function Profile({ userProfile, setUserProfile }) {
         }
     }, [userProfile]);
 
+    /**
+    * Displays a notification message to the user
+    * 
+    * @param {String} message - Notification message to display
+    * @param {Boolean} isSuccess - Determines notification style (success/error)
+    */
+
+    const handleLogout = () => {//when logout button is clicked
+        //clear all user information
+        setUserProfile(null)
+        setIsLoggedIn(false)
+        localStorage.removeItem("tutorMatch-email");
+        navigate("/");
+    }
     function showNotification(message, isSuccess) {
         const notification = document.getElementById('profileNotification');
         notification.textContent = message;
@@ -43,6 +77,12 @@ function Profile({ userProfile, setUserProfile }) {
         }, 0);
     }
 
+    /**
+    * Handles form input changes to reset notifications
+    * 
+    * @effect Adds event listeners to form inputs
+    * @dependencies None (runs once on mount)
+    */
     useEffect(() => {
         const form = document.querySelector('.userDetails');
         const notification = document.getElementById('profileNotification');
@@ -68,6 +108,12 @@ function Profile({ userProfile, setUserProfile }) {
         };
     }, []);
 
+    /**
+    * Resets notification when profile photo changes
+    * 
+    * @effect Hides notification and enables submit button
+    * @dependencies profilePhoto
+    */
     useEffect(() => {
         const notification = document.getElementById('profileNotification');
         const submitButton = document.getElementById("submit");
@@ -79,6 +125,11 @@ function Profile({ userProfile, setUserProfile }) {
         }
     }, [profilePhoto]);
 
+    /**
+    * Validates password and confirm password fields match
+    * 
+    * @returns {Boolean} True if passwords match, false otherwise
+    */
     function checkPassword() {
         let password = document.getElementById('password').value;
         let confirmPassword = document.getElementById('confirmPassword').value;
@@ -100,6 +151,12 @@ function Profile({ userProfile, setUserProfile }) {
         }
     }
 
+    /**
+    * Hides tutor details section on component mount
+    * 
+    * @effect Sets display:none for tutor details section
+    * @dependencies None (runs once on mount)
+    */
     useEffect(() => {
         const tutorDetails = document.querySelector('.TutorDetails');
         if (tutorDetails) {
@@ -107,6 +164,12 @@ function Profile({ userProfile, setUserProfile }) {
         }
     }, []);
 
+    /**
+    * Handles profile form submission
+    * 
+    * @param {Event} e - Form submit event
+    * @async
+    */
     function saveProfileData(e) {
         e.preventDefault();
         let errormsg = document.getElementById('warning').innerHTML;
@@ -252,7 +315,15 @@ function Profile({ userProfile, setUserProfile }) {
                     </div>
                 </form>
             </div>
+           
             <div id="profileNotification" className="profile-notification hidden"></div>
+            <div className="card">
+               
+                <div className="logout-btn">
+                    <button onClick={handleLogout}>Logout</button>
+                </div >
+                  
+            </div>
         </div>
     );
 }

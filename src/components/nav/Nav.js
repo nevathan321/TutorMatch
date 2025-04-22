@@ -1,3 +1,10 @@
+/**
+* TutorMatch Group
+* 
+* Date: April 7, 2025
+* 
+* Navigation Component for switching between pages
+*/
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationContext';
@@ -5,9 +12,12 @@ import NotificationBadge from '../NotificationBadge/NotificationBadge';
 import NotificationsPanel from '../NotificationsPanel/NotificationsPanel';
 import './Nav.css';
 
+
+
+// This is the nav bar that shows up at the top of every page
 function Nav() {
-  const location = useLocation();
-  const { unreadCount } = useNotifications();
+  const location = useLocation(); // lets us know what page we're currently on
+  const { unreadCount } = useNotifications(); // grabs how many unread notifications we have
   
   return (
     <nav className="main-nav">

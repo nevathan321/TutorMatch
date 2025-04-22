@@ -1,4 +1,6 @@
 <?php
+
+//regular login, verify if user exists and passwords match then return profile
 header("Access-Control-Allow-Origin: *");  // Replace '*' with the specific domain for better security
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");

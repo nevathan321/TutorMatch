@@ -1,3 +1,12 @@
+/**
+* TutorMatch Group
+* 
+* Date: April 7, 2025
+* 
+* Styling for the Profile Component
+* Also handles responsive design for all components with Nav.js
+*/
+
 /* Reset and Base Styles */
 .user-details p{
   font-size: 14px;
@@ -265,6 +274,106 @@ input::placeholder {
   font-size: 1rem;
 }
 
+/* Responsive Adjustments */
+/* @media (max-width: 768px) {
+  .top {
+    text-align: center;
+  }
+
+
+@media (min-width: 600px) {
+  .Profile {
+    padding: 0 2rem;
+  }
+  
+  .card {
+    padding: 2rem;
+  }
+  
+  .userContainer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+} */
+
+  .userContainer > div {
+    flex: 1;
+    min-width: 250px;
+}
+}
+
+.logout-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+.logout-btn button {
+  background-color: #dc3545;
+  color: white;
+  font-size: 18px;
+}
+
+/* Interactive Preferred Days Styling - kept for compatibility but not used */
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .days-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .passwords input {
+    width: 50%;
+  }
+}
+
+@media (min-width: 768px) {
+  .Profile {
+    margin: 2rem auto;
+  }
+  
+  .top h1 {
+    font-size: 1.75rem;
+  }
+  
+  .card {
+    margin: 2rem auto;
+  }
+}
+
+@media (min-width: 900px) {
+  .Profile {
+    max-width: 900px;
+  }
+}
+
+/* Adjust layout when navbar is present */
+@media (max-width: 1024px) {
+  .tile {
+    flex-direction: column;
+  }
+  
+  .Nav {
+    width: 100%;
+  }
+  
+  .page {
+    margin-left: 0;
+    padding: 0 1rem;
+  }
+}
+
+
+.day-button.selected:hover {
+  background-color: #0d8bf2;
+}
 
 @media (min-width: 600px) {
   .Profile {
@@ -284,20 +393,6 @@ input::placeholder {
   .userContainer > div {
     flex: 1;
     min-width: 250px;
-}
-}
-
-/* Interactive Preferred Days Styling - kept for compatibility but not used */
-.days-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  margin-top: 10px;
-}
-
-@media (max-width: 768px) {
-  .days-grid {
-    grid-template-columns: repeat(4, 1fr);
   }
   
   .passwords input {

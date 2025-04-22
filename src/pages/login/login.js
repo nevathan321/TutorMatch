@@ -5,7 +5,6 @@ import { jwtDecode } from "jwt-decode";
 import tutorImage from "./tutorImage.jpg";
 import { useNavigate } from "react-router-dom";
 
-
 export default function Login({ setIsLoggedIn, setUserProfile }) {
   const navigate = useNavigate();
   const [loginForm, setLoginForm] = useState({
@@ -14,6 +13,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
   });
   const [errorMessage, setErrorMessage] = useState(""); // State to hold error messages
 
+  // Handles input change for the login form fields (email, password)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setLoginForm((prev) => ({
@@ -22,7 +22,8 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
     }));
   };
 
-  const handleSubmit = async (e) => {//regular login
+  // Handles form submission for regular login (email/password)
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch("http://localhost/tutorMatch/server/login/", {
@@ -34,13 +35,11 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
       });
 
       const loginResult = await response.json();
-      console.log(loginResult)
       if (loginResult.success) {
-        console.log("Login Successfull:", loginResult);
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
         setErrorMessage("");
-        localStorage.setItem("email", loginResult.user_profile.email); 
+        localStorage.setItem("tutorMatch-email", loginResult.user_profile.email); 
 
         return;
       }
@@ -50,13 +49,12 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
     }
   };
 
-
-  const handleLoginSuccess = async (guathResponse) => {//google login
+  // Handles successful Google login and sends the email to the server
+  const handleLoginSuccess = async (guathResponse) => {
     const token = guathResponse.credential;
     const userGoogleInfo = jwtDecode(token);
     const googleEmail = {email: userGoogleInfo.email}
     
-    console.log(googleEmail)
     try {
       const response = await fetch("http://localhost/tutorMatch/server/login/googleLogin.php", {
         method: "POST",
@@ -69,11 +67,10 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
       const loginResult = await response.json();
 
       if (loginResult.success) {
-        console.log("Login Successfull:", loginResult);
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
         setErrorMessage("");
-        localStorage.setItem("userEmail", loginResult.user_profile.email); 
+        localStorage.setItem("tutorMatch-email", loginResult.user_profile.email); 
         return;
       }
       setErrorMessage("Incorrect email or password");
@@ -81,8 +78,8 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
       console.error("Login error:", err);
     }
   }
-  
 
+  // Handles failed Google login attempt
   const handleLoginFailure = (error) => {
     console.error("Google login error:", error);
   };
@@ -95,7 +92,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label for="email">Email Address</label>
+            <label htmlFor="email">Email Address</label>
             <input
               type="email"
               id="email"
@@ -108,7 +105,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
           </div>
 
           <div className="form-group">
-            <label for="account_password">Password</label>
+            <label htmlFor="account_password">Password</label>
             <input
               type="password"
               id="password"
@@ -122,9 +119,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
 
           <div className="form-footer">
             <p className="error-message">{errorMessage}</p>
-            <a href="/" className="forgot-password">
-              Forgot Password?
-            </a>
+            
           </div>
 
           <button type="submit" className="login-button">
@@ -141,14 +136,15 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
 
         <div className="divider"></div>
 
-        <p className="signup-link">
-          No account yet? <a onClick={() => navigate("/signup")}>Sign Up</a>
+        <p  className="signup-link">No account yet? 
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <a onClick={() => navigate("/signup")}>Sign Up</a>
         </p>
       </div>
 
       <div className="image-container">
         <img src={tutorImage} alt="profile" />
-      </div>
+      </div> 
     </div>
   );
 }

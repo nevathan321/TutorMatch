@@ -5,7 +5,8 @@ import cardplus from '../../images/cardplus.png';
 import cardminus from '../../images/cardminus.png';
 
 function Transaction({ id, type, amount, status, date, time }) {
-    // Get the styling of the status to change based on what it is
+
+    // Function to return the correct CSS class based on the status (Confirmed, Pending, Denied)
     function getStatusClass() {
         let statusClass = "";
         if (status === "Confirmed") {
@@ -18,6 +19,7 @@ function Transaction({ id, type, amount, status, date, time }) {
         return statusClass;
     }
 
+    // Function to return the correct image based on the transaction type (Refund, Cashback, Payment, Currency Exchange)
     function getTypeImg() {
         if (type === "Refund" || type === "Cashback") {
             return cardplus;
@@ -26,9 +28,8 @@ function Transaction({ id, type, amount, status, date, time }) {
         } else if (type === "Currency Exchange") {
             return exchange;
         }
-        return card; // default case
+        return card; 
     }
-
 
     return (
         <div className='Transaction'>
@@ -47,7 +48,7 @@ function Transaction({ id, type, amount, status, date, time }) {
                 </div>
             </div>
         </div>
-    )
-} 
+    );
+}
 
 export default Transaction;

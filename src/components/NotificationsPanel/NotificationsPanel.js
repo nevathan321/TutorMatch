@@ -1,24 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNotifications } from '../../context/NotificationContext';
-import NotificationBadge from '../NotificationBadge/NotificationBadge';
-import './NotificationsPanel.css';
-
+// Renders the notifications panel with a bell icon, badge, and dropdown list.
 function NotificationsPanel() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { 
-    notifications, 
-    unreadCount, 
-    soundEnabled,
-    toggleSound,
-    markAsRead, 
-    markAllAsRead, 
-    removeNotification,
-    clearAllNotifications,
-    initializeAudio // Add this
-  } = useNotifications();
-  const panelRef = useRef(null);
-  const buttonRef = useRef(null);
-  
   // Close panel when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
@@ -27,20 +8,19 @@ function NotificationsPanel() {
         setIsOpen(false);
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  
+
+  // Handles opening and closing the panel and marking visible notifications as read
   const togglePanel = () => {
-    // Initialize audio on user interaction
-    initializeAudio();
-    
+    initializeAudio(); // Ensures audio is ready on user interaction
     setIsOpen(!isOpen);
-    
-    // If opening the panel, mark notifications as read after a delay
+
+    // Automatically mark top 5 unread notifications as read after opening
     if (!isOpen && unreadCount > 0) {
       setTimeout(() => {
         const visibleNotifications = notifications.slice(0, 5);
@@ -52,17 +32,18 @@ function NotificationsPanel() {
       }, 2000);
     }
   };
-  
+
+  // Marks all notifications as read
   const handleMarkAllAsRead = () => {
     markAllAsRead();
   };
-  
+
+  // Clears all notifications
   const handleClearAll = () => {
     clearAllNotifications();
   };
-  
-  // Rest of the component remains the same...
-  
+
+  // Formats timestamp into human-readable time string
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -70,7 +51,7 @@ function NotificationsPanel() {
     const diffMins = Math.floor(diffMs / (1000 * 60));
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
+
     if (diffMins < 1) {
       return 'Just now';
     } else if (diffMins < 60) {
@@ -86,7 +67,8 @@ function NotificationsPanel() {
       });
     }
   };
-  
+
+  // Returns an SVG icon based on the notification type
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'success':
@@ -122,7 +104,7 @@ function NotificationsPanel() {
         );
     }
   };
-  
+
   return (
     <div className="notifications-container">
       <button 

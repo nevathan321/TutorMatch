@@ -2,13 +2,20 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./createProfile.css";
 
-const SIGNUP_ENDPOINT = "http://localhost/tutorMatch/server/signup/"
+// Define the endpoint for signing up users
+const SIGNUP_ENDPOINT = "http://localhost/tutorMatch/server/signup/";
+
 export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, firstName, lastName }) {
+  // useNavigate hook is used to programmatically navigate to different routes
+
   const navigate = useNavigate();
+  
+  // State for the user type (either 'tutee' or 'tutor')
   const [userType, setUserType] = useState("tutee");
   const [passwordError, setPasswordError] = useState(" ");
   
 
+  // Initial state for the form data
   const [formData, setFormData] = useState({
     first_name: firstName,
     last_name: lastName,
@@ -24,7 +31,9 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
     wage: "",
   });
 
-  const handleInputChange = (e) => {//update state whenever fields are updated
+  // Function to handle form input changes
+  // Updates the formData state based on input name and value
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -50,14 +59,18 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
     }
   };
 
+  // Function to handle form submission
+  // Checks password match and sends the form data to the server
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // If passwords don't match, show an alert and prevent form submission
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords don't match!");
       return;
     }
 
+    // Prepare the user data to be sent to the server
     const userData = {
       first_name: formData.first_name,
       last_name: formData.last_name,
@@ -76,6 +89,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
     };
 
     try {
+      // Send the POST request with the user data to the server
       const response = await fetch(`${SIGNUP_ENDPOINT}?type=${userType}`, {
         method: "POST",
         headers: {
@@ -84,20 +98,24 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
         body: JSON.stringify(userData),
       });
 
+      // Parse the server's response
       const result = await response.json();
-      console.log(response)
+
+      // If the user already exists, alert the user
       if (result.user_exists) {
         alert("User already exists with this email!");
       } else if (result.status === "success") {
-        console.log("Registration successful!");
-
-        setUserProfile(result.user)
-        setIsLoggedIn(true)
-        navigate("/")
+        // If registration is successful, update state and navigate to the home page
+        setUserProfile(result.user);
+        setIsLoggedIn(true);
+        localStorage.setItem("tutorMatch-email", userData.email); 
+        navigate("/"); // Navigate to the home page
       } else {
+        // Show an error message if registration fails
         alert("Registration failed: " + result.message);
       }
     } catch (error) {
+      // Log any errors that occur during the registration process
       console.error("Error:", error);
       alert("Registration failed. Please try again.");
     }
@@ -111,7 +129,6 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
           Create Your Account
         </p>
 
-
       </div>
 
 
@@ -119,6 +136,8 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
         <h2 className="form-title">
           {userType === "tutee" ? "Tutee Details" : "Tutor Details"}
         </h2>
+
+        {/* The form for creating a user profile */}
         <form className="signup-form" onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="create-profile-form-group">
@@ -236,6 +255,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
             </div>
           </div>
 
+          {/* Additional fields for tutor users */}
           {userType === "tutor" && (
             <>
               <div className="form-row">
@@ -304,6 +324,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
             </div>
           </div>
 
+          {/* Action buttons for canceling or submitting the form */}
           <div className="form-actions">
             <button className="btn secondary" type="reset">
               Cancel
