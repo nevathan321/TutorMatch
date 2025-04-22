@@ -5,16 +5,6 @@ import Review from "../../components/review/Review";
 import "./Dashboard.css";
 
 function Dashboard({userProfile}) {
-  const [userRole, setUserRole] = useState("");
-
-  const [stats, setStats] = useState({
-    totalSessions: 0,
-    upcomingSessions: 0,
-    averageRating: 0,
-    earnings: 0,
-    matches: 0,
-  });
-
   const [totalMatches, setTotalMatches] = useState(null)
   const [recentMatches, setRecentMatches] = useState([]);
   const [reviews, setReviews] = useState([]);
@@ -29,9 +19,6 @@ function Dashboard({userProfile}) {
     rating: 5,
     tutorId: "", // Add tutorId field
   });
-
-  // Add state for tutors list
-  const [tutors, setTutors] = useState([]);
 
   useEffect(() => {
     const fetchGoogleEvents = async () => {
@@ -72,10 +59,10 @@ function Dashboard({userProfile}) {
             },
           }
         );
-
         const matchedTutors = await response.json();
        
         setRecentMatches(matchedTutors.slice(-4));//gets last 4 matches
+        console.log(matchedTutors.length)
         setTotalMatches(matchedTutors.length)
     
       } catch (err) {
@@ -85,9 +72,8 @@ function Dashboard({userProfile}) {
 
     fetchMatchedTutors();
     setLoading(false)
+    // eslint-disable-next-line 
   }, []);
-
-  
 
   const handleReviewChange = (e) => {
     const { name, value } = e.target;
@@ -150,9 +136,11 @@ function Dashboard({userProfile}) {
           },
           body: JSON.stringify(newReviewObj),
         });
-  
-        //const result = await response.json();
-    
+        
+        if (!response.ok){
+          console.error("Error uploading review")
+        }
+        
       } catch (error) {
         console.error("Error:", error);
       }
@@ -173,11 +161,7 @@ function Dashboard({userProfile}) {
     <div className="dashboard-container">
       <div className="dashboard-header">
         <h1>Welcome to Your Dashboard</h1>
-        <p className="dashboard-subtitle">
-          {userRole === "tutor"
-            ? "Manage your tutoring sessions and track your progress"
-            : "Find tutors and manage your learning journey"}
-        </p>
+        <p className="dashboard-subtitle">Find tutors and manage your learning journey</p>
       </div>
 
       <div className="stats-container">
@@ -201,7 +185,7 @@ function Dashboard({userProfile}) {
           </div>
           <div className="stat-content">
             <h3>Total Sessions</h3>
-            <p className="stat-value">{stats.totalSessions}</p>
+            <p className="stat-value">0</p>
           </div>
         </div>
 
@@ -224,58 +208,11 @@ function Dashboard({userProfile}) {
           </div>
           <div className="stat-content">
             <h3>Upcoming</h3>
-            <p className="stat-value">{stats.upcomingSessions}</p>
+            <p className="stat-value">0</p>
           </div>
         </div>
 
-        {userRole === "tutor" ? (
-          <>
-            <div className="stat-card">
-              <div className="stat-icon rating">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round">
-
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-              </div>
-              <div className="stat-content">
-                <h3>Rating</h3>
-                <p className="stat-value">{stats.averageRating.toFixed(1)}</p>
-              </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-icon earnings">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round">
-                  <line x1="12" y1="1" x2="12" y2="23"></line>
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                </svg>
-              </div>
-              <div className="stat-content">
-                <h3>Earnings</h3>
-                <p className="stat-value">${stats.earnings}</p>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
+    
             <div className="stat-card">
               <div className="stat-icon matches">
                 <svg
@@ -313,19 +250,17 @@ function Dashboard({userProfile}) {
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
-
                   strokeLinejoin="round">
-
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
               </div>
               <div className="stat-content">
                 <h3>Favorites</h3>
-                <p className="stat-value">{stats.favoriteTutors || 0}</p>
+                <p className="stat-value">0</p>
               </div>
             </div>
-          </>
-        )}
+       
+      
       </div>
 
       <div className="dashboard-grid">
@@ -426,7 +361,7 @@ function Dashboard({userProfile}) {
           <form onSubmit={handleReviewSubmit} className="review-form">
             {/* Add the tutor selection dropdown to the review form */}
             <div className="form-group">
-              <label htmlFor="tutorId">Select Tutor</label>
+              <label htmlFor="tutorId">Select A Matched Tutor</label>
               <select
                 id="tutorId"
                 name="tutorId"

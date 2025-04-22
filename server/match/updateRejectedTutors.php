@@ -1,4 +1,5 @@
 <?php
+//update rejected tutors when tutee doesnt want to match with them
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
