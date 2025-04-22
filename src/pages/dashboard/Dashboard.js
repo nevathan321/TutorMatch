@@ -20,6 +20,13 @@ function Dashboard({userProfile}) {
     tutorId: "", // Add tutorId field
   });
 
+  const [userRole, setUserRole] = useState("tutee"); // Add userRole state
+  const [stats, setStats] = useState({
+    averageRating: 0,
+    earnings: 0,
+    favoriteTutors: 0
+  }); // Add stats state
+
   // Fetches events from the Google Calendar API and updates the state with the event data
   useEffect(() => {
     const fetchGoogleEvents = async () => {
@@ -305,8 +312,8 @@ function Dashboard({userProfile}) {
                 <p className="stat-value">{stats.favoriteTutors || 0}</p>
               </div>
             </div>
-       
-      
+          </>
+        )}
       </div>
 
       <div className="dashboard-grid">
@@ -423,7 +430,45 @@ function Dashboard({userProfile}) {
                 ))}
               </select>
             </div>
-          ))}
+            <div className="form-group">
+              <label htmlFor="title">Title</label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={newReview.title}
+                onChange={handleReviewChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="body">Review</label>
+              <textarea
+                id="body"
+                name="body"
+                value={newReview.body}
+                onChange={handleReviewChange}
+                required
+              ></textarea>
+            </div>
+            <div className="form-group">
+              <label htmlFor="rating">Rating</label>
+              <div className="rating-input">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    className={`star ${newReview.rating >= star ? "selected" : ""}`}
+                    onClick={() => handleRatingChange(star)}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+            </div>
+            <button type="submit" className="submit-button">
+              Submit Review
+            </button>
+          </form>
         </div>
       </div>
 
@@ -433,7 +478,7 @@ function Dashboard({userProfile}) {
           handleReviewChange={handleReviewChange}
           handleRatingChange={handleRatingChange}
           newReview={newReview}
-          tutors={tutors}
+          tutors={recentMatches} // Fix: use recentMatches instead of undefined tutors
         />
       </div>
     </div>
