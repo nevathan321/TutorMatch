@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './reviews.css';
 import Modal from '../modal/modal';
 
+// Fetches reviews for a given tutor ID from the server
 export const fetchReviews = async (tutorId) => {
     try {
         const response = await fetch(
@@ -26,9 +27,7 @@ export const fetchReviews = async (tutorId) => {
     }
 };
 
-
 const Reviews = ({ isOpen, onClose, tutor }) => {
-    
     const [reviews, setReviews] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);

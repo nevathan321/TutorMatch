@@ -16,6 +16,11 @@ import './profile.css';
 
 function Profile({ userProfile, setUserProfile, setIsLoggedIn }) {
     const [profilePhoto, setProfilePhoto] = useState(null);
+
+    useEffect(() => {
+        document.getElementById('warning').innerHTML = "Password fields cannot be empty";
+    }, []);
+
     const navigate = useNavigate();
     /**
     * Initializes profile data when userProfile prop changes
@@ -126,12 +131,20 @@ function Profile({ userProfile, setUserProfile, setIsLoggedIn }) {
     * @returns {Boolean} True if passwords match, false otherwise
     */
     function checkPassword() {
-        var password = document.getElementById('password').value;
-        var confirmPassword = document.getElementById('confirmPassword').value;
+        let password = document.getElementById('password').value;
+        let confirmPassword = document.getElementById('confirmPassword').value;
 
+        if (password === "" || confirmPassword === "") {
+            document.getElementById('warning').innerHTML = "Password fields cannot be empty";
+            return false;
+        }
         if (password !== confirmPassword) {
             document.getElementById('warning').innerHTML = "Passwords do not match";
             return false;
+        } else if (password.length < 8){
+            document.getElementById('warning').innerHTML = "Passwords must be at least 8 characters";
+        } else if (!/\d/.test(password)){
+            document.getElementById('warning').innerHTML = "Passwords must contain at least 1 number";
         } else {
             document.getElementById('warning').innerHTML = "";
             return true;
@@ -159,9 +172,10 @@ function Profile({ userProfile, setUserProfile, setIsLoggedIn }) {
     */
     function saveProfileData(e) {
         e.preventDefault();
+        let errormsg = document.getElementById('warning').innerHTML;
 
         if (!checkPassword()) {
-            showNotification("Passwords don't match!", false);
+            showNotification(errormsg, false);
             return;
         }
 
