@@ -13,7 +13,7 @@ CREATE TABLE Reviews (
 );
 
 INSERT INTO Reviews (authorID, rating, title, body, authorName, datePosted, tutorID, tutorName) VALUES
-(1001, 5, 'Amazing Tutor!', 'Eva explained statistics so clearly. I finally understand inference!', 'Abishan Bhavananthan', '2025-04-20', 5, 'Eva Sharma'),
+(1001, 5, 'Amazing Tutor!', 'Eva explained statistics so clearly. I finally understand inference!', 'Tyler Smith', '2025-04-20', 5, 'Eva Sharma'),
 (1002, 4, 'Very Helpful', 'Farhan helped me debug my Java assignment and taught me clean coding practices.', 'Meera Patel', '2025-04-19', 6, 'Farhan Iqbal'),
 (1003, 3, 'Good Session', 'Grace was patient and kind, though I wish we had more time.', 'Daniel Kim', '2025-04-18', 7, 'Grace Nakamura'),
 (1004, 5, 'Excellent with Calculus', 'Derek broke down limits and integrals step by step.', 'Sophia Liu', '2025-04-17', 4, 'Derek Chang'),

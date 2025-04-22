@@ -126,11 +126,11 @@ function Match({ userProfile }) {
     // Simulate a tutor response after a delay (for demonstration)
     setTimeout(() => {
       addNotification({
-        title: `Message from ${tutors[currentTutorIndex].name}`,
+        title: `Message from ${tutors[currentTutorIndex].full_name}`,
         message: `Hi there! Thanks for matching with me. I'd be happy to help with your studies.`,
         type: "info",
       });
-    }, 10000); 
+    }, 4000); 
   };
 
   const handleSeeMoreReviews = () => {
