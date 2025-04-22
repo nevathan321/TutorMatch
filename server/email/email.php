@@ -1,4 +1,5 @@
 <?php
+
 use Google\Client;
 
 ini_set('display_errors', 1);
@@ -8,27 +9,34 @@ error_reporting(E_ALL);
 // Always return JSON
 header("Content-Type: application/json");
 
-if (isset($_SERVER['HTTP_ORIGIN'])) {
-    $origin = $_SERVER['HTTP_ORIGIN'];
-    header("Access-Control-Allow-Origin: $origin");
-    header("Access-Control-Allow-Credentials: true");
-}
+// Define allowed origins
+$allowed_origins = [
+    "http://localhost:3000",
+    "http://localhost", // Add this if you're accessing localhost without the port
+    "https://cs1xd3.cas.mcmaster.ca",
+];
 
-
-// CORS headers
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    if (isset($_SERVER['HTTP_ORIGIN'])) {
-        $origin = $_SERVER['HTTP_ORIGIN'];
-        header("Access-Control-Allow-Origin: $origin");
+// Function to set CORS headers
+function set_cors_headers($allowed_origins)
+{
+    if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
+        header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
         header("Access-Control-Allow-Credentials: true");
     }
+}
+
+// Set CORS headers for all requests
+set_cors_headers($allowed_origins);
+
+// CORS headers for preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    set_cors_headers($allowed_origins); // Re-apply for OPTIONS
 
     header("Access-Control-Allow-Methods: POST, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization");
     http_response_code(204);
     exit(0);
 }
-
 
 // ✅ Start session — do this AFTER setting headers
 if (session_status() === PHP_SESSION_NONE) {
@@ -140,3 +148,4 @@ try {
         "message" => $e->getMessage()
     ]);
 }
+?>

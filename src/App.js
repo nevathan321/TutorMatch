@@ -18,7 +18,7 @@ function App() {
   const [userProfile, setUserProfile] = useState(null);//should be null
 
   useEffect(() => {
-    const email = localStorage.getItem("email");
+    const email = localStorage.getItem("tutorMatch-email");
     if (email == null) {
       setIsLoggedIn(false)
       return
@@ -64,10 +64,8 @@ function App() {
         </Routes>
       </Router>
     );
-
   } 
   
-
   return (
     <NotificationProvider>
       <div className="App">
@@ -76,7 +74,7 @@ function App() {
             <Nav />
             <div className="page">
               <Routes>
-                <Route path="/profile" element={<Profile userProfile={userProfile} setUserProfile={setUserProfile} />} />
+                <Route path="/profile" element={<Profile userProfile={userProfile} setUserProfile={setUserProfile} setIsLoggedIn={setIsLoggedIn}/>} />
                 <Route path="*" element={<Dashboard userProfile={userProfile} />} />
                 <Route path="/inbox" element={<Inbox userProfile={userProfile} />} />
                 <Route path="/match" element={<Match userProfile={userProfile}/>} />

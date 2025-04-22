@@ -7,19 +7,18 @@ error_reporting(E_ALL);
 
 require_once 'vendor/autoload.php';
 use Google\Service\Gmail;
+use Google\Service\Oauth2;
 
 try {
     $client = new Google_Client();
     $client->setAuthConfig('/Applications/XAMPP/xamppfiles/htdocs/TutorMatch/server/credentials.json');
     $client->addScope(Gmail::GMAIL_SEND);
     $client->addScope(Google\Service\Calendar::CALENDAR_EVENTS);
+    $client->addScope(Google\Service\Oauth2::USERINFO_EMAIL);
     $client->setRedirectUri('http://localhost/TutorMatch/server/authenticate.php');
-
-    // Request offline access to get a refresh token
     $client->setAccessType('offline');
-    $client->setPrompt('consent'); // Force the consent screen to reappear
+    $client->setPrompt('consent');
 
-    // Check if the user is being redirected back to this page after authentication
     if (isset($_GET['code'])) {
         $code = $_GET['code'];
         $accessToken = $client->fetchAccessTokenWithAuthCode($code);
@@ -27,17 +26,19 @@ try {
         if (isset($accessToken['error'])) {
             throw new Exception("Error fetching access token: " . $accessToken['error']);
         } else {
-            // Save tokens in the session
-            $_SESSION['access_token'] = $accessToken['access_token'];
+            $client->setAccessToken($accessToken);
 
-            // Check if refresh_token is present
+            // ✅ Store full token array, not just access_token
+            $_SESSION['access_token'] = $accessToken;
             if (isset($accessToken['refresh_token'])) {
                 $_SESSION['refresh_token'] = $accessToken['refresh_token'];
-            } else {
-                echo "<div style='color: orange; font-weight: bold;'>Warning: No refresh token was returned. This may cause issues with token renewal.</div>";
             }
 
-            // Display success message and redirect option
+            // ✅ Get user info and store email
+            $oauth2 = new Oauth2($client);
+            $userInfo = $oauth2->userinfo->get();
+            $_SESSION['user_email'] = $userInfo->email;
+
             echo "
             <!DOCTYPE html>
             <html>
@@ -51,7 +52,7 @@ try {
             </head>
             <body>
                 <h1>Authentication Successful!</h1>
-                <p class='success'>You have successfully authenticated with Google.</p>
+                <p class='success'>You have successfully authenticated with Google as <strong> . htmlspecialchars(\$userInfo->email) . </strong>.</p>
                 <p>You can now return to the TutorMatch application and send emails.</p>
                 <a href='http://localhost:3000/inbox' class='btn'>Return to TutorMatch</a>
             </body>
@@ -59,7 +60,6 @@ try {
             ";
         }
     } else {
-        // If not authenticated, show the login button
         $authUrl = $client->createAuthUrl();
         echo "
         <!DOCTYPE html>
@@ -75,7 +75,7 @@ try {
             <h1>TutorMatch Email Authentication</h1>
             <p>To send emails through TutorMatch, you need to authenticate with your Google account.</p>
             <p>This will allow TutorMatch to send emails on your behalf.</p>
-            <a href='$authUrl' class='btn'>Authenticate with Google</a>
+            <a href=\"" . htmlspecialchars($authUrl) . "\" class='btn'>Authenticate with Google</a>
         </body>
         </html>
         ";
@@ -95,7 +95,7 @@ try {
     <body>
         <h1>Authentication Error</h1>
         <p class='error'>An error occurred during authentication:</p>
-        <p>" . htmlspecialchars($e->getMessage()) . "</p>
+        <p> . htmlspecialchars(\$e->getMessage()) . </p>
         <a href='http://localhost:3000/inbox'>Return to TutorMatch</a>
     </body>
     </html>

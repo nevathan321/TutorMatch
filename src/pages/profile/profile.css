@@ -1,3 +1,12 @@
+/**
+* TutorMatch Group
+* 
+* Date: April 7, 2025
+* 
+* Styling for the Profile Component
+* Also handles responsive design for all components with Nav.js
+*/
+
 /* Reset and Base Styles */
 .user-details p{
   font-size: 14px;
@@ -266,23 +275,44 @@ input::placeholder {
 }
 
 /* Responsive Adjustments */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .top {
     text-align: center;
   }
 
-  .buttonGroup {
-    flex-direction: column;
-  }
 
-  .buttonGroup button {
-    width: 100%;
-    margin: 0.5rem 0;
+@media (min-width: 600px) {
+  .Profile {
+    padding: 0 2rem;
   }
-
+  
+  .card {
+    padding: 2rem;
+  }
+  
   .userContainer {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
   }
+
+} */
+
+  .userContainer > div {
+    flex: 1;
+    min-width: 250px;
+}
+
+.logout-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+.logout-btn button {
+  background-color: #dc3545;
+  color: white;
+  font-size: 18px;
 }
 
 /* Interactive Preferred Days Styling - kept for compatibility but not used */
@@ -297,36 +327,127 @@ input::placeholder {
   .days-grid {
     grid-template-columns: repeat(4, 1fr);
   }
-}
-
-@media (max-width: 480px) {
-  .days-grid {
-    grid-template-columns: repeat(3, 1fr);
+  
+  .passwords input {
+    width: 50%;
   }
 }
 
-.day-button {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  color: #555;
+@media (min-width: 768px) {
+  .Profile {
+    margin: 2rem auto;
+  }
+  
+  .top h1 {
+    font-size: 1.75rem;
+  }
+  
+  .card {
+    margin: 2rem auto;
+  }
 }
 
-.day-button:hover {
-  background-color: #f0f0f0;
-  border-color: #d0d0d0;
+@media (min-width: 900px) {
+  .Profile {
+    max-width: 900px;
+  }
 }
 
-.day-button.selected {
-  background-color: #2196f3;
-  color: white;
-  border-color: #2196f3;
+/* Adjust layout when navbar is present */
+@media (max-width: 1024px) {
+  .tile {
+    flex-direction: column;
+  }
+  
+  .Nav {
+    width: 100%;
+  }
+  
+  .page {
+    margin-left: 0;
+    padding: 0 1rem;
+  }
 }
+
 
 .day-button.selected:hover {
   background-color: #0d8bf2;
+}
+
+@media (min-width: 600px) {
+  .Profile {
+    padding: 0 2rem;
+  }
+  
+  .card {
+    padding: 2rem;
+  }
+  
+  .userContainer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  
+  .userContainer > div {
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  .passwords input {
+    width: 50%;
+  }
+}
+
+@media (min-width: 768px) {
+  .Profile {
+    margin: 2rem auto;
+  }
+  
+  .top h1 {
+    font-size: 1.75rem;
+  }
+  
+  .card {
+    margin: 2rem auto;
+  }
+}
+
+@media (min-width: 900px) {
+  .Profile {
+    max-width: 900px;
+  }
+}
+
+/* Adjust layout when navbar is present */
+@media (max-width: 1024px) {
+  .tile {
+    flex-direction: column;
+  }
+  
+  .Nav {
+    width: 100%;
+  }
+  
+  .page {
+    margin-left: 0;
+    padding: 0 1rem;
+  }
+}
+
+
+/* Very small devices */
+@media (max-width: 400px) {
+  .card {
+    padding: 1rem;
+  }
+  
+  input {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+  }
+
 }

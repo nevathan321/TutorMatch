@@ -103,11 +103,13 @@ try {
         ],
         'attendees' => [
             [
-                'email' => $tutorEmail,
+                'email' => $input['tutorEmail'],
+                'useDefault' => false,
                 'responseStatus' => 'needsAction'
             ],
             [
-                'email' => $senderEmail,
+                'email' => 'liyuxiao2@gmail.com',
+                'useDefault' => false,
                 'responseStatus' => 'needsAction'
             ]
         
