@@ -7,10 +7,13 @@ const SIGNUP_ENDPOINT = "http://localhost/tutorMatch/server/signup/";
 
 export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, firstName, lastName }) {
   // useNavigate hook is used to programmatically navigate to different routes
+
   const navigate = useNavigate();
   
   // State for the user type (either 'tutee' or 'tutor')
   const [userType, setUserType] = useState("tutee");
+  const [passwordError, setPasswordError] = useState(" ");
+  
 
   // Initial state for the form data
   const [formData, setFormData] = useState({
@@ -36,6 +39,24 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
       ...prev,
       [name]: value,
     }));
+
+    // Validate password when it's being typed
+    if (name === "password") {
+      validatePassword(value);
+    }
+  };
+
+  const validatePassword = (password) => {
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
+      return false;
+    } else if (!/\d/.test(password)) {
+      setPasswordError("Password must contain at least one number");
+      return false;
+    } else {
+      setPasswordError("");
+      return true;
+    }
   };
 
   // Function to handle form submission
@@ -108,20 +129,8 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
           Create Your Account
         </p>
 
-        {/* Toggle between 'Tutee' and 'Tutor' user type */}
-        <div className="user-type-toggle">
-          <button
-            className={`toggle-btn ${userType === "tutee" ? "active" : ""}`}
-            onClick={() => setUserType("tutee")}>
-            I'm a Tutee
-          </button>
-          <button
-            className={`toggle-btn ${userType === "tutor" ? "active" : ""}`}
-            onClick={() => setUserType("tutor")}>
-            I'm a Tutor
-          </button>
-        </div>
       </div>
+
 
       <div className="details-card">
         <h2 className="form-title">
@@ -290,9 +299,10 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder="Create a password"
+                placeholder="Create a password (min 8 chars, with a number)"
                 required
               />
+              {passwordError && <p className="warning-message">{passwordError}</p>}
             </div>
 
             <div className="create-profile-form-group">
@@ -319,8 +329,8 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
             <button className="btn secondary" type="reset">
               Cancel
             </button>
-            <button className="btn primary" type="submit">
-              {userType === "tutee" ? "Sign Up as Tutee" : "Sign Up as Tutor"}
+            <button className="btn primary" type="submit" disabled={!!passwordError || formData.password !== formData.confirmPassword}>
+              {userType === "tutee" ? "Sign Up" : "Sign Up"}
             </button>
           </div>
         </form>

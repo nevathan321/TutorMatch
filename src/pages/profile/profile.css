@@ -302,6 +302,7 @@ input::placeholder {
     flex: 1;
     min-width: 250px;
 }
+}
 
 .logout-btn{
   display: flex;
