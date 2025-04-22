@@ -35,9 +35,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
       });
 
       const loginResult = await response.json();
-      console.log(loginResult)
       if (loginResult.success) {
-        console.log("Login Successfull:", loginResult);
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
         setErrorMessage("");
@@ -57,7 +55,6 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
     const userGoogleInfo = jwtDecode(token);
     const googleEmail = {email: userGoogleInfo.email}
     
-    console.log(googleEmail)
     try {
       const response = await fetch("http://localhost/tutorMatch/server/login/googleLogin.php", {
         method: "POST",
@@ -70,11 +67,10 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
       const loginResult = await response.json();
 
       if (loginResult.success) {
-        console.log("Login Successfull:", loginResult);
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
         setErrorMessage("");
-        localStorage.setItem("userEmail", loginResult.user_profile.email); 
+        localStorage.setItem("tutorMatch-email", loginResult.user_profile.email); 
         return;
       }
       setErrorMessage("Incorrect email or password");
@@ -96,7 +92,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label for="email">Email Address</label>
+            <label htmlFor="email">Email Address</label>
             <input
               type="email"
               id="email"
@@ -109,7 +105,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
           </div>
 
           <div className="form-group">
-            <label for="account_password">Password</label>
+            <label htmlFor="account_password">Password</label>
             <input
               type="password"
               id="password"
@@ -123,9 +119,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
 
           <div className="form-footer">
             <p className="error-message">{errorMessage}</p>
-            <a href="/" className="forgot-password">
-              Forgot Password?
-            </a>
+            
           </div>
 
           <button type="submit" className="login-button">
@@ -142,14 +136,15 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
 
         <div className="divider"></div>
 
-        <p className="signup-link">
-          No account yet? <a onClick={() => navigate("/signup")}>Sign Up</a>
+        <p  className="signup-link">No account yet? 
+          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+          <a onClick={() => navigate("/signup")}>Sign Up</a>
         </p>
       </div>
 
       <div className="image-container">
         <img src={tutorImage} alt="profile" />
-      </div>
+      </div> 
     </div>
   );
 }

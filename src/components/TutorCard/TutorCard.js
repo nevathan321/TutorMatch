@@ -1,5 +1,7 @@
-import React from 'react';
+import { useState, useEffect } from "react";
 import './TutorCard.css';
+import Reviews from '../Reviews/reviews';
+import { fetchReviews } from '../Reviews/reviews';
 
 // Function to return the year of study string based on the year number
 const getYearOfStudyString = (year) => {
@@ -19,7 +21,6 @@ const getYearOfStudyString = (year) => {
   }
 };
 
-// Sample review data for the tutor
 const review = {
   title: 'AMAZING',
   text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.',
@@ -28,40 +29,51 @@ const review = {
   date: 'March 23, 2024'
 }
 
-// Function to render stars based on the rating
-const renderStars = (rating) => {
-  const stars = [];
-  for (let i = 1; i <= 5; i++) {
-    stars.push(
-      <span key={i} className={`star ${i <= rating ? 'filled' : ''}`}>
-        {i <= rating ? (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-          </svg>
-        ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="24" height="24">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-          </svg>
-        )}
-      </span>
-    );
-  }
-  return stars;
-};
-
-// Function to determine the CSS class based on the subject
-const getSubjectClass = (subject) => {
-  const subjectLower = subject.toLowerCase();
-  if (subjectLower.includes('chemistry')) return 'chemistry';
-  if (subjectLower.includes('physics')) return 'physics';
-  if (subjectLower.includes('math')) return 'mathematics';
-  if (subjectLower.includes('program') || subjectLower.includes('computer')) return 'programming';
-  if (subjectLower.includes('stat')) return 'statistics';
-  return '';
-};
-
 function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
-  const subjects = JSON.parse(tutor.main_subjects); //parse from json string
+  const [showReviewsModal, setShowReviewsModal] = useState(false);
+  const [latestReview, setLatestReview] = useState(null);
+  const subjects = JSON.parse(tutor.main_subjects)
+
+  useEffect(() => {
+      const getLatestReview = async () => {
+          const reviews = await fetchReviews(tutor.id);
+          if (reviews && reviews.length > 0) {
+              setLatestReview(reviews[0]); // Get the first (latest) review
+          }
+      };
+
+      getLatestReview();
+  }, [tutor.id]);
+ 
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <span key={i} className={`star ${i <= rating ? 'filled' : ''}`}>
+          {i <= rating ? (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="24" height="24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          )}
+        </span>
+      );
+    }
+    return stars;
+  };
+  
+  const getSubjectClass = (subject) => {
+    const subjectLower = subject.toLowerCase();
+    if (subjectLower.includes('chemistry')) return 'chemistry';
+    if (subjectLower.includes('physics')) return 'physics';
+    if (subjectLower.includes('math')) return 'mathematics';
+    if (subjectLower.includes('program') || subjectLower.includes('computer')) return 'programming';
+    if (subjectLower.includes('stat')) return 'statistics';
+    return '';
+  };
   
   return (
     <div className="tutor-card">
@@ -94,7 +106,7 @@ function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
           
           <button 
             className="see-more-button"
-            onClick={onSeeMoreReviews}
+            onClick={() => setShowReviewsModal(true)}
           >
             See More Reviews
           </button>
@@ -103,22 +115,25 @@ function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
             {renderStars(tutor.rating)}
           </div>
           
-          {review && (
-            <div className="review-section">
-              <div className="review-title">{review.title}</div>
-              <p className="review-text">{review.text}</p>
-              
-              <div className="reviewer-info">
-                <img 
-                  src={review.reviewerImage || '/placeholder-avatar.png'} 
-                  alt={review.reviewerName} 
-                  className="reviewer-image"
-                />
-                <span className="reviewer-name">{review.reviewerName}</span>
-                <span className="review-date">{review.date}</span>
-              </div>
-            </div>
-          )}
+          {latestReview && (
+                <div className="review-section">
+                    <div className="review-title">{latestReview.title}</div>
+                    <p className="review-text">{latestReview.review_text || latestReview.body}</p>
+                    
+                    <div className="reviewer-info">
+                        <img 
+                            src="/placeholder-avatar.png"
+                            alt={latestReview.reviewer_name} 
+                            className="reviewer-image"
+                        />
+                        <span className="reviewer-name">{latestReview.reviewer_name}</span>
+                        <span className="review-date">
+                            {new Date(latestReview.created_at).toLocaleDateString()}
+                        </span>
+                    </div>
+                </div>
+            )}
+            
           
           <div className="tutor-actions">
             <button 
@@ -144,6 +159,13 @@ function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
               <span>Accept</span>
             </button>
           </div>
+
+          <Reviews 
+                isOpen={showReviewsModal}
+                onClose={() => setShowReviewsModal(false)}
+                tutor={tutor}
+          />
+          
         </div>
       </div>
     </div>

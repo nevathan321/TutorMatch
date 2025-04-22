@@ -1,4 +1,5 @@
 <?php
+//return all tutors that tutee has matched with
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -15,8 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $stmt = $dbh->prepare($sql);
   $stmt->execute([':tuteeID' => $tuteeID]);
   $mathcedTutors = $stmt->fetch(PDO::FETCH_ASSOC);
-
+  
   $tutorIDS = json_decode($mathcedTutors['matched_tutors'], true);
+  if (is_null($tutorIDS)) {//if there are no matched tutors yet and field is NULL
+    echo json_encode([]); // return an empty PHP array as JSON 
+    return;
+  }
 
   //format ids in sql
   $placeholders = implode(',', array_fill(0, count($tutorIDS), '?'));
@@ -25,5 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $stmt1->execute($tutorIDS);
   $tutorsArr = $stmt1->fetchAll(PDO::FETCH_ASSOC);
 
+ 
   echo json_encode($tutorsArr);
 }

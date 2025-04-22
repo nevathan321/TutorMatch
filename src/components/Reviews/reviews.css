@@ -1,0 +1,96 @@
+.reviews-container {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.review-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.review-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.reviewer-name {
+    font-weight: 500;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+.review-rating {
+    display: flex;
+    gap: 2px;
+}
+
+.review-rating .star {
+    color: #e4e5e7;
+    font-size: 1.1rem;
+}
+
+.review-rating .star.filled {
+    color: #ffd700;
+}
+
+.review-date {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.review-content {
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.review-content p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.no-reviews {
+    text-align: center;
+    padding: 32px 16px;
+    color: #6c757d;
+}
+
+/* Scrollbar Styling */
+.reviews-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.reviews-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.reviews-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.reviews-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

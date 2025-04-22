@@ -4,18 +4,8 @@ import { Link } from "react-router-dom";
 import Review from "../../components/review/Review";
 import "./Dashboard.css";
 
-function Dashboard({ userProfile }) {
-  const [userRole, setUserRole] = useState("");
-
-  const [stats, setStats] = useState({
-    totalSessions: 0,
-    upcomingSessions: 0,
-    averageRating: 0,
-    earnings: 0,
-    matches: 0,
-  });
-
-  const [totalMatches, setTotalMatches] = useState(null);
+function Dashboard({userProfile}) {
+  const [totalMatches, setTotalMatches] = useState(null)
   const [recentMatches, setRecentMatches] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,9 +19,6 @@ function Dashboard({ userProfile }) {
     rating: 5,
     tutorId: "", // Add tutorId field
   });
-
-  // Add state for tutors list
-  const [tutors, setTutors] = useState([]);
 
   // Fetches events from the Google Calendar API and updates the state with the event data
   useEffect(() => {
@@ -74,21 +61,22 @@ function Dashboard({ userProfile }) {
             },
           }
         );
-
         const matchedTutors = await response.json();
-
-        setRecentMatches(matchedTutors.slice(-4)); // gets last 4 matches
-        setTotalMatches(matchedTutors.length);
+       
+        setRecentMatches(matchedTutors.slice(-4));//gets last 4 matches
+        setTotalMatches(matchedTutors.length)
+    
       } catch (err) {
         console.error("Login error:", err);
       }
     };
 
     fetchMatchedTutors();
-    setLoading(false);
+    setLoading(false)
   }, []);
 
-  // Updates the review form state when any field is changed
+  
+
   const handleReviewChange = (e) => {
     const { name, value } = e.target;
     setNewReview((prev) => ({
@@ -142,16 +130,16 @@ function Dashboard({ userProfile }) {
     // Uploads the review to the server
     const uploadReview = async (newReviewObj) => {
       try {
-        const response = await fetch(
-          `http://localhost/tutorMatch/server/reviews/createReview.php`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newReviewObj),
-          }
-        );
+        const response = await fetch(`http://localhost/tutorMatch/server/reviews/createReview.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newReviewObj),
+        });
+  
+        //const result = await response.json();
+    
       } catch (error) {
         console.error("Error:", error);
       }
@@ -172,11 +160,7 @@ function Dashboard({ userProfile }) {
     <div className="dashboard-container">
       <div className="dashboard-header">
         <h1>Welcome to Your Dashboard</h1>
-        <p className="dashboard-subtitle">
-          {userRole === "tutor"
-            ? "Manage your tutoring sessions and track your progress"
-            : "Find tutors and manage your learning journey"}
-        </p>
+        <p className="dashboard-subtitle">Find tutors and manage your learning journey</p>
       </div>
 
       <div className="stats-container">
@@ -201,7 +185,7 @@ function Dashboard({ userProfile }) {
           </div>
           <div className="stat-content">
             <h3>Total Sessions</h3>
-            <p className="stat-value">{stats.totalSessions}</p>
+            <p className="stat-value">0</p>
           </div>
         </div>
 
@@ -224,7 +208,7 @@ function Dashboard({ userProfile }) {
           </div>
           <div className="stat-content">
             <h3>Upcoming</h3>
-            <p className="stat-value">{stats.upcomingSessions}</p>
+            <p className="stat-value">0</p>
           </div>
         </div>
 
@@ -241,8 +225,8 @@ function Dashboard({ userProfile }) {
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+                  strokeLinejoin="round">
+
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                 </svg>
               </div>
@@ -263,8 +247,7 @@ function Dashboard({ userProfile }) {
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+                  strokeLinejoin="round">
                   <line x1="12" y1="1" x2="12" y2="23"></line>
                   <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                 </svg>
@@ -311,29 +294,134 @@ function Dashboard({ userProfile }) {
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 1v22m6-6v6H6v-6"></path>
+
+                  strokeLinejoin="round">
+
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
               </div>
               <div className="stat-content">
-                <h3>Reviews</h3>
-                <p className="stat-value">{reviews.length}</p>
+                <h3>Favorites</h3>
+                <p className="stat-value">{stats.favoriteTutors || 0}</p>
               </div>
             </div>
-          </>
-        )}
+       
+      
       </div>
 
-      <div className="recent-matches">
-        <h3>Recent Matches</h3>
-        <div className="matches-list">
-          {recentMatches.map((match) => (
-            <div className="match-card" key={match.id}>
-              <h4>{match.full_name}</h4>
-              <Link to={`/tutor/${match.id}`} className="view-profile">
-                View Profile
-              </Link>
+      <div className="dashboard-grid">
+        <div className="dashboard-card recent-matches">
+          <div className="card-header">
+            <h2>Recent Matches</h2>
+            <Link to="/inbox" className="view-all">
+              View All
+            </Link>
+          </div>
+
+          <div className="matches-list">
+            {recentMatches.length > 0 ? (
+              recentMatches.map((match) => (
+                <div key={match.id} className="match-item">
+                  <div className="match-avatar">
+                    <img
+                      src={match.profileImage || "/placeholder-avatar.png"}
+                      alt={match.full_name}
+                    />
+                  </div>
+                  <div className="match-details">
+
+                    <h3>{match.full_name}</h3>
+                    <p>{JSON.parse(match.main_subjects)[0]}</p>
+                    <span className="match-date">
+                      
+                      {match.bio}
+                    </span>
+
+                  </div>
+                  <Link to={`/inbox`} className="contact-button">
+                    Contact
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <div className="no-data">
+                <p>No matches yet. Start browsing tutors!</p>
+                <Link to="/match" className="action-link">
+                  Find Tutors
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="dashboard-card schedule">
+          <div className="card-header">
+            <h2>Upcoming Sessions</h2>
+          </div>
+
+          <div className="calendar-container">
+            {googleEvents.length > 0 ? (
+              <ul className="event-list">
+                {googleEvents.map((event, index) => {
+                  const start = new Date(event.start);
+                  const end = new Date(event.end);
+
+                  const dateOptions = { weekday: 'short', month: 'short', day: 'numeric' };
+                  const timeOptions = { hour: '2-digit', minute: '2-digit' };
+
+                  const formattedDate = start.toLocaleDateString(undefined, dateOptions);
+                  const startTime = start.toLocaleTimeString(undefined, timeOptions);
+                  const endTime = end.toLocaleTimeString(undefined, timeOptions);
+
+                  return (
+                    <li key={index} className="event-item">
+                      <div className="event-date">
+                        <span className="event-day">{formattedDate} , </span>
+                        <span className="event-time-range">{startTime} – {endTime}</span>
+                      </div>
+                      <div className="event-details">
+                        <strong className="event-title">{event.summary}</strong>
+                        {event.location && (
+                          <p className="event-location">{event.location}</p>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="no-events">No upcoming events found.</p>
+            )}
+          </div>
+
+        </div>
+      </div>
+
+      {/* New Review Form Section - Moved before the reviews section */}
+      <div className="dashboard-card create-review full-width">
+        <div className="card-header">
+          <h2>Write a Review</h2>
+        </div>
+
+        <div className="review-form-container">
+          <form onSubmit={handleReviewSubmit} className="review-form">
+            {/* Add the tutor selection dropdown to the review form */}
+            <div className="form-group">
+              <label htmlFor="tutorId">Select Tutor</label>
+              <select
+                id="tutorId"
+                name="tutorId"
+                value={newReview.tutorId}
+                onChange={handleReviewChange}
+                className="tutor-select"
+                required>
+                <option value="">-- Select a Tutor --</option>
+                {recentMatches.map((tutor) => (
+                  <option key={tutor.id} value={tutor.id}>
+                    {tutor.full_name} - {JSON.parse(tutor.main_subjects)[0]}
+                  </option>
+                ))}
+              </select>
             </div>
           ))}
         </div>
