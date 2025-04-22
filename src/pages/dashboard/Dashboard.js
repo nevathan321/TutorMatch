@@ -1,5 +1,3 @@
-"use client";
-
 // src/pages/dashboard/Dashboard.js
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -118,7 +116,6 @@ function Dashboard({userProfile}) {
 
     const getTutorName = (tutorID) => {
       for (const tutor of recentMatches){
-        console.log(tutor )
         if (tutor.id === Number(tutorID)) return tutor.full_name
       }
     }
@@ -161,7 +158,6 @@ function Dashboard({userProfile}) {
       }
     }
     uploadReview(newReviewObj)
-    console.log("Review submitted:", newReviewObj);
   };
 
   if (loading) {
