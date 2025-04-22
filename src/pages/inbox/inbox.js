@@ -7,6 +7,8 @@ import MyCalendar from "../../components/calendar/MyCalendar";
 import Modal from "../../components/modal/modal";
 import Reviews from "../../components/Reviews/reviews";
 
+
+// Function to return a string representing the year of study based on the year number
 const getYearOfStudyString = (year) => {
     switch (year) {
         case 1:
@@ -25,6 +27,8 @@ const getYearOfStudyString = (year) => {
 };
 
 function Inbox({ userProfile }) {
+    // State variables for managing data and UI
+
     const [matches, setMatches] = useState([]);
     const [filteredMatches, setFilteredMatches] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -42,6 +46,8 @@ function Inbox({ userProfile }) {
 
     const [showReviewsModal, setShowReviewsModal] = useState(false);
 
+
+    // Function to fetch tutor matches based on the user profile and search term
     useEffect(() => {
         const fetchMatchedTutors = async () => {
             try {
@@ -54,6 +60,8 @@ function Inbox({ userProfile }) {
                         },
                     }
                 );
+
+                // Error handling for failed response
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -82,6 +90,8 @@ function Inbox({ userProfile }) {
         ));
     };
 
+    // Function to handle selecting a tutor for scheduling or emailing
+
     const handleSelectTutor = (tutor) => {
         setSelectedTutor(tutor);
         const subjects = tutor.main_subjects && typeof tutor.main_subjects === 'string'
@@ -93,6 +103,9 @@ function Inbox({ userProfile }) {
         });
         setShowEmailModal(true);
     };
+
+
+    // Function to send a calendar invite to the selected tutor
 
     const sendCalendarInvite = async (tutor, date, startTimeStr, endTimeStr) => {
         try {
@@ -161,6 +174,9 @@ function Inbox({ userProfile }) {
             return { success: false, error: error.message };
         }
     };
+
+
+    // Function to handle sending the email
 
     const handleSendEmail = async () => {
         setEmailStatus({ type: "loading", message: "Sending email..." });

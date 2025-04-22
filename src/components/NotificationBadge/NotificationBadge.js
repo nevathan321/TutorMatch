@@ -1,6 +1,7 @@
 import React from 'react';
 import './NotificationBadge.css';
 
+// Component that displays a notification badge if count is greater than 0
 function NotificationBadge({ count }) {
   if (!count || count <= 0) return null;
   

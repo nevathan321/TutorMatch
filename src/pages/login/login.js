@@ -13,6 +13,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
   });
   const [errorMessage, setErrorMessage] = useState(""); // State to hold error messages
 
+  // Handles input change for the login form fields (email, password)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setLoginForm((prev) => ({
@@ -21,7 +22,8 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
     }));
   };
 
-  const handleSubmit = async (e) => {//regular login
+  // Handles form submission for regular login (email/password)
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch("http://localhost/tutorMatch/server/login/", {
@@ -47,8 +49,8 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
     }
   };
 
-
-  const handleLoginSuccess = async (guathResponse) => {//google login
+  // Handles successful Google login and sends the email to the server
+  const handleLoginSuccess = async (guathResponse) => {
     const token = guathResponse.credential;
     const userGoogleInfo = jwtDecode(token);
     const googleEmail = {email: userGoogleInfo.email}
@@ -76,8 +78,8 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
       console.error("Login error:", err);
     }
   }
-  
 
+  // Handles failed Google login attempt
   const handleLoginFailure = (error) => {
     console.error("Google login error:", error);
   };

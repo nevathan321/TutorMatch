@@ -3,6 +3,7 @@ import './TutorCard.css';
 import Reviews from '../Reviews/reviews';
 import { fetchReviews } from '../Reviews/reviews';
 
+// Function to return the year of study string based on the year number
 const getYearOfStudyString = (year) => {
   switch (year) {
     case 1:
@@ -20,6 +21,13 @@ const getYearOfStudyString = (year) => {
   }
 };
 
+const review = {
+  title: 'AMAZING',
+  text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.',
+  reviewerName: 'Ashley',
+  reviewerImage: '/placeholder-avatar.png',
+  date: 'March 23, 2024'
+}
 
 function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
   const [showReviewsModal, setShowReviewsModal] = useState(false);

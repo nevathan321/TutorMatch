@@ -10,9 +10,10 @@ export default function Signup({ setIsLoggedIn, setUserProfile }) {
   const navigate = useNavigate();
   const [step, setStep] = useState("signup");
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
+  // Handles successful Google signup and decodes user information
   const handleSingupSuccess = (response) => {
     const token = response.credential;
     const userInfo = jwtDecode(token);
@@ -24,20 +25,32 @@ export default function Signup({ setIsLoggedIn, setUserProfile }) {
     
   };
 
+  // Handles Google signup failure
   const handleSignupFailure = (error) => {
     console.error("Google login error:", error);
   };
 
+  // Handles form submission and moves to the profile creation step
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setStep("createProfile")
+    setStep("createProfile");
   };
 
-  if (step === "createProfile"){
-    return <CreateProfile setIsLoggedIn={setIsLoggedIn} setUserProfile={setUserProfile} email={email} firstName={firstName} lastName={lastName} />
+  // Renders the CreateProfile component if step is "createProfile"
+  if (step === "createProfile") {
+    return (
+      <CreateProfile
+        setIsLoggedIn={setIsLoggedIn}
+        setUserProfile={setUserProfile}
+        email={email}
+        firstName={firstName}
+        lastName={lastName}
+      />
+    );
   }
 
+  // Renders the signup form if step is "signup"
   if (step === "signup") {
     return (
       <div className="login-page">

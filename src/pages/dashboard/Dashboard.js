@@ -20,6 +20,7 @@ function Dashboard({userProfile}) {
     tutorId: "", // Add tutorId field
   });
 
+  // Fetches events from the Google Calendar API and updates the state with the event data
   useEffect(() => {
     const fetchGoogleEvents = async () => {
       try {
@@ -47,7 +48,8 @@ function Dashboard({userProfile}) {
     fetchGoogleEvents();
   }, []);
 
-  useEffect(() => {//runs on component load, fetches tutors from database
+  // Fetches matched tutors for the user from the server and updates the recent matches and total matches state
+  useEffect(() => {
     const fetchMatchedTutors = async () => {
       try {
         const response = await fetch(
@@ -62,7 +64,6 @@ function Dashboard({userProfile}) {
         const matchedTutors = await response.json();
        
         setRecentMatches(matchedTutors.slice(-4));//gets last 4 matches
-        console.log(matchedTutors.length)
         setTotalMatches(matchedTutors.length)
     
       } catch (err) {
@@ -72,19 +73,19 @@ function Dashboard({userProfile}) {
 
     fetchMatchedTutors();
     setLoading(false)
-    // eslint-disable-next-line 
   }, []);
+
+  
 
   const handleReviewChange = (e) => {
     const { name, value } = e.target;
     setNewReview((prev) => ({
       ...prev,
       [name]: value,
-      
     }));
   };
 
-  // Handle star rating selection
+  // Updates the rating in the review form when a star is selected
   const handleRatingChange = (rating) => {
     setNewReview((prev) => ({
       ...prev,
@@ -92,21 +93,20 @@ function Dashboard({userProfile}) {
     }));
   };
 
-  // Submit new review
+  // Handles the submission of the new review, including resetting the form and uploading the review to the server
   const handleReviewSubmit = (e) => {
     e.preventDefault();
 
-
     const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0];
+    const formattedDate = today.toISOString().split("T")[0];
 
     const getTutorName = (tutorID) => {
-      for (const tutor of recentMatches){
-        if (tutor.id === Number(tutorID)) return tutor.full_name
+      for (const tutor of recentMatches) {
+        if (tutor.id === Number(tutorID)) return tutor.full_name;
       }
-    }
+    };
     const newReviewObj = {
-      authorID: userProfile.id ,
+      authorID: userProfile.id,
       rating: Number.parseInt(newReview.rating),
       title: newReview.title,
       body: newReview.body,
@@ -127,6 +127,7 @@ function Dashboard({userProfile}) {
       tutorId: "",
     });
 
+    // Uploads the review to the server
     const uploadReview = async (newReviewObj) => {
       try {
         const response = await fetch(`http://localhost/tutorMatch/server/reviews/createReview.php`, {
@@ -136,16 +137,14 @@ function Dashboard({userProfile}) {
           },
           body: JSON.stringify(newReviewObj),
         });
-        
-        if (!response.ok){
-          console.error("Error uploading review")
-        }
-        
+  
+        //const result = await response.json();
+    
       } catch (error) {
         console.error("Error:", error);
       }
-    }
-    uploadReview(newReviewObj)
+    };
+    uploadReview(newReviewObj);
   };
 
   if (loading) {
@@ -154,7 +153,7 @@ function Dashboard({userProfile}) {
         <div className="loader"></div>
         <p>Loading your dashboard...</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -176,7 +175,8 @@ function Dashboard({userProfile}) {
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
-              strokeLinejoin="round">
+              strokeLinejoin="round"
+            >
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
               <line x1="16" y1="2" x2="16" y2="6"></line>
               <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -200,8 +200,8 @@ function Dashboard({userProfile}) {
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
-              strokeLinejoin="round">
-
+              strokeLinejoin="round"
+            >
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
@@ -212,7 +212,54 @@ function Dashboard({userProfile}) {
           </div>
         </div>
 
-    
+        {userRole === "tutor" ? (
+          <>
+            <div className="stat-card">
+              <div className="stat-icon rating">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round">
+
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </div>
+              <div className="stat-content">
+                <h3>Rating</h3>
+                <p className="stat-value">{stats.averageRating.toFixed(1)}</p>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="stat-icon earnings">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+              <div className="stat-content">
+                <h3>Earnings</h3>
+                <p className="stat-value">${stats.earnings}</p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
             <div className="stat-card">
               <div className="stat-icon matches">
                 <svg
@@ -224,23 +271,20 @@ function Dashboard({userProfile}) {
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
-
-                  strokeLinejoin="round">
-
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 2l3 9h-6l3-9z"></path>
+                  <path d="M12 22l3-9h-6l3 9z"></path>
                 </svg>
               </div>
               <div className="stat-content">
-                <h3>Matches</h3>
+                <h3>Total Matches</h3>
                 <p className="stat-value">{totalMatches}</p>
               </div>
             </div>
 
             <div className="stat-card">
-              <div className="stat-icon favorites">
+              <div className="stat-icon reviews">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -250,13 +294,15 @@ function Dashboard({userProfile}) {
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
+
                   strokeLinejoin="round">
+
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
               </div>
               <div className="stat-content">
                 <h3>Favorites</h3>
-                <p className="stat-value">0</p>
+                <p className="stat-value">{stats.favoriteTutors || 0}</p>
               </div>
             </div>
        
@@ -361,7 +407,7 @@ function Dashboard({userProfile}) {
           <form onSubmit={handleReviewSubmit} className="review-form">
             {/* Add the tutor selection dropdown to the review form */}
             <div className="form-group">
-              <label htmlFor="tutorId">Select A Matched Tutor</label>
+              <label htmlFor="tutorId">Select Tutor</label>
               <select
                 id="tutorId"
                 name="tutorId"
@@ -377,93 +423,21 @@ function Dashboard({userProfile}) {
                 ))}
               </select>
             </div>
-
-            <div className="form-group">
-              <label htmlFor="rating">Rating</label>
-              <div className="star-rating">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <span
-                    key={star}
-                    className={`star ${Number.parseInt(newReview.rating) >= star ? "selected" : ""}`}
-                    onClick={() => handleRatingChange(star)}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill={Number.parseInt(newReview.rating) >= star ? "gold" : "none"}
-                      stroke="currentColor"
-                      strokeWidth="2">
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                    </svg>
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="title">Title</label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={newReview.title}
-                onChange={handleReviewChange}
-                placeholder="Enter a title for your review"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="body">Review</label>
-              <textarea
-                id="body"
-                name="body"
-                value={newReview.body}
-                onChange={handleReviewChange}
-                placeholder="Share your experience with this tutor..."
-                rows="4"
-                required></textarea>
-            </div>
-
-            <button type="submit" className="submit-review-button">
-              Submit Review
-            </button>
-          </form>
+          ))}
         </div>
       </div>
 
-      {/* Reviews section moved after the create-review section */}
-      <div className="dashboard-card reviews full-width">
-        <div className="card-header">
-          <h2>Latest Reviews</h2>
-        </div>
-
-        <div className="reviews-list">
-          {reviews.length > 0 ? (
-            reviews.map((review) => (
-              <Review
-                key={review.id}
-                rating={review.rating}
-                title={review.title}
-                body={review.body}
-                author={review.author}
-                date={review.date}
-                pfp={review.pfp}
-                tutorName={review.tutorName}
-              />
-            ))
-          ) : (
-            <div className="no-data">
-              <p>No reviews yet.</p>
-            </div>
-          )}
-        </div>
+      <div className="review-section">
+        <Review
+          handleReviewSubmit={handleReviewSubmit}
+          handleReviewChange={handleReviewChange}
+          handleRatingChange={handleRatingChange}
+          newReview={newReview}
+          tutors={tutors}
+        />
       </div>
     </div>
-  )
+  );
 }
 
-
 export default Dashboard;
-
