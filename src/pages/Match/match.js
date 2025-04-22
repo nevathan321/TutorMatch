@@ -130,17 +130,17 @@ function Match({ userProfile }) {
         message: `Hi there! Thanks for matching with me. I'd be happy to help with your studies.`,
         type: "info",
       });
-    }, 10000); // 10 seconds later
+    }, 10000); 
   };
 
   const handleSeeMoreReviews = () => {
     if (tutors.length === 0) return;
 
-    // No notification for seeing more reviews
+    
 
   };
 
-  // Navigate to previous tutor
+  
   const handlePrevTutor = () => {
     if (tutors.length <= 1) return;
 
@@ -149,7 +149,7 @@ function Match({ userProfile }) {
     );
   };
 
-  // Navigate to next tutor
+  
   const handleNextTutor = () => {
     if (tutors.length <= 1) return;
 
@@ -176,7 +176,7 @@ function Match({ userProfile }) {
 
       <div className="tutor-card-container">
           <div className="tutor-card-with-navigation">
-            {/* Previous button positioned absolutely */}
+            
             <button
               className="arrow-button prev"
               onClick={handlePrevTutor}
@@ -192,7 +192,7 @@ function Match({ userProfile }) {
               </svg>
             </button>
 
-            {/* Tutor card */}
+            
             <TutorCard
               tutor={tutors[currentTutorIndex]}
               onSeeMoreReviews={handleSeeMoreReviews}
@@ -200,7 +200,7 @@ function Match({ userProfile }) {
               onReject={handleReject}
             />
 
-            {/* Next button positioned absolutely */}
+            
             <button
               className="arrow-button next"
               onClick={handleNextTutor}
