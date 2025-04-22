@@ -2,23 +2,28 @@ import React, { useState, useEffect } from 'react';
 import './ToastNotification.css';
 
 function ToastNotification({ notification, onClose }) {
+  // State to track if the toast is exiting
   const [isExiting, setIsExiting] = useState(false);
   
   useEffect(() => {
+    // Set timer for exit animation after 4.5 seconds
     const timer = setTimeout(() => {
       setIsExiting(true);
     }, 4500); // Start exit animation after 4.5 seconds
     
+    // Remove toast after 5 seconds
     const closeTimer = setTimeout(() => {
       onClose(notification.id);
     }, 5000); // Remove after 5 seconds
     
     return () => {
+      // Cleanup timers on unmount or change in notification.id
       clearTimeout(timer);
       clearTimeout(closeTimer);
     };
   }, [notification.id, onClose]);
   
+  // Handle manual close of the toast notification
   const handleClose = (e) => {
     e.stopPropagation(); // Prevent event bubbling
     setIsExiting(true);
@@ -27,6 +32,7 @@ function ToastNotification({ notification, onClose }) {
     }, 300); // Wait for exit animation to complete
   };
   
+  // Get the class for different toast types (success, error, etc.)
   const getTypeClass = () => {
     switch (notification.type) {
       case 'success':
@@ -40,6 +46,7 @@ function ToastNotification({ notification, onClose }) {
     }
   };
   
+  // Get the appropriate icon for the toast based on its type
   const getIcon = () => {
     switch (notification.type) {
       case 'success':

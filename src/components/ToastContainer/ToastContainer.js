@@ -4,6 +4,8 @@ import ToastNotification from '../ToastNotification/ToastNotification';
 import './ToastContainer.css';
 
 function ToastContainer() {
+
+  // Destructure toasts and removeToast from context
   const { toasts, removeToast } = useNotifications();
   
   return (

@@ -22,14 +22,18 @@ function Review({ id, rating, title, body, author, date, pfp }) {
 
         return stars;
     };
-    
+
     return (
         <div className='Review'>
+            {/* Render the stars based on rating */}
             <div className='starReview'>
                 {renderStars()}
             </div>
+            {/* Display the title of the review */}
             <h2>{title}</h2>
+            {/* Display the review body/content */}
             <p>{body}</p>
+            {/* Display the author info (profile picture, name, and date) */}
             <div className='authorinfo'>
                 <img src={sampleprofile} alt="PFP" />
                 <div>

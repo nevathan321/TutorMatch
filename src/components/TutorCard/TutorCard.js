@@ -1,6 +1,7 @@
 import React from 'react';
 import './TutorCard.css';
 
+// Function to return the year of study string based on the year number
 const getYearOfStudyString = (year) => {
   switch (year) {
     case 1:
@@ -18,6 +19,7 @@ const getYearOfStudyString = (year) => {
   }
 };
 
+// Sample review data for the tutor
 const review = {
   title: 'AMAZING',
   text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.',
@@ -26,38 +28,40 @@ const review = {
   date: 'March 23, 2024'
 }
 
+// Function to render stars based on the rating
+const renderStars = (rating) => {
+  const stars = [];
+  for (let i = 1; i <= 5; i++) {
+    stars.push(
+      <span key={i} className={`star ${i <= rating ? 'filled' : ''}`}>
+        {i <= rating ? (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="24" height="24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        )}
+      </span>
+    );
+  }
+  return stars;
+};
+
+// Function to determine the CSS class based on the subject
+const getSubjectClass = (subject) => {
+  const subjectLower = subject.toLowerCase();
+  if (subjectLower.includes('chemistry')) return 'chemistry';
+  if (subjectLower.includes('physics')) return 'physics';
+  if (subjectLower.includes('math')) return 'mathematics';
+  if (subjectLower.includes('program') || subjectLower.includes('computer')) return 'programming';
+  if (subjectLower.includes('stat')) return 'statistics';
+  return '';
+};
+
 function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
-  const subjects = JSON.parse(tutor.main_subjects)//parse from json string
- 
-  const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <span key={i} className={`star ${i <= rating ? 'filled' : ''}`}>
-          {i <= rating ? (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="24" height="24">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-          )}
-        </span>
-      );
-    }
-    return stars;
-  };
-  
-  const getSubjectClass = (subject) => {
-    const subjectLower = subject.toLowerCase();
-    if (subjectLower.includes('chemistry')) return 'chemistry';
-    if (subjectLower.includes('physics')) return 'physics';
-    if (subjectLower.includes('math')) return 'mathematics';
-    if (subjectLower.includes('program') || subjectLower.includes('computer')) return 'programming';
-    if (subjectLower.includes('stat')) return 'statistics';
-    return '';
-  };
+  const subjects = JSON.parse(tutor.main_subjects); //parse from json string
   
   return (
     <div className="tutor-card">
