@@ -285,6 +285,7 @@ input::placeholder {
     flex: 1;
     min-width: 250px;
 }
+}
 
 /* Interactive Preferred Days Styling - kept for compatibility but not used */
 .days-grid {

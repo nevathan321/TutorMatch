@@ -233,6 +233,21 @@ textarea {
   background-color: #2980b9;
 }
 
+/* Style for disabled primary button */
+.btn.primary:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Remove hover effects when disabled */
+.btn.primary:disabled:hover {
+  background-color: #cccccc; /* Same as normal disabled state */
+  transform: none; /* Remove any transform effects */
+  box-shadow: none; /* Remove any shadow effects */
+}
+
 .secondary {
   background-color: #ecf0f1;
   color: #7f8c8d;
