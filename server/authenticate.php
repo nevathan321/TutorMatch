@@ -6,6 +6,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once 'vendor/autoload.php';
+require_once 'connect.php'; 
 use Google\Service\Gmail;
 use Google\Service\Oauth2;
 
@@ -38,6 +39,23 @@ try {
             $oauth2 = new Oauth2($client);
             $userInfo = $oauth2->userinfo->get();
             $_SESSION['user_email'] = $userInfo->email;
+
+            $updateStmt = $dbh->prepare(" UPDATE Users SET gauth_access_token = ?, 
+                                    gauth_refresh_token = ?,
+                                    gauth_token_type = ?,
+                                    gauth_scope = ?,
+                                    gauth_expiry = ?
+                                    WHERE email = ?
+                                 ");
+
+            $updateStmt->execute([
+                $accessToken['access_token'],
+                $accessToken['refresh_token'] ?? null,
+                $accessToken['token_type'] ?? 'Bearer',
+                $accessToken['scope'] ?? '',
+                date('Y-m-d H:i:s', time() + ($accessToken['expires_in'] ?? 0)),
+                $userInfo->email
+            ]);
 
             echo "
             <!DOCTYPE html>

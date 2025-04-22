@@ -180,59 +180,71 @@ function Inbox({ userProfile }) {
 
     const handleSendEmail = async () => {
         setEmailStatus({ type: "loading", message: "Sending email..." });
-
+      
         try {
-            const emailEndpoint = "http://localhost/TutorMatch/server/email/email.php";
-
-            const response = await fetch(emailEndpoint, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify({
-                    to: selectedTutor.email,
-                    subject: emailContent.subject,
-                    message: emailContent.message,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const result = await response.json();
-
-            if (result.success) {
-                setEmailStatus({ type: "success", message: "Email sent successfully!" });
-                setTimeout(() => {
-                    setShowEmailModal(false);
-                    setEmailStatus({ type: "", message: "" });
-                }, 2000);
-            } else {
-                if (result.redirect) {
-                    setEmailStatus({ type: "info", message: "Authentication required. Redirecting to Google login..." });
-                    const authWindow = window.open(result.redirect, "googleAuth", "width=600,height=600");
-
-                    const checkAuthWindow = setInterval(() => {
-                        if (authWindow.closed) {
-                            clearInterval(checkAuthWindow);
-                            setEmailStatus({ type: "info", message: "Authentication completed. Trying to send email again..." });
-                            setTimeout(() => {
-                                handleSendEmail();
-                            }, 1000);
-                        }
-                    }, 500);
-                } else {
-                    setEmailStatus({ type: "error", message: result.error || "Failed to send email. Please try again." });
+          const emailEndpoint = "http://localhost/TutorMatch/server/email/email.php";
+      
+          const response = await fetch(emailEndpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              to: selectedTutor.email,
+              subject: emailContent.subject,
+              message: emailContent.message,
+              from: localStorage.getItem("userEmail"),
+            }),
+          });
+      
+          const result = await response.json();
+      
+          if (!response.ok) {
+            if (result.redirect) {
+              setEmailStatus({
+                type: "info",
+                message: "Authentication required. Redirecting to Google login...",
+              });
+      
+              const authWindow = window.open("https://localhost/TutorMatch/server/authenticate.php", "googleAuth", "width=600,height=600");
+      
+              const checkAuthWindow = setInterval(() => {
+                if (authWindow.closed) {
+                  clearInterval(checkAuthWindow);
+                  setEmailStatus({
+                    type: "info",
+                    message: "Authentication completed. Trying to send email again...",
+                  });
+                  setTimeout(() => {
+                    handleSendEmail();
+                  }, 1000);
                 }
+              }, 500);
+            } else {
+              setEmailStatus({
+                type: "error",
+                message: result.error || "Failed to send email. Please try again.",
+              });
             }
+            return;
+          }
+      
+          if (result.success) {
+            setEmailStatus({ type: "success", message: "Email sent successfully!" });
+            setTimeout(() => {
+              setShowEmailModal(false);
+              setEmailStatus({ type: "", message: "" });
+            }, 2000);
+          }
         } catch (error) {
-            console.error("Error sending email:", error);
-            setEmailStatus({ type: "error", message: "An error occurred while sending the email." });
+          console.error("Error sending email:", error);
+          setEmailStatus({
+            type: "error",
+            message: "An error occurred while sending the email.",
+          });
         }
-    };
-
+      };
    
 
 

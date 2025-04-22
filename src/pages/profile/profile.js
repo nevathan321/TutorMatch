@@ -59,7 +59,7 @@ function Profile({ userProfile, setUserProfile, setIsLoggedIn }) {
         //clear all user information
         setUserProfile(null)
         setIsLoggedIn(false)
-        localStorage.removeItem("tutorMatch-email");
+        localStorage.removeItem("userEmail");
         navigate("/");
     }
     function showNotification(message, isSuccess) {

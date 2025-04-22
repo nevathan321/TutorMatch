@@ -7,95 +7,94 @@ ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/calendar_errors.log');
 
-// Handle CORS
+require_once '../vendor/autoload.php';
+require_once '../connect.php'; // ✅ Your PDO $pdo should come from here
+
+use Google\Client;
+use Google\Service\Calendar;
+
+// CORS Headers
 if (isset($_SERVER['HTTP_ORIGIN'])) {
     $origin = $_SERVER['HTTP_ORIGIN'];
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Credentials: true");
 }
-
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Content-Type: application/json");
 
-// Start session first
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+// Preflight
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
 }
 
-require_once '../vendor/autoload.php';
-
-use Google\Client;
-use Google\Service\Calendar;
-
-$tutorEmail = filter_var($input['tutorEmail'], FILTER_SANITIZE_EMAIL);
-
-
 try {
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        http_response_code(200);
-        exit;
-    }
-
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Only POST method is allowed');
     }
-    // Get and validate input
+
     $input = json_decode(file_get_contents('php://input'), true);
-
-    if (!$input) {
-        throw new Exception('No input data received');
-    }
-
-
-    // Validate required fields
-    if (!isset($input['tutorEmail'], $input['startTime'], $input['endTime'], $input['summary'])) {
+    if (!$input || !isset($input['tutorEmail'], $input['startTime'], $input['endTime'], $input['summary'])) {
         throw new Exception('Missing required fields');
     }
 
-    // Check authentication
-    if (!isset($_SESSION['access_token'])) {
+    // Pull token from DB using tutorEmail
+    $tutorEmail = filter_var($input['tutorEmail'], FILTER_SANITIZE_EMAIL);
+    $senderEmail = filter_var($input['senderEmail'], FILTER_SANITIZE_EMAIL);
+
+    $stmt = $dbh->prepare("SELECT gauth_access_token, gauth_refresh_token, gauth_token_type, gauth_scope, gauth_expiry FROM Users WHERE email = ?");
+    $stmt->execute([$senderEmail]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user || empty($user['gauth_access_token'])) {
+        http_response_code(401);
         echo json_encode([
             'success' => false,
-            'error' => 'Not authenticated',
-            'redirect' => 'http://localhost/TutorMatch/server/authenticate.php'
+            'error' => 'Sender is not authenticated with Google'
         ]);
         exit;
     }
 
-
+    // Setup Google Client
     $client = new Google_Client();
     $client->setAuthConfig('../credentials.json');
-    $client->addScope(Calendar::CALENDAR_EVENTS);
-    $client->setAccessToken($_SESSION['access_token']);
+    $client->addScope(Google\Service\Calendar::CALENDAR_EVENTS);
+    $client->setAccessType('offline');
+    $client->setAccessToken([
+        'access_token' => $user['gauth_access_token'],
+        'refresh_token' => $user['gauth_refresh_token'],
+        'expires_in' => strtotime($user['gauth_expiry']) - time(),
+        'scope' => $user['gauth_scope'],
+        'token_type' => $user['gauth_token_type'],
+        'created' => time() - 60
+    ]);
 
-    // Refresh token if expired
+    // Refresh if expired
     if ($client->isAccessTokenExpired()) {
-        if (isset($_SESSION['refresh_token'])) {
-            $client->fetchAccessTokenWithRefreshToken($_SESSION['refresh_token']);
-            $newAccessToken = $client->getAccessToken();
-            $_SESSION['access_token'] = $newAccessToken['access_token'];
-        } else {
-            echo json_encode([
-                'success' => false,
-                'error' => 'Session expired',
-                'redirect' => 'http://localhost/TutorMatch/server/authenticate.php'
-            ]);
-            exit;
+        $newToken = $client->fetchAccessTokenWithRefreshToken($user['gauth_refresh_token']);
+        if (isset($newToken['error'])) {
+            throw new Exception('Token refresh failed: ' . $newToken['error']);
         }
+
+        // Update token in DB
+        $update = $pdo->prepare("UPDATE Users SET gauth_access_token = ?, gauth_expiry = ? WHERE email = ?");
+        $update->execute([
+            $newToken['access_token'],
+            date('Y-m-d H:i:s', time() + $newToken['expires_in']),
+            $tutorEmail
+        ]);
     }
 
+    // Prepare Calendar Event
     $service = new Calendar($client);
 
-    $tutorEmail = filter_var($input['tutorEmail'], FILTER_SANITIZE_EMAIL);
-    $senderEmail = filter_var($input['tutorEmail'], FILTER_SANITIZE_EMAIL);
-    
     $event = new Google\Service\Calendar\Event([
         'summary' => $input['summary'],
         'description' => $input['description'] ?? 'Tutoring session',
         'start' => [
             'dateTime' => $input['startTime'],
-            'timeZone' => 'America/Toronto' // You can change this based on your region
+            'timeZone' => 'America/Toronto'
         ],
         'end' => [
             'dateTime' => $input['endTime'],
@@ -103,13 +102,17 @@ try {
         ],
         'attendees' => [
             [
-                'email' => $input['tutorEmail'],
+                'email' => $tutorEmail,
                 'useDefault' => false,
                 'responseStatus' => 'needsAction'
-            ],     
+            ],
+            [
+                'email' => $senderEmail,
+                'useDefault' => false,
+                'responseStatus' => 'needsAction'
+            ]
         ]
     ]);
-    
 
     $calendarId = 'primary';
     $event = $service->events->insert($calendarId, $event, ['sendUpdates' => 'all']);
@@ -129,3 +132,4 @@ try {
         'error' => $e->getMessage()
     ]);
 }
+?>
