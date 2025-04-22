@@ -106,13 +106,7 @@ try {
                 'email' => $input['tutorEmail'],
                 'useDefault' => false,
                 'responseStatus' => 'needsAction'
-            ],
-            [
-                'email' => 'liyuxiao2@gmail.com',
-                'useDefault' => false,
-                'responseStatus' => 'needsAction'
-            ]
-        
+            ],     
         ]
     ]);
     
