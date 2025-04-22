@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Create the context
+// Create the context for notifications
 const NotificationContext = createContext();
 
 // Custom hook to use the notification context
@@ -26,9 +26,13 @@ const initialNotifications = [
   }
 ];
 
+
+// Provider component for notification context
 export const NotificationProvider = ({ children }) => {
   // Load notifications from localStorage if available
   const savedNotifications = localStorage.getItem('tutorMatchNotifications');
+
+  // Initialize state with saved or default notifications
   const [notifications, setNotifications] = useState(
     savedNotifications ? JSON.parse(savedNotifications) : initialNotifications
   );
@@ -39,11 +43,11 @@ export const NotificationProvider = ({ children }) => {
     const unread = notifications.filter(notification => !notification.read).length;
     setUnreadCount(unread);
     
-    // Save to localStorage
+    // Save notifications to localStorage
     localStorage.setItem('tutorMatchNotifications', JSON.stringify(notifications));
   }, [notifications]);
   
-  // Add a new notification
+   // Function to add a new notification
   const addNotification = (notification) => {
     const newNotification = {
       id: Date.now(),
@@ -52,6 +56,8 @@ export const NotificationProvider = ({ children }) => {
       ...notification
     };
     
+
+    // Update state with the new notification
     setNotifications(prev => [newNotification, ...prev]);
     
     // Play notification sound if available
@@ -62,7 +68,7 @@ export const NotificationProvider = ({ children }) => {
       console.log('Audio not supported:', error);
     }
     
-    return newNotification.id; // Return ID for potential reference
+    return newNotification.id; 
   };
   
   // Mark a notification as read

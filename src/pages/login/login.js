@@ -4,8 +4,12 @@ import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import tutorImage from "./tutorImage.jpg";
 
+// Asynchronous function to save user information to the server
 
 async function saveUser(userInfo) {
+
+  // Sends a POST request to the server to save the user data
+
   try {
     const response = await fetch("http://localhost:8000/signup", {
       method: "POST",
@@ -19,6 +23,8 @@ async function saveUser(userInfo) {
   } catch {}
 }
 
+
+// Main login component
 export default function login({ setIsLoggedIn }) {
   const handleLoginSuccess = (response) => {
     const token = response.credential;

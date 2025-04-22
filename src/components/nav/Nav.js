@@ -5,9 +5,12 @@ import NotificationBadge from '../NotificationBadge/NotificationBadge';
 import NotificationsPanel from '../NotificationsPanel/NotificationsPanel';
 import './Nav.css';
 
+
+
+// This is the nav bar that shows up at the top of every page
 function Nav() {
-  const location = useLocation();
-  const { unreadCount } = useNotifications();
+  const location = useLocation(); // lets us know what page we're currently on
+  const { unreadCount } = useNotifications(); // grabs how many unread notifications we have
   
   return (
     <nav className="main-nav">

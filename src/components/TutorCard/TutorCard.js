@@ -12,9 +12,10 @@ function TutorCard({ tutor, onSeeMoreReviews }) {
     review 
   } = tutor;
 
-  // Generate stars based on rating
+  // Function to generate stars based on rating
   const renderStars = () => {
     const stars = [];
+    // Loop to create 5 stars, add filled class based on rating
     for (let i = 1; i <= 5; i++) {
       stars.push(
         <span 
@@ -25,7 +26,7 @@ function TutorCard({ tutor, onSeeMoreReviews }) {
         </span>
       );
     }
-    return stars;
+    return stars; // Return an array of stars
   };
 
   return (

@@ -2,6 +2,8 @@ import React from "react";
 import "./inbox.css";
 import Card from "../../components/card/card";
 
+
+// Renders the inbox page with a header, search bar, and message cards
 function inbox() {
   return (
   <React.Fragment>

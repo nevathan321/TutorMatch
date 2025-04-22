@@ -2,6 +2,9 @@ import profile from '../../images/profile.png';
 import './profilePhoto.css';
 import { useState } from 'react';
 
+
+
+// Handles photo upload and sets the selected image as the profile photo.
 function ProfilePhotoBlock() {
     const [imageSrc, setImageSrc] = useState(profile);
 
@@ -18,10 +21,13 @@ function ProfilePhotoBlock() {
         }
     }
 
+
+    // Resets the profile photo back to the default image.
     function deletePhoto(){
         setImageSrc(profile);
     }
 
+    // Opens the hidden file input when "Upload Photo" button is clicked.
     function triggerFileInput() {
         document.getElementById('fileInput').click();
     }

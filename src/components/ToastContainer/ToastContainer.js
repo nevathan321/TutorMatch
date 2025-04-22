@@ -6,6 +6,8 @@ import './ToastContainer.css';
 function ToastContainer() {
   const { notifications, removeNotification } = useNotifications();
   
+
+  // Filters notifications that have a valid type and limits to the first 5 notifications.
   const toastNotifications = notifications
     .filter(notification => notification.type)
     .slice(0, 5);

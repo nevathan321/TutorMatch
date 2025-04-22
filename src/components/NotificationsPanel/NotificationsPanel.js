@@ -3,6 +3,8 @@ import { useNotifications } from '../../context/NotificationContext';
 import NotificationBadge from '../NotificationBadge/NotificationBadge';
 import './NotificationsPanel.css';
 
+
+// Renders the notifications panel with a bell icon, badge, and dropdown list.
 function NotificationsPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const { 

@@ -3,7 +3,11 @@ import Review from '../../components/review/Review';
 import Transaction from '../../components/transaction/Transaction';
 import MyCalendar from '../../components/calendar/MyCalendar';
 
+
+// Renders the entire dashboard layout with reviews, transactions, and a calendar
+
 function Dashboard() {
+
     let reviews = [
         {
             id: 1,

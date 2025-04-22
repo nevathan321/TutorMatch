@@ -1,6 +1,8 @@
 import React from 'react';
 import './NavigationButtons.css';
 
+
+// Renders two navigation buttons: one for rejecting and one for accepting
 function NavigationButtons({ onReject, onAccept }) {
   return (
     <div className="navigation-buttons">
