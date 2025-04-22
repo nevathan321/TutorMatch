@@ -1,5 +1,24 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { useNotifications } from '../../context/NotificationContext';
+import NotificationBadge from '../NotificationBadge/NotificationBadge';
+import './NotificationsPanel.css';
+
 // Renders the notifications panel with a bell icon, badge, and dropdown list.
 function NotificationsPanel() {
+  const [isOpen, setIsOpen] = useState(false);
+  const { 
+    notifications, 
+    unreadCount, 
+    soundEnabled,
+    toggleSound,
+    markAsRead, 
+    markAllAsRead, 
+    removeNotification,
+    clearAllNotifications,
+    initializeAudio // Add this
+  } = useNotifications();
+  const panelRef = useRef(null);
+  const buttonRef = useRef(null);
   // Close panel when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
