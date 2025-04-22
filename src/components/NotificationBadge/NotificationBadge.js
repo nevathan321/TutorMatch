@@ -1,17 +1,16 @@
 import React from 'react';
 import './NotificationBadge.css';
 
-
-// This component displays a small badge showing the number of notifications
-function NotificationBadge({ count, maxCount = 99, className = '' }) {
+function NotificationBadge({ count }) {
   if (!count || count <= 0) return null;
   
-  const displayCount = count > maxCount ? `${maxCount}+` : count;
+  // Display 9+ if count is greater than 9
+  const displayCount = count > 9 ? '9+' : count;
   
   return (
-    <div className={`notification-badge ${className}`}>
+    <span className="notification-badge">
       {displayCount}
-    </div>
+    </span>
   );
 }
 

@@ -1,45 +1,66 @@
 import profile from '../../images/profile.png';
 import './profilePhoto.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-
-
-// Handles photo upload and sets the selected image as the profile photo.
-function ProfilePhotoBlock() {
+function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
+    // Initialize with default profile image
     const [imageSrc, setImageSrc] = useState(profile);
 
-    function uploadPhoto(event){
+
+    useEffect(() => {
+        // Use the explicitly passed photo
+        if (initialPhoto && initialPhoto !== profile) {
+            setImageSrc(initialPhoto);
+        } 
+        // Fall back to userProfile's photo
+        else if (userProfile?.profilePhoto) {
+            setImageSrc(userProfile.profilePhoto);
+        }
+        // Default image
+        else {
+            setImageSrc(profile);
+        }
+    }, [initialPhoto, userProfile]);
+
+    function uploadPhoto(event) {
         const file = event.target.files[0];
         const reader = new FileReader();
 
-        reader.onloadend = function(){
+        reader.onloadend = function () {
             setImageSrc(reader.result);
-        }
+            onPhotoChange(reader.result); // Notify parent component
+        };
 
-        if(file){
+        if (file) {
             reader.readAsDataURL(file);
         }
     }
 
-
-    // Resets the profile photo back to the default image.
-    function deletePhoto(){
+    function deletePhoto() {
         setImageSrc(profile);
+        onPhotoChange(profile); // Notify parent component
     }
 
-    // Opens the hidden file input when "Upload Photo" button is clicked.
     function triggerFileInput() {
         document.getElementById('fileInput').click();
     }
 
+    function handleImageError() {
+        setImageSrc(profile); // Reset to default profile image on error
+        onPhotoChange(profile); // Notify parent component
+    }
+
     return (
         <div className="profile-photo">
-            <img className="image" src={imageSrc} alt="Profile" />
+            <img
+                className="image"
+                src={imageSrc}
+                alt="Profile"
+                onError={handleImageError}
+            />
             <div className="profile-header">
-                <h2>John Doe</h2>
-                <p>Email: liyuxiao2@gmail.com</p>
+            <h2>Change Profile Icon</h2>
                 <div className="options">
-
                     <input
                         id="fileInput"
                         type="file"
@@ -47,7 +68,6 @@ function ProfilePhotoBlock() {
                         onChange={uploadPhoto}
                         style={{ display: 'none' }}
                     />
-
                     <button className="btn" onClick={triggerFileInput}>Upload Photo</button>
                     <button className="btn delete" onClick={deletePhoto}>Delete Photo</button>
                 </div>

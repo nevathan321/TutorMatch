@@ -1,114 +1,503 @@
-import './Dashboard.css';
-import Review from '../../components/review/Review';
-import Transaction from '../../components/transaction/Transaction';
-import MyCalendar from '../../components/calendar/MyCalendar';
+"use client";
 
+// src/pages/dashboard/Dashboard.js
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Review from "../../components/review/Review";
+import "./Dashboard.css";
 
-// Renders the entire dashboard layout with reviews, transactions, and a calendar
+function Dashboard({userProfile}) {
+  const [userRole, setUserRole] = useState("");
+  const [stats, setStats] = useState({
+    totalSessions: 0,
+    upcomingSessions: 0,
+    averageRating: 0,
+    earnings: 0,
+    matches: 0,
+  });
+  const [totalMatches, setTotalMatches] = useState(null)
+  const [recentMatches, setRecentMatches] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [googleEvents, setGoogleEvents] = useState([]);
 
-function Dashboard() {
+  // New state for review form
+  const [newReview, setNewReview] = useState({
+    title: "",
+    body: "",
+    rating: 5,
+    tutorId: "", // Add tutorId field
+  });
 
-    let reviews = [
-        {
-            id: 1,
-            rating: 5,
-            title: "Title",
-            body: "Body Goes Here",
-            author: "Name",
-            date: "1/1/2025",
-            pfp: "imgURL"
-        },
-        {
-            id: 2,
-            rating: 4,
-            title: "Title",
-            body: "Body Goes Here",
-            author: "Name",
-            date: "1/1/2025",
-            pfp: "imgURL"
-        },
-        {
-            id: 3,
-            rating: 1,
-            title: "Title",
-            body: "Body Goes Here",
-            author: "Name",
-            date: "1/1/2025",
-            pfp: "imgURL"
+  // Add state for tutors list
+  const [tutors, setTutors] = useState([]);
+
+  useEffect(() => {
+    const fetchGoogleEvents = async () => {
+      try {
+        const res = await fetch(
+          "http://localhost/TutorMatch/server/calendar/fetchEvents.php",
+          {
+            credentials: "include",
+          }
+        );
+        const data = await res.json();
+
+        if (data.success) {
+          setGoogleEvents(data.events);
+        } else {
+          console.error(
+            "Google Calendar API error:",
+            data.error || "Unknown error"
+          );
         }
+      } catch (err) {
+        console.error("Failed to load calendar events:", err);
+      }
+    };
+
+    fetchGoogleEvents();
+  }, []);
+
+  useEffect(() => {
+    const fetchMatchedTutors = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost/tutorMatch/server/match/getMatches.php?tuteeID=${userProfile.id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+
+        const matchedTutors = await response.json();
+       
+        setRecentMatches(matchedTutors.slice(0,4));//show max 4
+        setTotalMatches(matchedTutors.length)
+        console.log(matchedTutors)
+      } catch (err) {
+        console.error("Login error:", err);
+      }
+    };
+
+    fetchMatchedTutors();
+    setLoading(false)
+  }, []);
+
+  // Add this useEffect to fetch tutors
+  useEffect(() => {
+    // In a real app, fetch tutors from your API
+    // For now, we'll use mock data
+    const mockTutors = [
+      { id: 1, name: "Dr. Michael Chen", subject: "Computer Science" },
+      { id: 2, name: "Prof. Emily Johnson", subject: "Biology" },
+      { id: 3, name: "Dr. Richard Doe", subject: "Mathematics" },
+      { id: 4, name: "Prof. Kelly Johnson", subject: "Physics" },
     ];
 
-    let transactions = [
-        {
-            id: 10000000,
-            type: "Payment",
-            amount: 100,
-            status: "Pending",
-            date: "Date",
-            time: "Time"
-        },
-        {
-            id: 10000001,
-            type: "Refund",
-            amount: 100,
-            status: "Confirmed",
-            date: "Date",
-            time: "Time"
-        },
-        {
-            id: 10000002,
-            type: "Currency Exchange",
-            amount: 100,
-            status: "Denied",
-            date: "Date",
-            time: "Time"
-        },
-    ];
+    setTutors(mockTutors);
+  }, []);
 
-    return (
-        <div className="Dashboard">
-            <h2 className="title">Dashboard</h2>
+  // Handle input changes for the review form
+  const handleReviewChange = (e) => {
+    const { name, value } = e.target;
+    setNewReview((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-            <div className="reviewpanel">
-                <h2 className="reviewheader">Latest Reviews</h2>
-                <div className="reviewdisplay">
-                    {reviews.map((review) => (
-                        <Review
-                            key={review.id}
-                            rating={review.rating}
-                            title={review.title}
-                            body={review.body}
-                            author={review.author}
-                            date={review.date}
-                            pfp={review.pfp}
-                        />
-                    ))}
-                </div>
-            </div>
-            <div className='transaction-schedule'>
-                <div className='transactionpanel'>
-                    <h4>Recent Transactions</h4>
-                    <div className='transactions'>
-                        {transactions.map((transaction) => (
-                            <Transaction
-                                key={transaction.id}
-                                type={transaction.type}
-                                id={transaction.id}
-                                amount={transaction.amount}
-                                status={transaction.status}
-                                date={transaction.date}
-                                time={transaction.time}
-                            />
-                        ))}
-                    </div>
-                </div>
-                <div className='schedulepanel'>
-                    <h4>Schedule</h4>
-                    <MyCalendar/>
-                </div>
-            </div>
-        </div>
+  // Handle star rating selection
+  const handleRatingChange = (rating) => {
+    setNewReview((prev) => ({
+      ...prev,
+      rating,
+    }));
+  };
+
+  // Submit new review
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+
+    // Validate that a tutor is selected
+    if (!newReview.tutorId) {
+      alert("Please select a tutor to review");
+      return;
+    }
+    console.log(e);
+    // In a real app, you would send this to your API
+    const currentDate = new Date().toISOString().split("T")[0];
+    const userName = localStorage.getItem("userName") || "You";
+
+    // Find the tutor name based on tutorId
+    const tutor = tutors.find(
+      (t) => t.id.toString() === newReview.tutorId.toString()
     );
+    const tutorName = tutor ? tutor.name : "Unknown Tutor";
+
+    const newReviewObj = {
+      id: reviews.length + 1,
+      rating: Number.parseInt(newReview.rating),
+      title: newReview.title,
+      body: newReview.body,
+      author: userName,
+      date: currentDate,
+      pfp: "/placeholder-avatar.png",
+      tutorId: newReview.tutorId,
+      tutorName: tutorName,
+    };
+
+    // Add to reviews list
+    setReviews((prev) => [newReviewObj, ...prev]);
+
+    // Reset form
+    setNewReview({
+      title: "",
+      body: "",
+      rating: 5,
+      tutorId: "",
+    });
+
+    // In a real app, you would save this to a database
+    console.log("Review submitted:", newReviewObj);
+  };
+
+  if (loading) {
+    return (
+      <div className="dashboard-loading">
+        <div className="loader"></div>
+        <p>Loading your dashboard...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="dashboard-container">
+      <div className="dashboard-header">
+        <h1>Welcome to Your Dashboard</h1>
+        <p className="dashboard-subtitle">
+          {userRole === "tutor"
+            ? "Manage your tutoring sessions and track your progress"
+            : "Find tutors and manage your learning journey"}
+        </p>
+      </div>
+
+      <div className="stats-container">
+        <div className="stat-card">
+          <div className="stat-icon sessions">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <div className="stat-content">
+            <h3>Total Sessions</h3>
+            <p className="stat-value">{stats.totalSessions}</p>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-icon upcoming">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div className="stat-content">
+            <h3>Upcoming</h3>
+            <p className="stat-value">{stats.upcomingSessions}</p>
+          </div>
+        </div>
+
+        {userRole === "tutor" ? (
+          <>
+            <div className="stat-card">
+              <div className="stat-icon rating">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </div>
+              <div className="stat-content">
+                <h3>Rating</h3>
+                <p className="stat-value">{stats.averageRating.toFixed(1)}</p>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="stat-icon earnings">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+              <div className="stat-content">
+                <h3>Earnings</h3>
+                <p className="stat-value">${stats.earnings}</p>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="stat-card">
+              <div className="stat-icon matches">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div className="stat-content">
+                <h3>Matches</h3>
+                <p className="stat-value">{totalMatches}</p>
+              </div>
+            </div>
+
+            <div className="stat-card">
+              <div className="stat-icon favorites">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </div>
+              <div className="stat-content">
+                <h3>Favorites</h3>
+                <p className="stat-value">{stats.favoriteTutors || 0}</p>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="dashboard-grid">
+        <div className="dashboard-card recent-matches">
+          <div className="card-header">
+            <h2>Recent Matches</h2>
+            <Link to="/inbox" className="view-all">
+              View All
+            </Link>
+          </div>
+
+          <div className="matches-list">
+            {recentMatches.length > 0 ? (
+              recentMatches.map((match) => (
+                <div key={match.id} className="match-item">
+                  <div className="match-avatar">
+                    <img
+                      src={match.profileImage || "/placeholder-avatar.png"}
+                      alt={match.full_name}
+                    />
+                  </div>
+                  <div className="match-details">
+                    <h3>{match.full_name}</h3>
+                    <p>{JSON.parse(match.main_subjects)[0]}</p>
+                    <span className="match-date">
+                      
+                      {match.bio}
+                    </span>
+                  </div>
+                  <Link to={`/inbox`} className="contact-button">
+                    Contact
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <div className="no-data">
+                <p>No matches yet. Start browsing tutors!</p>
+                <Link to="/match" className="action-link">
+                  Find Tutors
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="dashboard-card schedule">
+          <div className="card-header">
+            <h2>Upcoming Sessions</h2>
+          </div>
+
+          <div className="calendar-container">
+            {googleEvents.length > 0 ? (
+              googleEvents.map((event, index) => (
+                <div key={index} className="event">
+                  <strong>{event.summary}</strong>
+                  <p>
+                    {new Date(event.start).toLocaleString()} -{" "}
+                    {new Date(event.end).toLocaleString()}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p>No upcoming events found.</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* New Review Form Section - Moved before the reviews section */}
+      <div className="dashboard-card create-review full-width">
+        <div className="card-header">
+          <h2>Write a Review</h2>
+        </div>
+
+        <div className="review-form-container">
+          <form onSubmit={handleReviewSubmit} className="review-form">
+            {/* Add the tutor selection dropdown to the review form */}
+            <div className="form-group">
+              <label htmlFor="tutorId">Select Tutor</label>
+              <select
+                id="tutorId"
+                name="tutorId"
+                value={newReview.tutorId}
+                onChange={handleReviewChange}
+                className="tutor-select"
+                required>
+                <option value="">-- Select a Tutor --</option>
+                {tutors.map((tutor) => (
+                  <option key={tutor.id} value={tutor.id}>
+                    {tutor.name} - {tutor.subject}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="rating">Rating</label>
+              <div className="star-rating">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    className={`star ${
+                      Number.parseInt(newReview.rating) >= star
+                        ? "selected"
+                        : ""
+                    }`}
+                    onClick={() => handleRatingChange(star)}>
+                    ★
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="title">Title</label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={newReview.title}
+                onChange={handleReviewChange}
+                placeholder="Enter a title for your review"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="body">Review</label>
+              <textarea
+                id="body"
+                name="body"
+                value={newReview.body}
+                onChange={handleReviewChange}
+                placeholder="Share your experience with this tutor..."
+                rows="4"
+                required></textarea>
+            </div>
+
+            <button type="submit" className="submit-review-button">
+              Submit Review
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Reviews section moved after the create-review section */}
+      <div className="dashboard-card reviews full-width">
+        <div className="card-header">
+          <h2>Latest Reviews</h2>
+        </div>
+
+        <div className="reviews-list">
+          {reviews.length > 0 ? (
+            reviews.map((review) => (
+              <Review
+                key={review.id}
+                rating={review.rating}
+                title={review.title}
+                body={review.body}
+                author={review.author}
+                date={review.date}
+                pfp={review.pfp}
+                tutorName={review.tutorName}
+              />
+            ))
+          ) : (
+            <div className="no-data">
+              <p>No reviews yet.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Dashboard;

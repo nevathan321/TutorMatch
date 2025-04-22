@@ -4,26 +4,29 @@ import './ToastNotification.css';
 function ToastNotification({ notification, onClose }) {
   const [isExiting, setIsExiting] = useState(false);
   
-
-  // Use effect to automatically trigger toast exit after 4.5 seconds and remove it after 5 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsExiting(true); 
-    }, 4500); 
+      setIsExiting(true);
+    }, 4500); // Start exit animation after 4.5 seconds
     
     const closeTimer = setTimeout(() => {
-      onClose(notification.id); 
-    }, 5000); 
+      onClose(notification.id);
+    }, 5000); // Remove after 5 seconds
     
     return () => {
-      clearTimeout(timer); 
-      clearTimeout(closeTimer); 
+      clearTimeout(timer);
+      clearTimeout(closeTimer);
     };
   }, [notification.id, onClose]);
   
+  const handleClose = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setIsExiting(true);
+    setTimeout(() => {
+      onClose(notification.id);
+    }, 300); // Wait for exit animation to complete
+  };
   
-  // Function to return a CSS class based on notification type (success, error, warning, info)
-
   const getTypeClass = () => {
     switch (notification.type) {
       case 'success':
@@ -37,8 +40,6 @@ function ToastNotification({ notification, onClose }) {
     }
   };
   
-
-   // Function to return an SVG icon based on notification type
   const getIcon = () => {
     switch (notification.type) {
       case 'success':
@@ -86,12 +87,11 @@ function ToastNotification({ notification, onClose }) {
       </div>
       <button 
         className="toast-close"
-        onClick={() => onClose(notification.id)}
+        onClick={handleClose}
         aria-label="Close notification"
       >
         &times;
       </button>
-      <div className="toast-progress"></div>
     </div>
   );
 }
