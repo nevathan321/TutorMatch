@@ -108,12 +108,26 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
         // If registration is successful, update state and navigate to the home page
         setUserProfile(result.user);
         setIsLoggedIn(true);
-        localStorage.setItem("tutorMatch-email", userData.email); 
+        localStorage.setItem("userEmail", userData.email); 
         navigate("/"); // Navigate to the home page
       } else {
         // Show an error message if registration fails
         alert("Registration failed: " + result.message);
       }
+
+      const authWindow = window.open(
+        "http://localhost/TutorMatch/server/authenticate.php",
+        "googleAuth",
+        "width=600,height=600"
+      );
+      
+      const checkAuthWindow = setInterval(() => {
+        if (authWindow.closed) {
+          clearInterval(checkAuthWindow);
+          window.location.href = "/";
+          window.location.reload();
+        }
+      }, 500);
     } catch (error) {
       // Log any errors that occur during the registration process
       console.error("Error:", error);

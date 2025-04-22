@@ -31,10 +31,16 @@ function Dashboard({userProfile}) {
   useEffect(() => {
     const fetchGoogleEvents = async () => {
       try {
-        const res = await fetch(
-          "http://localhost/TutorMatch/server/calendar/fetchEvents.php",
+        const res = await fetch("http://localhost/TutorMatch/server/calendar/fetchEvents.php",
           {
+            headers: {
+              "Content-Type": "application/json"
+            },
+            method: "POST",
             credentials: "include",
+            body: JSON.stringify({
+              senderEmail: localStorage.getItem("userEmail"),
+            })
           }
         );
         const data = await res.json();
@@ -53,7 +59,7 @@ function Dashboard({userProfile}) {
     };
 
     fetchGoogleEvents();
-  }, []);
+  }, );
 
   // Fetches matched tutors for the user from the server and updates the recent matches and total matches state
   useEffect(() => {

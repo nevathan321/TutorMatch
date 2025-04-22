@@ -39,7 +39,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
         setErrorMessage("");
-        localStorage.setItem("tutorMatch-email", loginResult.user_profile.email); 
+        localStorage.setItem("userEmail", loginResult.user_profile.email); 
 
         return;
       }
@@ -70,7 +70,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
         setErrorMessage("");
-        localStorage.setItem("tutorMatch-email", loginResult.user_profile.email); 
+        localStorage.setItem("userEmail", loginResult.user_profile.email); 
         return;
       }
       setErrorMessage("Incorrect email or password");
