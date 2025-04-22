@@ -73,6 +73,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile,  email, f
 
         setUserProfile(result.user)
         setIsLoggedIn(true)
+        localStorage.setItem("tutorMatch-email", userData.email); 
         navigate("/")
       } else {
         alert("Registration failed: " + result.message);

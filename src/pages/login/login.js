@@ -40,7 +40,7 @@ export default function Login({ setIsLoggedIn, setUserProfile }) {
         setIsLoggedIn(true);
         setUserProfile(loginResult.user_profile);
         setErrorMessage("");
-        localStorage.setItem("email", loginResult.user_profile.email); 
+        localStorage.setItem("tutorMatch-email", loginResult.user_profile.email); 
 
         return;
       }
