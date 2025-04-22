@@ -1,5 +1,7 @@
-import React from 'react';
+import { useState, useEffect } from "react";
 import './TutorCard.css';
+import Reviews from '../Reviews/reviews';
+import { fetchReviews } from '../Reviews/reviews';
 
 const getYearOfStudyString = (year) => {
   switch (year) {
@@ -18,16 +20,22 @@ const getYearOfStudyString = (year) => {
   }
 };
 
-const review = {
-  title: 'AMAZING',
-  text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.',
-  reviewerName: 'Ashley',
-  reviewerImage: '/placeholder-avatar.png',
-  date: 'March 23, 2024'
-}
 
 function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
-  const subjects = JSON.parse(tutor.main_subjects)//parse from json string
+  const [showReviewsModal, setShowReviewsModal] = useState(false);
+  const [latestReview, setLatestReview] = useState(null);
+  const subjects = JSON.parse(tutor.main_subjects)
+
+  useEffect(() => {
+      const getLatestReview = async () => {
+          const reviews = await fetchReviews(tutor.id);
+          if (reviews && reviews.length > 0) {
+              setLatestReview(reviews[0]); // Get the first (latest) review
+          }
+      };
+
+      getLatestReview();
+  }, [tutor.id]);
  
   const renderStars = (rating) => {
     const stars = [];
@@ -90,7 +98,7 @@ function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
           
           <button 
             className="see-more-button"
-            onClick={onSeeMoreReviews}
+            onClick={() => setShowReviewsModal(true)}
           >
             See More Reviews
           </button>
@@ -99,22 +107,25 @@ function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
             {renderStars(tutor.rating)}
           </div>
           
-          {review && (
-            <div className="review-section">
-              <div className="review-title">{review.title}</div>
-              <p className="review-text">{review.text}</p>
-              
-              <div className="reviewer-info">
-                <img 
-                  src={review.reviewerImage || '/placeholder-avatar.png'} 
-                  alt={review.reviewerName} 
-                  className="reviewer-image"
-                />
-                <span className="reviewer-name">{review.reviewerName}</span>
-                <span className="review-date">{review.date}</span>
-              </div>
-            </div>
-          )}
+          {latestReview && (
+                <div className="review-section">
+                    <div className="review-title">{latestReview.title}</div>
+                    <p className="review-text">{latestReview.review_text || latestReview.body}</p>
+                    
+                    <div className="reviewer-info">
+                        <img 
+                            src="/placeholder-avatar.png"
+                            alt={latestReview.reviewer_name} 
+                            className="reviewer-image"
+                        />
+                        <span className="reviewer-name">{latestReview.reviewer_name}</span>
+                        <span className="review-date">
+                            {new Date(latestReview.created_at).toLocaleDateString()}
+                        </span>
+                    </div>
+                </div>
+            )}
+            
           
           <div className="tutor-actions">
             <button 
@@ -140,6 +151,13 @@ function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
               <span>Accept</span>
             </button>
           </div>
+
+          <Reviews 
+                isOpen={showReviewsModal}
+                onClose={() => setShowReviewsModal(false)}
+                tutor={tutor}
+          />
+          
         </div>
       </div>
     </div>

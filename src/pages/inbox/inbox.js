@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import "./inbox.css";
 import MyCalendar from "../../components/calendar/MyCalendar";
 import Modal from "../../components/modal/modal";
+import Reviews from "../../components/Reviews/reviews";
 
 const getYearOfStudyString = (year) => {
     switch (year) {
@@ -40,7 +41,6 @@ function Inbox({ userProfile }) {
     const [endTime, setEndTime] = useState("11:00");
 
     const [showReviewsModal, setShowReviewsModal] = useState(false);
-    const [currentReviews, setCurrentReviews] = useState([]);
 
     useEffect(() => {
         const fetchMatchedTutors = async () => {
@@ -67,7 +67,6 @@ function Inbox({ userProfile }) {
                 ));
             } catch (err) {
                 console.error("Error fetching matches:", err);
-                // Consider setting an error state to display a message to the user
                 setMatches([]);
                 setFilteredMatches([]);
             }
@@ -218,13 +217,7 @@ function Inbox({ userProfile }) {
         }
     };
 
-    const reviews = selectedTutor?.reviews || [];
-
-
-    const displayReviews = (reviews) => {
-        setCurrentReviews(reviews);
-        setShowReviewsModal(true);
-    };
+   
 
 
     return (
@@ -292,7 +285,12 @@ function Inbox({ userProfile }) {
                             </div>
 
                             <div className="tutor-review">
-                                <button onClick={() => displayReviews(reviews)}> See Reviews </button>
+                                <button onClick={() => {
+                                    setSelectedTutor(match);
+                                    setShowReviewsModal(true);
+                                }}>
+                                    See Reviews
+                                </button>
                             </div>
 
 
@@ -443,21 +441,11 @@ function Inbox({ userProfile }) {
                 )}
             </Modal>
 
-            <Modal
+            <Reviews 
                 isOpen={showReviewsModal}
                 onClose={() => setShowReviewsModal(false)}
-                title="Reviews"
-            >
-                {currentReviews && currentReviews.length > 0 ? (
-                    currentReviews.map((review, index) => (
-                        <div key={index} className="review">
-                            <p>{review}</p>
-                        </div>
-                    ))
-                ) : (
-                    <p>No reviews available.</p>
-                )}
-            </Modal>
+                tutor={selectedTutor}
+            />
         </div>
     );
 }

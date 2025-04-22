@@ -317,11 +317,6 @@
   margin-bottom: 1rem;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 .inbox-loading p {
   font-size: 1rem;
   color: #64748b;
@@ -640,6 +635,28 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
+}
+
+.reviews-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.review-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes spin {
