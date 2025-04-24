@@ -21,7 +21,7 @@
       </ul>
     </section>
 
-<section class="tech-stack">
+  <section class="tech-stack">
       <h2>🛠️ Tech Stack</h2>
       <div class="stack-category">
         <h3>Frontend</h3>
@@ -33,7 +33,15 @@
       </div>
     </section>
 
-
+  <section class="apis-used">
+      <h2>🔌 APIs Used</h2>
+      <ul>
+        <li><strong>Google OAuth2:</strong> Authenticates users securely with their Google accounts</li>
+        <li><strong>Gmail API:</strong> Sends email communications between tutors and tutees</li>
+        <li><strong>Google Calendar API:</strong> Schedules tutoring sessions and sends calendar invites</li>
+      </ul>
+    </section>
+  </main>
 
   <footer>
     <section class="license">
@@ -43,7 +51,7 @@
       </p>
     </section>
 
-<section class="credits">
+  <section class="credits">
       <h3>💡 Innovation Credits</h3>
       <p>
         Client: Sam Dovbenyuk <br />
