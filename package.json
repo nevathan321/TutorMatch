@@ -2,7 +2,8 @@
   "name": "my-react-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "",
+  "homepage": "https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch",
+
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@react-oauth/google": "^0.12.1",

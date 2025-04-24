@@ -13,10 +13,10 @@
 
 
 
-$username = "root";
-$password = "";
-$host = "localhost:3306";
-$dbname = "TutorMatch";
+$username = "xiaol31_local";
+$password = ";0FsM%>&";
+$host = "localhost";
+$dbname = "xiaol31_db";
 try {
   $dbh = new PDO(
     "mysql:host=$host;dbname=$dbname",

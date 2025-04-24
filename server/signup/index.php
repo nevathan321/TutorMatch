@@ -70,7 +70,7 @@ function addUserToDatabase($dbh, $userData, $user_type)
   $main_subject = $userData['main_subject'] ?? NULL;
   $wage = $userData['wage'] ?? NULL;
   try {
-    $insertUserQuery = "INSERT INTO users (
+    $insertUserQuery = "INSERT INTO Users (
         first_name, last_name, full_name, email, account_password,
         macid, student_number, major, main_subjects, wage,
         year_of_study, dob, user_type
@@ -106,7 +106,12 @@ function addUserToDatabase($dbh, $userData, $user_type)
 
     echo json_encode(["user_exists" => false, "status" => "success", "user" => $newUser]);
   } catch (PDOException $e) {
-    die("Error inserting into the database: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode([
+      "status" => "error",
+      "message" => "Error inserting into the database: " . $e->getMessage()
+    ]);
+    exit;
   }
 }
 
