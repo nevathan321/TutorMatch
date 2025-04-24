@@ -256,35 +256,6 @@ function Inbox({ userProfile }) {
       
           const result = await response.json();
       
-          if (!response.ok) {
-            if (result.redirect) {
-              setEmailStatus({
-                type: "info",
-                message: "Authentication required. Redirecting to Google login...",
-              });
-      
-              const authWindow = window.open("https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/authenticate.php", "googleAuth", "width=600,height=600");
-      
-              const checkAuthWindow = setInterval(() => {
-                if (authWindow.closed) {
-                  clearInterval(checkAuthWindow);
-                  setEmailStatus({
-                    type: "info",
-                    message: "Authentication completed. Trying to send email again...",
-                  });
-                  setTimeout(() => {
-                    handleSendEmail();
-                  }, 1000);
-                }
-              }, 500);
-            } else {
-              setEmailStatus({
-                type: "error",
-                message: result.error || "Failed to send email. Please try again.",
-              });
-            }
-            return;
-          }
       
           if (result.success) {
             setEmailStatus({ type: "success", message: "Email sent successfully!" });

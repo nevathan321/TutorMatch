@@ -26,7 +26,7 @@ use Google\Service\Oauth2;
 
 try {
     $client = new Google_Client();
-    $client->setAuthConfig('/Applications/XAMPP/xamppfiles/htdocs/TutorMatch/server/credentials.json');
+    $client->setAuthConfig('credentials.json');
     $client->addScope(Gmail::GMAIL_SEND);
     $client->addScope(Google\Service\Calendar::CALENDAR_EVENTS);
     $client->addScope(Google\Service\Oauth2::USERINFO_EMAIL);
@@ -53,6 +53,13 @@ try {
             $oauth2 = new Oauth2($client);
             $userInfo = $oauth2->userinfo->get();
             $_SESSION['user_email'] = $userInfo->email;
+
+            $gauth_scope = $accessToken['scope'] ?? '';
+
+
+            if (!str_contains($gauth_scope, 'gmail.send')) {
+                throw new Exception("Gmail scope not granted. Please retry authentication and allow email access.");
+            }
 
             $updateStmt = $dbh->prepare(" UPDATE Users SET gauth_access_token = ?, 
                                     gauth_refresh_token = ?,
@@ -84,9 +91,9 @@ try {
             </head>
             <body>
                 <h1>Authentication Successful!</h1>
-                <p class='success'>You have successfully authenticated with Google as <strong> . htmlspecialchars(\$userInfo->email) . </strong>.</p>
+                <p class='success'>You have successfully authenticated with Google as <strong> ". htmlspecialchars($userInfo->email) ." </strong>.</p>
                 <p>You can now return to the TutorMatch application and send emails.</p>
-                <a href='https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/inbox' class='btn'>Return to TutorMatch</a>
+                <a href='https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch' class='btn'>Return to TutorMatch</a>
             </body>
             </html>
             ";
@@ -127,8 +134,8 @@ try {
     <body>
         <h1>Authentication Error</h1>
         <p class='error'>An error occurred during authentication:</p>
-        <p> . htmlspecialchars(\$e->getMessage()) . </p>
-        <a href='https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/inbox'>Return to TutorMatch</a>
+        <p> ". htmlspecialchars($e->getMessage()) ." </p>
+        <a href='https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch'>Return to TutorMatch</a>
     </body>
     </html>
     ";

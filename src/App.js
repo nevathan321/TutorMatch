@@ -26,7 +26,7 @@ import Signup from "./pages/login/Singup";
 
 
 // switch root path when uploading to filezilla
-const ROOT_PATH = "/";
+const ROOT_PATH = "/~xiaol31/TutorMatch/";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
