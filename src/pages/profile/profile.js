@@ -218,7 +218,7 @@ function Profile({ userProfile, setUserProfile, setIsLoggedIn }) {
             email
         };
 
-        fetch('https://cs1xd3.cas.mcmaster.ca/~xiaol31/Tutormatch/server/profile/createProfile.php', {
+        fetch('https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/profile/createProfile.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
