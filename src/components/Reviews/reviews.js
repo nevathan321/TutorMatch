@@ -1,12 +1,34 @@
+/**
+ * File: Reviews.js
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ *
+ * Description:
+ * This file contains the Reviews component, which displays a modal listing 
+ * all reviews for a given tutor. It includes:
+ * - `fetchReviews`: An asynchronous helper function that retrieves reviews
+ *   for a tutor from the backend API.
+ * - `Reviews` component: A modal component that loads and renders reviews 
+ *   when opened. It shows loading and error states, and formats each review
+ *   with title, reviewer name, star rating, and date.
+ */
+
+
 import React, { useState, useEffect } from 'react';
 import './reviews.css';
 import Modal from '../modal/modal';
 
-// Fetches reviews for a given tutor ID from the server
+/**
+ * Fetches reviews for a specific tutor by ID from the server.
+ *
+ * @param {number|string} tutorId - The ID of the tutor whose reviews are being requested.
+ * @returns {Promise<Array>} A promise that resolves to an array of review objects, or an empty array on failure.
+ */
 export const fetchReviews = async (tutorId) => {
     try {
         const response = await fetch(
-            `http://localhost/TutorMatch/server/reviews/getReviews.php?tutorID=${tutorId}`,
+            `https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/reviews/getReviews.php?tutorID=${tutorId}`,
             {
                 method: "GET",
                 headers: {

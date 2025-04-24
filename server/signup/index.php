@@ -1,6 +1,19 @@
 <?php
-// check if user exists then add them to the database
-//data is passed as json in body
+/**
+ * File: signup.php
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: 2025-04-24
+ *
+ * Description:
+ * This endpoint handles user registration for the TutorMatch application.
+ * It supports both tutor and tutee registrations by parsing incoming JSON data
+ * and inserting user records into the database. It first checks if a user with
+ * the given email already exists to prevent duplicates.
+ * User data is stored securely, including password hashing.
+ * Accepts HTTP POST requests with JSON payload and returns JSON responses.
+ */
+
 header("Access-Control-Allow-Origin: *");  // Replace '*' with the specific domain for better security
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -8,6 +21,13 @@ header("Cross-Origin-Opener-Policy: same-origin");  // Add this to allow same-or
 header("Cross-Origin-Embedder-Policy: require-corp");  // Add this for stricter policies
 require_once '../connect.php';
 
+/**
+ * Checks whether a user with the given email already exists in the database.
+ *
+ * @param PDO $dbh - Database connection object
+ * @param string $email - Email address to search for
+ * @return bool - True if user exists, false otherwise
+ */
 function doesUserExist($dbh, $email)
 {
   try {
@@ -25,6 +45,15 @@ function doesUserExist($dbh, $email)
     die(json_encode(["status" => "error", "message" => "Error checking user existence: " . $e->getMessage()]));
   }
 }
+
+/**
+ * Inserts a new user into the Users table in the database.
+ *
+ * @param PDO $dbh - Database connection object
+ * @param array $userData - Associative array of user attributes
+ * @param string $user_type - The type of user ('tutee' or 'tutor')
+ * @return void - Outputs JSON response with success or error message
+ */
 
 function addUserToDatabase($dbh, $userData, $user_type)
 {

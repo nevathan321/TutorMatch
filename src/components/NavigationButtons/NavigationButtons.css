@@ -1,3 +1,16 @@
+/* 
+ * File: NavigationButtons.css
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: 2025-04-24
+ * 
+ * Description:
+ * This stylesheet defines the styles for the NavigationButtons component.
+ * It includes layout, button appearance, hover and active states,
+ * responsive scaling, and SVG icon styling for accept/reject interactions.
+ */
+
+
 .navigation-buttons {
   display: flex;
   justify-content: center;

@@ -1,10 +1,14 @@
-/**
-* TutorMatch Group
-* 
-* Date: April 7, 2025
-* 
-* Styling for the Navigation component
-*/
+/* 
+ * File: Nav.css
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: 2025-04-24
+ *
+ * Description:
+ * Styles for the main navigation bar of the TutorMatch application.
+ * Includes layout styling, icon animations, responsive behavior,
+ * and active link highlighting.
+ */
 
 .main-nav {
   align-items: center;

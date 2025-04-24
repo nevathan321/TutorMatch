@@ -1,4 +1,18 @@
 <?php
+/**
+ * File: authenticate.php
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: 2025-04-24
+ *
+ * Description:
+ * This script handles OAuth2 authentication with Google for the TutorMatch application.
+ * It enables access to Gmail, Google Calendar, and user email info.
+ * Upon successful login, it stores the access token and refresh token in both the session
+ * and the database, allowing the user to send emails and schedule calendar events.
+ * The script also provides a simple UI for Google login and confirmation messages.
+ */
+
 session_start(); // Start the session
 
 ini_set('display_errors', 1);
@@ -16,7 +30,7 @@ try {
     $client->addScope(Gmail::GMAIL_SEND);
     $client->addScope(Google\Service\Calendar::CALENDAR_EVENTS);
     $client->addScope(Google\Service\Oauth2::USERINFO_EMAIL);
-    $client->setRedirectUri('http://localhost/TutorMatch/server/authenticate.php');
+    $client->setRedirectUri('https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/authenticate.php');
     $client->setAccessType('offline');
     $client->setPrompt('consent');
 
@@ -72,7 +86,7 @@ try {
                 <h1>Authentication Successful!</h1>
                 <p class='success'>You have successfully authenticated with Google as <strong> . htmlspecialchars(\$userInfo->email) . </strong>.</p>
                 <p>You can now return to the TutorMatch application and send emails.</p>
-                <a href='http://localhost:3000/inbox' class='btn'>Return to TutorMatch</a>
+                <a href='https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/inbox' class='btn'>Return to TutorMatch</a>
             </body>
             </html>
             ";
@@ -114,7 +128,7 @@ try {
         <h1>Authentication Error</h1>
         <p class='error'>An error occurred during authentication:</p>
         <p> . htmlspecialchars(\$e->getMessage()) . </p>
-        <a href='http://localhost:3000/inbox'>Return to TutorMatch</a>
+        <a href='https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/inbox'>Return to TutorMatch</a>
     </body>
     </html>
     ";

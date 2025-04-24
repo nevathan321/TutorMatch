@@ -1,4 +1,17 @@
 <?php
+/**
+ * File: calendar.php
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Adrian, Liyu, Abishan
+ *
+ * Description:
+ * This endpoint allows authenticated users to schedule Google Calendar events (e.g. tutoring sessions).
+ * It accepts tutor and sender email addresses, event start and end times, and event details.
+ * The script uses OAuth tokens to authenticate with the Google Calendar API and send event invites to both parties.
+ * Access tokens are refreshed if expired, and updated in the database accordingly.
+ */
+
 ob_start();
 
 // Enable error logging
@@ -8,7 +21,7 @@ ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/calendar_errors.log');
 
 require_once '../vendor/autoload.php';
-require_once '../connect.php'; // ✅ Your PDO $pdo should come from here
+require_once '../connect.php'; 
 
 use Google\Client;
 use Google\Service\Calendar;

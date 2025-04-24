@@ -1,3 +1,15 @@
+/* 
+ * File: profilePhoto.css
+ * Group: WebFusion
+ * Group Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: 2025-04-24
+ * 
+ * Description:
+ * Styling for the ProfilePhotoBlock component.
+ * Includes layout for the profile image, upload/delete buttons, and header.
+ * Ensures responsive alignment and interactive hover effects for user actions.
+ */
+ 
 .profile-photo {
     display: flex;
     align-items: center;

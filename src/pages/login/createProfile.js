@@ -14,11 +14,22 @@ import { useNavigate } from "react-router-dom";
 import "./createProfile.css";
 
 // Define the endpoint for signing up users
-const SIGNUP_ENDPOINT = "http://localhost/tutorMatch/server/signup/";
+const SIGNUP_ENDPOINT = "https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/signup/";
+
+/**
+ * Handles the creation of a user profile during signup.
+ *
+ * @param {Object} props
+ * @param {Function} props.setIsLoggedIn - Function to update login state after successful signup.
+ * @param {Function} props.setUserProfile - Function to store user profile in state after signup.
+ * @param {string} props.email - Email of the user, prefilled from Google login.
+ * @param {string} props.firstName - First name of the user, prefilled from Google login.
+ * @param {string} props.lastName - Last name of the user, prefilled from Google login.
+ *
+ * @returns {JSX.Element} Signup form with validation, role toggle, and server submission.
+ */
 
 export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, firstName, lastName }) {
-  // useNavigate hook is used to programmatically navigate to different routes
-
   const navigate = useNavigate();
   
   // State for the user type (either 'tutee' or 'tutor')
@@ -42,8 +53,12 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
     wage: "",
   });
 
-  // Function to handle form input changes
-  // Updates the formData state based on input name and value
+  /**
+   * Handles input field changes by updating form state.
+   * Also triggers password validation if the password field is being modified.
+   *
+   * @param {Object} e - The input change event object.
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -57,6 +72,15 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
     }
   };
 
+
+  /**
+   * Validates the password for minimum requirements:
+   * - At least 8 characters
+   * - Contains at least one digit
+   *
+   * @param {string} password - The password string to validate.
+   * @returns {boolean} - True if valid, false otherwise.
+   */
   const validatePassword = (password) => {
     if (password.length < 8) {
       setPasswordError("Password must be at least 8 characters");
@@ -70,8 +94,17 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
     }
   };
 
-  // Function to handle form submission
-  // Checks password match and sends the form data to the server
+  /**
+   * Handles form submission for creating a new user profile.
+   * Verifies password match, builds the data payload, submits it to the backend,
+   * and processes the server's response.
+   *
+   * On successful signup, stores the user session and triggers Google OAuth login.
+   *
+   * @param {Object} e - The form submission event.
+   * @async
+   * @returns {void}
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -127,7 +160,7 @@ export default function CreateProfile({ setIsLoggedIn, setUserProfile, email, fi
       }
 
       const authWindow = window.open(
-        "http://localhost/TutorMatch/server/authenticate.php",
+        "https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/authenticate.php",
         "googleAuth",
         "width=600,height=600"
       );

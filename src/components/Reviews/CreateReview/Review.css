@@ -1,3 +1,16 @@
+
+/* 
+ * File: Review.css
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ *
+ * Description:
+ * Styles for the Review component, including layout, typography, star icons,
+ * and author information display.
+ */
+
+ 
 .Review {
     padding-top: 18px;
     padding-bottom: 10px;

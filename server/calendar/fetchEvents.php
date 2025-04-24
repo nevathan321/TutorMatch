@@ -1,4 +1,17 @@
 <?php
+/**
+ * File: fetchEvents.php
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Adrian, Liyu, Abishan
+ *
+ * Description:
+ * This endpoint retrieves upcoming Google Calendar events for a given user.
+ * It authenticates using OAuth tokens stored in the database, refreshes tokens if expired,
+ * and fetches the next 100 upcoming events using the Google Calendar API.
+ * The response includes event details such as summary, description, start/end time, and attendees.
+ */
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
@@ -26,14 +39,14 @@ use Google\Client;
 use Google\Service\Calendar;
 
 try {
-    // ✅ Accept input
+    //  Accept input
     $input = json_decode(file_get_contents('php://input'), true);
     if (!isset($input['senderEmail'])) {
         throw new Exception("Missing senderEmail");
     }
     $senderEmail = filter_var($input['senderEmail'], FILTER_SANITIZE_EMAIL);
 
-    // ✅ Fetch user’s token data from DB
+    //  Fetch user’s token data from DB
     $stmt = $dbh->prepare("SELECT gauth_access_token, gauth_refresh_token, gauth_token_type, gauth_scope, gauth_expiry FROM Users WHERE email = ?");
     $stmt->execute([$senderEmail]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -47,7 +60,7 @@ try {
         exit;
     }
 
-    // ✅ Setup Google Client
+    //  Setup Google Client
     $client = new Google_Client();
     $client->setAuthConfig('../credentials.json');
     $client->addScope(Google\Service\Calendar::CALENDAR_READONLY);
@@ -61,14 +74,14 @@ try {
         'created' => time() - 60
     ]);
 
-    // ✅ Refresh if expired
+    //  Refresh if expired
     if ($client->isAccessTokenExpired()) {
         $newToken = $client->fetchAccessTokenWithRefreshToken($user['gauth_refresh_token']);
         if (isset($newToken['error'])) {
             throw new Exception("Token refresh failed: " . $newToken['error']);
         }
 
-        $update = $pdo->prepare("UPDATE Users SET gauth_access_token = ?, gauth_expiry = ? WHERE email = ?");
+        $update = $dbh->prepare("UPDATE Users SET gauth_access_token = ?, gauth_expiry = ? WHERE email = ?");
         $update->execute([
             $newToken['access_token'],
             date('Y-m-d H:i:s', time() + $newToken['expires_in']),
@@ -76,7 +89,7 @@ try {
         ]);
     }
 
-    // ✅ Fetch events
+    //  Fetch events
     $service = new Calendar($client);
     $calendarId = 'primary';
     $now = date('c');

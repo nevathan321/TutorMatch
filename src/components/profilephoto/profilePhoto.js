@@ -1,6 +1,28 @@
+/**
+ * File: profilePhoto.jsx
+ * Group: WebFusion
+ * Group Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: 2025-04-24
+ *
+ * Description:
+ * This component renders the profile photo section for a user's profile page.
+ * It supports uploading a new image, deleting the current image, and falling back to a default avatar.
+ * The selected image is read using FileReader and passed to the parent component via a callback.
+ */
+
 import profile from '../../images/profile.png';
 import './profilePhoto.css';
 import { useState, useEffect } from 'react';
+
+/**
+ * Displays and manages the profile photo upload block.
+ * Allows users to upload a custom image or revert to the default.
+ *
+ * @param {string} initialPhoto - The initial photo to display (base64 or URL).
+ * @param {function} onPhotoChange - Callback to notify parent of image changes.
+ * @param {object} userProfile - User profile object containing saved profile photo.
+ * @returns {JSX.Element} The rendered profile photo component.
+ */
 
 function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
     // Initialize with default profile image
@@ -21,7 +43,12 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
         }
     }, [initialPhoto, userProfile]);
 
-    // Handles the photo upload, reads the file and updates the image source
+    /**
+     * Uploads a new profile photo by reading the selected file as a base64 string.
+     * Updates the displayed image and notifies the parent component.
+     *
+     * @param {Event} event - The file input change event.
+     */
     function uploadPhoto(event) {
         const file = event.target.files[0];
         const reader = new FileReader();
@@ -36,18 +63,27 @@ function ProfilePhotoBlock({ initialPhoto, onPhotoChange, userProfile }) {
         }
     }
 
-    // Deletes the uploaded photo and reverts to the default profile image
+    /**
+     * Deletes the currently uploaded photo and resets to the default image.
+     * Notifies the parent component about the change.
+     */
+
     function deletePhoto() {
         setImageSrc(profile);
         onPhotoChange(profile); // Notify parent component
     }
 
-    // Triggers the file input to allow photo selection
+    /**
+     * Simulates a click on the hidden file input element to trigger photo selection.
+     */
     function triggerFileInput() {
         document.getElementById('fileInput').click();
     }
 
-    // Handles image loading errors and reverts to the default profile photo
+    /**
+     * Handles profile image load errors by reverting to the default image.
+     * Also notifies the parent component of the fallback.
+     */
     function handleImageError() {
         setImageSrc(profile); // Reset to default profile image on error
         onPhotoChange(profile); // Notify parent component

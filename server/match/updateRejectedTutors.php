@@ -1,5 +1,21 @@
 <?php
-//update rejected tutors when tutee doesnt want to match with them
+/**
+ * File: updateRejectedTutors.php
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Adrian, Liyu, Abishan
+ *
+ * Description:
+ * This file handles updating the list of tutors that a tutee has rejected during the match process.
+ * When a tutee rejects a tutor, the tutor's ID is added to the tutee's `rejected_tutors` field 
+ * in the database. This field is stored as a JSON array.
+ * 
+ * The script accepts `tuteeID` and `tutorID` as GET parameters and updates the relevant record in the Users table.
+ * The updated list of rejected tutors is returned as a JSON response.
+ * 
+ * Supports CORS for cross-origin requests.
+ */
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");

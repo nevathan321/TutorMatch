@@ -1,4 +1,20 @@
 <?php
+/**
+ * File: updateProfile.php
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Adrian, Liyu, Abishan
+ *
+ * Description:
+ * This file handles the updating of user profiles for the TutorMatch platform.
+ * It accepts a JSON payload with fields such as name, McMaster ID, student number,
+ * role (tutee or tutor), password, and optional fields like profile image, hourly rate,
+ * and main subjects. It updates the corresponding database record in the Users table.
+ * 
+ * On success, it returns the updated user profile in JSON format.
+ * Supports preflight CORS requests.
+ */
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");

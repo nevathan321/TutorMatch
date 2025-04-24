@@ -1,3 +1,16 @@
+/* 
+ * File: reviews.css
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * 
+ * Description:
+ * Styles for the Reviews modal component.
+ * Includes layout and styling for the review cards, 
+ * star ratings, and states like loading, error, and empty.
+ */
+
+
 .reviews-container {
     max-height: 60vh;
     overflow-y: auto;

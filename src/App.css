@@ -1,3 +1,14 @@
+/**
+ * Group Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: April 20, 2025
+ *
+ * Description:
+ * This file contains global layout and base styling for the TutorMatch React application.
+ * It defines the default font, background color, and layout structure for core layout
+ * elements including the `.App`, `.card`, `.tile`, `.Nav`, and `.page` containers.
+ * Google Fonts are also imported for consistent typography across the app.
+ */
+
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 *{

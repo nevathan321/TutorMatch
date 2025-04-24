@@ -1,3 +1,15 @@
+/*
+ * File: MyCalendar.css
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: 2025-04-24
+ *
+ * Description:
+ * Custom styles for the MyCalendar component. 
+ * Overrides default react-calendar styles for visual consistency with TutorMatch.
+ */
+
+
 .react-calendar {
     width: 90%;
     border: none;

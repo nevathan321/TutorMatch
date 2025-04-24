@@ -1,4 +1,18 @@
 <?php
+/**
+ * File: createReview.php
+ * Group: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: April 24, 2025
+ *
+ * Description:
+ * This file receives POST requests to upload new tutor reviews.
+ * It parses the JSON request body containing review details and
+ * inserts the review into the `Reviews` table in the database.
+ * Returns a confirmation message upon success.
+ */
+
+ 
 header("Access-Control-Allow-Origin: *");  // Replace '*' with the specific domain for better security
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");

@@ -1,8 +1,26 @@
+/**
+ * File: NavigationButtons.js
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: 2025-04-24
+ *
+ * Description:
+ * This file defines the NavigationButtons component used within tutor match cards.
+ * It renders two circular SVG-based buttons for accepting or rejecting a tutor.
+ * These buttons trigger callback functions passed as props from the parent component.
+ */
+
 import React from 'react';
 import './NavigationButtons.css';
 
 
-// Renders two navigation buttons: one for rejecting and one for accepting
+/**
+ * Renders navigation buttons for accepting or rejecting a tutor.
+ *
+ * @param {Function} onReject - Callback triggered when the reject button is clicked.
+ * @param {Function} onAccept - Callback triggered when the accept button is clicked.
+ * @returns {JSX.Element} A component containing accept and reject buttons.
+ */
 function NavigationButtons({ onReject, onAccept }) {
   return (
     <div className="navigation-buttons">

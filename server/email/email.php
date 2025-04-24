@@ -1,4 +1,18 @@
 <?php
+/**
+ * File: email.php
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Adrian, Liyu, Abishan
+ * 
+ * Description:
+ * This endpoint handles email sending using the Gmail API via OAuth2.
+ * It validates and sanitizes incoming POST requests containing email details,
+ * retrieves the user’s Google OAuth tokens from the database,
+ * refreshes the access token if expired, and sends the email using cURL.
+ * If authentication is missing or token refresh fails, it returns an appropriate error with a redirect flag.
+ */
+
 require_once '../connect.php'; 
 require_once '../vendor/autoload.php';
 
@@ -42,7 +56,7 @@ try {
     $subject = strip_tags($data['subject']);
     $message = strip_tags($data['message']);
 
-    // 🔍 Pull user's tokens from DB
+    //  Pull user's tokens from DB
     $stmt = $dbh->prepare("SELECT gauth_access_token, gauth_refresh_token, gauth_token_type, gauth_scope, gauth_expiry FROM Users WHERE email = ?");
     $stmt->execute([$from]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -53,7 +67,7 @@ try {
         exit;
     }
 
-    // 🔐 Load credentials into Google Client
+    //  Load credentials into Google Client
     $client = new Google_Client();
     $client->setAuthConfig('../credentials.json');
     $client->addScope(Google\Service\Gmail::GMAIL_SEND);
@@ -68,7 +82,7 @@ try {
         'created' => time() - 60
     ]);
 
-    // 🔁 Refresh if needed
+    //  Refresh if needed
     if ($client->isAccessTokenExpired()) {
         $newToken = $client->fetchAccessTokenWithRefreshToken($user['gauth_refresh_token']);
         if (isset($newToken['error'])) {
@@ -77,7 +91,7 @@ try {
             exit;
         }
 
-        // ⏫ Update DB with new token
+        // Update DB with new token
         $update = $pdo->prepare("UPDATE Users SET gauth_access_token = ?, gauth_expiry = ? WHERE email = ?");
         $update->execute([
             $newToken['access_token'],
@@ -95,7 +109,7 @@ try {
 
     $rawBase64Url = rtrim(strtr(base64_encode($rawMessage), '+/', '-_'), '=');
 
-    // 🚀 Send via Gmail API
+    //  Send via Gmail API
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "https://gmail.googleapis.com/gmail/v1/users/me/messages/send");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);

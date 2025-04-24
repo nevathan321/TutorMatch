@@ -1,3 +1,14 @@
+/*
+ * Notifications Panel Styles
+ * 
+ * Date: 2025-04-24
+ * Designed by Team WebFusion (Nevathan, Liyu, Adrian, Abishan)
+ *
+ * This stylesheet defines the layout, animations, and visual styling for the notifications panel,
+ * including the bell icon button, dropdown list of notifications, actions like clear and mark as read,
+ * unread highlights, icon colors, and responsive behavior.
+ */
+
 .notifications-container {
   position: relative;
   z-index: 1000;

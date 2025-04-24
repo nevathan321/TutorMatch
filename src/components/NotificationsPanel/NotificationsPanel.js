@@ -1,26 +1,47 @@
+/**
+ * NotificationsPanel Component
+ * 
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Liyu, Adrian, Abishan
+ * 
+ * This component renders a notifications panel triggered by a bell icon. It shows a badge count,
+ * lists recent notifications, and allows the user to mark them as read or clear them. 
+ * Clicking outside the panel closes it. Automatically marks the top 5 as read after opening.
+ */
+
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useNotifications } from '../../context/NotificationContext';
 import NotificationBadge from '../NotificationBadge/NotificationBadge';
 import './NotificationsPanel.css';
 
-// Renders the notifications panel with a bell icon, badge, and dropdown list.
+/**
+ * Renders the notifications panel with a bell icon, unread badge, and a dropdown list of notifications.
+ * 
+ * @returns {JSX.Element} A button with notification count and a dropdown panel listing recent alerts.
+ */
+
 function NotificationsPanel() {
   const [isOpen, setIsOpen] = useState(false);
   const { 
     notifications, 
     unreadCount, 
-    soundEnabled,
-    toggleSound,
     markAsRead, 
     markAllAsRead, 
     removeNotification,
     clearAllNotifications,
-    initializeAudio // Add this
-  } = useNotifications();
+    } = useNotifications();
   const panelRef = useRef(null);
   const buttonRef = useRef(null);
+
   // Close panel when clicking outside
   useEffect(() => {
+    /**
+     * Detects clicks outside of the notifications panel and closes it if open.
+     * 
+     * @param {MouseEvent} event - The mouse event triggered by the document listener.
+     */
     function handleClickOutside(event) {
       if (panelRef.current && !panelRef.current.contains(event.target) && 
           buttonRef.current && !buttonRef.current.contains(event.target)) {
@@ -34,9 +55,13 @@ function NotificationsPanel() {
     };
   }, []);
 
-  // Handles opening and closing the panel and marking visible notifications as read
+  
+  /**
+   * Toggles the notifications panel open or closed.
+   * Automatically marks the top 5 unread notifications as read after a delay.
+   */
   const togglePanel = () => {
-    initializeAudio(); // Ensures audio is ready on user interaction
+    
     setIsOpen(!isOpen);
 
     // Automatically mark top 5 unread notifications as read after opening
@@ -52,17 +77,26 @@ function NotificationsPanel() {
     }
   };
 
-  // Marks all notifications as read
+  /**
+   * Marks all notifications in the list as read.
+   */
   const handleMarkAllAsRead = () => {
     markAllAsRead();
   };
 
-  // Clears all notifications
+  /**
+   * Clears all notifications from the list.
+   */
   const handleClearAll = () => {
     clearAllNotifications();
   };
 
-  // Formats timestamp into human-readable time string
+  /**
+   * Converts a timestamp into a human-readable relative time string.
+   * 
+   * @param {Date | string} timestamp - The timestamp to format.
+   * @returns {string} A string representing time since (e.g., "2h ago", "Mar 15").
+   */
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -87,7 +121,12 @@ function NotificationsPanel() {
     }
   };
 
-  // Returns an SVG icon based on the notification type
+  /**
+   * Returns an SVG icon element corresponding to the notification type.
+   * 
+   * @param {string} type - The type of notification (e.g., "success", "error", "info").
+   * @returns {JSX.Element} The icon element representing the type.
+   */
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'success':
@@ -154,13 +193,7 @@ function NotificationsPanel() {
           <div className="notifications-header">
             <h3>Notifications</h3>
             <div className="notifications-actions">
-              <button 
-                className={`toggle-sound-button ${!soundEnabled ? 'sound-off' : ''}`}
-                onClick={toggleSound}
-                title={soundEnabled ? "Mute notifications" : "Unmute notifications"}
-              >
-                {soundEnabled ? "Mute" : "Unmute"}
-              </button>
+              
               
               {unreadCount > 0 && (
                 <button 

@@ -1,3 +1,15 @@
+/**
+ * Group Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: April 20, 2025
+ *
+ * Description:
+ * This is the root component of the TutorMatch React application.
+ * It handles initial login detection via localStorage and auto-authenticates users if tokens exist.
+ * The component sets up global routing using React Router, context for notifications,
+ * and renders major app pages including Dashboard, Inbox, Profile, Match, Login, and Signup.
+ * Conditional rendering is used to show login/signup routes if the user is not authenticated.
+ */
+
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -10,6 +22,9 @@ import { NotificationProvider } from "./context/NotificationContext";
 import ToastContainer from "./components/ToastContainer/ToastContainer";
 import Login from "./pages/login/login";
 import Signup from "./pages/login/Singup";
+
+
+
 // switch root path when uploading to filezilla
 const ROOT_PATH = "/";
 
@@ -18,7 +33,7 @@ function App() {
   const [userProfile, setUserProfile] = useState(null);//should be null
 
   useEffect(() => {
-    const email = localStorage.getItem("tutorMatch-email");
+    const email = localStorage.getItem("userEmail");
     if (email == null) {
       setIsLoggedIn(false)
       return
@@ -30,7 +45,7 @@ function App() {
   const loginOnLoad = async (email) => {
   try {
 
-      const response = await fetch("http://localhost/tutorMatch/server/login/googleLogin.php", {//use this endpoint cause doesn't require password
+      const response = await fetch("https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/login/googleLogin.php", {//use this endpoint cause doesn't require password
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

@@ -1,3 +1,15 @@
+/*
+ * File: modal.css
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: 2025-04-24
+ *
+ * Description:
+ * Styles for the Modal component. Includes overlay appearance, modal layout, 
+ * header, content, and footer sections, as well as animation and responsiveness.
+ */
+
+ 
 .modal-overlay {
     position: fixed;
     top: 0;

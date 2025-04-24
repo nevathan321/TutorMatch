@@ -1,5 +1,22 @@
 <?php
-//returns array of all tutors that user hasnt accepted or declined
+/**
+ * File: getTutors.php
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Adrian, Liyu, Abishan
+ *
+ * Description:
+ * This file retrieves all tutor profiles from the database that a given tutee has not yet
+ * accepted (matched) or rejected. It filters out any tutor IDs that already exist in the
+ * tutee's `matched_tutors` or `rejected_tutors` fields (both stored as JSON arrays).
+ * 
+ * Accepts:
+ * - GET parameter `tuteeID`: the ID of the current tutee
+ *
+ * Returns:
+ * - A JSON-encoded array of eligible tutor profiles
+ */
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");

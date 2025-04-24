@@ -1,6 +1,17 @@
 <?php
-//handle google login
-//checks if email user is registed then return their profile
+/**
+ * File: googleLogin.php
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Adrian, Liyu, Abishan
+ * 
+ * Description:
+ * This endpoint handles Google OAuth login for TutorMatch.
+ * It checks if a user with the provided Google email exists in the database.
+ * If found, the full user profile is returned in JSON format.
+ * Tutor-specific fields like preferred_days and subject_expertise are decoded if present.
+ */
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");

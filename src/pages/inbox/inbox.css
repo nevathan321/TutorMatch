@@ -1,6 +1,12 @@
-/* src/pages/inbox/inbox.css */
-/* Team: WebFusion | Members: Nevathan, Liyu, Adrian, Abishan | Date: 2025-04-24 */
-/* This file defines the styles for the inbox view, including the layout for the inbox container, header, search bar, tutor match cards, actions, modals, and responsive design. */
+/**
+ * File: src/pages/inbox/inbox.css
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Liyu, Adrian, Abishan
+ *
+ * Description:
+ * Styles for the Inbox page layout, match cards, modals, and responsiveness.
+ */
 
 .inbox-container {
   max-width: 1200px;
