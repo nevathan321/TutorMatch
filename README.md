@@ -5,6 +5,9 @@
       TutorMatch revolutionizes how students find academic help by connecting learners 
       with the ideal tutors—based on course compatibility, hourly rates, and teaching styles.
     </p>
+    <p>
+      🔗 <strong><a href="https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/" target="_blank" rel="noopener noreferrer">Live App</a></strong>
+    </p>
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License Badge" />
   </header>
 
