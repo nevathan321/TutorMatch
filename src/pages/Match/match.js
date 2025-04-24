@@ -14,17 +14,36 @@ import TutorCard from "../../components/TutorCard/TutorCard"
 import { useNotifications } from "../../context/NotificationContext"
 import "./match.css"
 
-// Sample data - replace with API call in a real application
+
+/**
+ * Renders the Match component for browsing and swiping through tutor profiles.
+ *
+ * @param {Object} props
+ * @param {Object} props.userProfile - The current user's profile object containing tutee ID.
+ *
+ * @returns {JSX.Element} A swipeable interface with tutor cards for matching or rejecting.
+ */
 
 function Match({ userProfile }) {
   const [tutors, setTutors] = useState([]);
   const [currentTutorIndex, setCurrentTutorIndex] = useState(0);
   const { addNotification } = useNotifications();
 
+  useEffect(() => {
+    fetchTutors();
+  }, []);
+
+
+  /**
+   * Fetches tutor matches from the backend using the tutee's user ID.
+   * 
+   * @async
+   * @returns {void}
+   */
   const fetchTutors = async () => {
     try {
       const response = await fetch(
-        `http://localhost/tutorMatch/server/match/getTutors.php?tuteeID=${userProfile.id}`,
+        `https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/match/getTutors.php?tuteeID=${userProfile.id}`,
         {
           method: "GET",
           headers: {
@@ -40,11 +59,18 @@ function Match({ userProfile }) {
     }
   };
 
+  /**
+   * Updates the database when a tutor is accepted (matched) by the tutee.
+   *
+   * @param {number} tutorID - The ID of the matched tutor.
+   * @async
+   * @returns {void}
+   */
   const updateMatchedTutors = async (tutorID) => {
     try {
       // eslint-disable-next-line
       const response = await fetch(
-        `http://localhost/tutorMatch/server/match/updateMatches.php?tutorID=${tutorID}&tuteeID=${userProfile.id}`,
+        `https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/match/updateMatches.php?tutorID=${tutorID}&tuteeID=${userProfile.id}`,
         {
           method: "POST",
           headers: {
@@ -58,11 +84,18 @@ function Match({ userProfile }) {
     }
   };
 
+  /**
+   * Updates the database when a tutor is rejected by the tutee.
+   *
+   * @param {number} tutorID - The ID of the rejected tutor.
+   * @async
+   * @returns {void}
+   */
   const updateRejectedTutors = async (tutorID) => {
     try {
-      // eslint-disable-next-line
+      
       const response = await fetch(
-        `http://localhost/tutorMatch/server/match/updateRejectedTutors.php?tutorID=${tutorID}&tuteeID=${userProfile.id}`,
+        `https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/match/updateRejectedTutors.php?tutorID=${tutorID}&tuteeID=${userProfile.id}`,
         {
           method: "POST",
           headers: {
@@ -70,42 +103,46 @@ function Match({ userProfile }) {
           },
         }
       );
-      //const result = await response.json();
+      
       
     } catch (err) {
       console.error("Login error:", err);
     }
   };
 
-  useEffect(() => {
-    //run on load
-    fetchTutors();
-    // eslint-disable-next-line
-  }, []);
-
-  // Handle rejecting a tutor (swipe left)
+  
+  /**
+   * Handles tutor acceptance (e.g., swipe right).
+   * Updates the matched tutors, displays notifications, and simulates a response.
+   * 
+   * @returns {void}
+   */
   const handleReject = () => {
     if (tutors.length === 0) return;
     updateRejectedTutors(tutors[currentTutorIndex].id)
    
-    // Remove the current tutor from the list
+   
     const updatedTutors = [...tutors];
     updatedTutors.splice(currentTutorIndex, 1);
 
     if (updatedTutors.length === 0) {
-      // No more tutors to show
+      
       setTutors([])
      
     } else {
       setTutors(updatedTutors)
-      // If we're at the end of the list, go back to the first tutor
       if (currentTutorIndex >= updatedTutors.length) {
         setCurrentTutorIndex(0)
       }
     }
   };
 
-  // Handle accepting a tutor (swipe right)
+  /**
+   * Handles tutor acceptance (e.g., swipe right).
+   * Updates the matched tutors, displays notifications, and simulates a response.
+   * 
+   * @returns {void}
+   */
   const handleAccept = () => {
     if (tutors.length === 0) return;
     updateMatchedTutors(tutors[currentTutorIndex].id)
@@ -144,14 +181,12 @@ function Match({ userProfile }) {
     }, 4000); 
   };
 
-  const handleSeeMoreReviews = () => {
-    if (tutors.length === 0) return;
-
-    
-
-  };
-
   
+  /**
+   * Navigates to the previous tutor in the list.
+   * 
+   * @returns {void}
+   */
   const handlePrevTutor = () => {
     if (tutors.length <= 1) return;
 
@@ -160,7 +195,11 @@ function Match({ userProfile }) {
     );
   };
 
-  
+  /**
+   * Navigates to the next tutor in the list.
+   * 
+   * @returns {void}
+   */
   const handleNextTutor = () => {
     if (tutors.length <= 1) return;
 
@@ -206,7 +245,6 @@ function Match({ userProfile }) {
             
             <TutorCard
               tutor={tutors[currentTutorIndex]}
-              onSeeMoreReviews={handleSeeMoreReviews}
               onAccept={handleAccept}
               onReject={handleReject}
             />

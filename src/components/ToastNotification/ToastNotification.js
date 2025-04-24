@@ -9,10 +9,29 @@
 import React, { useState, useEffect } from 'react';
 import './ToastNotification.css';
 
+
+/**
+ * Renders an individual toast notification.
+ *
+ * @param {Object} notification - The notification data object.
+ * @param {string} notification.id - Unique ID of the notification.
+ * @param {string} notification.type - Type of the notification (success, error, warning, info).
+ * @param {string} notification.title - Title text of the notification.
+ * @param {string} notification.message - Body message of the notification.
+ * @param {Function} onClose - Callback function to remove the toast.
+ *
+ * @returns {JSX.Element} A styled toast notification component with auto-dismiss and close functionality.
+ */
+
 function ToastNotification({ notification, onClose }) {
   // State to track if the toast is exiting
   const [isExiting, setIsExiting] = useState(false);
-  
+
+  /**
+   * Sets up timers for triggering the exit animation and removing the toast after 5 seconds.
+   *
+   * @effect Runs once when the component mounts or when notification.id changes
+   */
   useEffect(() => {
     // Set timer for exit animation after 4.5 seconds
     const timer = setTimeout(() => {
@@ -31,7 +50,11 @@ function ToastNotification({ notification, onClose }) {
     };
   }, [notification.id, onClose]);
   
-  // Handle manual close of the toast notification
+  /**
+   * Handles manual closing of the toast when the user clicks the close button.
+   *
+   * @param {Event} e - Click event
+   */
   const handleClose = (e) => {
     e.stopPropagation(); // Prevent event bubbling
     setIsExiting(true);
@@ -40,7 +63,11 @@ function ToastNotification({ notification, onClose }) {
     }, 300); // Wait for exit animation to complete
   };
   
-  // Get the class for different toast types (success, error, etc.)
+  /**
+   * Returns the CSS class corresponding to the toast notification type.
+   *
+   * @returns {String} - A class string: 'toast-success', 'toast-error', etc.
+   */
   const getTypeClass = () => {
     switch (notification.type) {
       case 'success':
@@ -53,8 +80,12 @@ function ToastNotification({ notification, onClose }) {
         return 'toast-info';
     }
   };
-  
-  // Get the appropriate icon for the toast based on its type
+
+  /**
+   * Returns the appropriate SVG icon element based on the toast type.
+   *
+   * @returns {JSX.Element} - The SVG icon element
+   */
   const getIcon = () => {
     switch (notification.type) {
       case 'success':

@@ -1,10 +1,12 @@
 /**
+ * Group Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: April 20, 2025
+ *
  * Signup component for TutorMatch.
  * Handles user signup via email or Google login.
  * On successful Google auth, decodes token and proceeds to profile creation.
  * Renders either the signup form or the CreateProfile component based on the current step.
  */
-
 
 import React, { useState } from "react";
 import "./login.css";
@@ -14,6 +16,16 @@ import tutorImage from "./tutorImage.jpg";
 import { useNavigate } from "react-router-dom";
 import CreateProfile from "./createProfile";
 
+
+/**
+ * Handles the user signup flow with Google OAuth and redirects to profile creation.
+ *
+ * @param {Object} props
+ * @param {Function} props.setIsLoggedIn - Function to update login state upon successful signup.
+ * @param {Function} props.setUserProfile - Function to set user profile data.
+ *
+ * @returns {JSX.Element} Signup interface and Google login integration.
+ */
 export default function Signup({ setIsLoggedIn, setUserProfile }) {
   const navigate = useNavigate();
   const [step, setStep] = useState("signup");
@@ -21,7 +33,12 @@ export default function Signup({ setIsLoggedIn, setUserProfile }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  // Handles successful Google signup and decodes user information
+   /**
+   * Handles successful Google signup and extracts user info from JWT
+   * 
+   * @param {Object} response - Google auth response object
+   * @returns {void}
+   */
   const handleSingupSuccess = (response) => {
     const token = response.credential;
     const userInfo = jwtDecode(token);
@@ -33,12 +50,23 @@ export default function Signup({ setIsLoggedIn, setUserProfile }) {
     
   };
 
-  // Handles Google signup failure
+   /**
+   * Logs error message when Google signup fails
+   * 
+   * @param {Object} error - Google auth error object
+   * @returns {void}
+   */
+
   const handleSignupFailure = (error) => {
     console.error("Google login error:", error);
   };
 
-  // Handles form submission and moves to the profile creation step
+  /**
+   * Handles manual email signup form submission
+   * 
+   * @param {Event} e - Form submission event
+   * @returns {void}
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 

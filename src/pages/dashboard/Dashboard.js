@@ -17,8 +17,17 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Review from "../../components/review/Review";
+import Review from "../../components/Reviews/CreateReview/Review";
 import "./Dashboard.css";
+
+/**
+ * Renders the user dashboard component.
+ *
+ * @param {Object} props
+ * @param {Object} props.userProfile - The currently logged-in user's profile data.
+ *
+ * @returns {JSX.Element} Dashboard view including stats, recent matches, upcoming sessions, and review form.
+ */
 
 function Dashboard({userProfile}) {
   const [totalMatches, setTotalMatches] = useState(null)
@@ -43,69 +52,85 @@ function Dashboard({userProfile}) {
     favoriteTutors: 0
   }); // Add stats state
 
-  // Fetches events from the Google Calendar API and updates the state with the event data
-  useEffect(() => {
-    const fetchGoogleEvents = async () => {
-      try {
-        const res = await fetch("http://localhost/TutorMatch/server/calendar/fetchEvents.php",
-          {
-            headers: {
-              "Content-Type": "application/json"
-            },
-            method: "POST",
-            credentials: "include",
-            body: JSON.stringify({
-              senderEmail: localStorage.getItem("userEmail"),
-            })
-          }
-        );
-        const data = await res.json();
-
-        if (data.success) {
-          setGoogleEvents(data.events);
-        } else {
-          console.error(
-            "Google Calendar API error:",
-            data.error || "Unknown error"
-          );
-        }
-      } catch (err) {
-        console.error("Failed to load calendar events:", err);
-      }
-    };
-
-    fetchGoogleEvents();
-  }, []);
+  
 
   // Fetches matched tutors for the user from the server and updates the recent matches and total matches state
   useEffect(() => {
-    const fetchMatchedTutors = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost/tutorMatch/server/match/getMatches.php?tuteeID=${userProfile.id}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          }
-        );
-        const matchedTutors = await response.json();
-       
-        setRecentMatches(matchedTutors.slice(-4));//gets last 4 matches
-        setTotalMatches(matchedTutors.length)
-    
-      } catch (err) {
-        console.error("Login error:", err);
-      }
-    };
-
+    fetchGoogleEvents();
     fetchMatchedTutors();
     setLoading(false)
   }, []);
 
   
+  /**
+   * Fetches events from the Google Calendar API for the logged-in user.
+   * Updates the state with a list of upcoming sessions.
+   *
+   * @async
+   * @returns {void}
+   */
+  const fetchGoogleEvents = async () => {
+    try {
+      const res = await fetch("https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/calendar/fetchEvents.php",
+        {
+          headers: {
+            "Content-Type": "application/json"
+          },
+          method: "POST",
+          credentials: "include",
+          body: JSON.stringify({
+            senderEmail: localStorage.getItem("userEmail"),
+          })
+        }
+      );
+      const data = await res.json();
 
+      if (data.success) {
+        setGoogleEvents(data.events);
+      } else {
+        console.error(
+          "Google Calendar API error:",
+          data.error || "Unknown error"
+        );
+      }
+    } catch (err) {
+      console.error("Failed to load calendar events:", err);
+    }
+  };
+
+  /**
+   * Fetches recent tutor matches from the backend for the current tutee.
+   * Updates recent matches and total match count in the component state.
+   *
+   * @async
+   * @returns {void}
+   */
+  const fetchMatchedTutors = async () => {
+    try {
+      const response = await fetch(
+        `https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/match/getMatches.php?tuteeID=${userProfile.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      const matchedTutors = await response.json();
+     
+      setRecentMatches(matchedTutors.slice(-4));//gets last 4 matches
+      setTotalMatches(matchedTutors.length)
+  
+    } catch (err) {
+      console.error("Login error:", err);
+    }
+  };
+
+  /**
+   * Updates the review form state based on input changes.
+   *
+   * @param {Object} e - The input change event.
+   */
   const handleReviewChange = (e) => {
     const { name, value } = e.target;
     setNewReview((prev) => ({
@@ -114,7 +139,11 @@ function Dashboard({userProfile}) {
     }));
   };
 
-  // Updates the rating in the review form when a star is selected
+  /**
+   * Updates the rating value in the review form when a star is selected.
+   *
+   * @param {number} rating - The selected star rating (1–5).
+   */
   const handleRatingChange = (rating) => {
     setNewReview((prev) => ({
       ...prev,
@@ -122,7 +151,14 @@ function Dashboard({userProfile}) {
     }));
   };
 
-  // Handles the submission of the new review, including resetting the form and uploading the review to the server
+  /**
+   * Handles review form submission.
+   * Builds a new review object, resets the form, updates the local review list,
+   * and uploads the review to the server.
+   *
+   * @param {Object} e - The form submit event.
+   * @returns {void}
+   */
   const handleReviewSubmit = (e) => {
     e.preventDefault();
 
@@ -156,10 +192,17 @@ function Dashboard({userProfile}) {
       tutorId: "",
     });
 
-    // Uploads the review to the server
+    /**
+     * Sends the newly submitted review to the backend API for database storage.
+     * Called after local state is updated with the new review.
+     *
+     * @param {Object} newReviewObj - The review object containing tutor ID, rating, title, body, and author details.
+     * @async
+     * @returns {void}
+     */
     const uploadReview = async (newReviewObj) => {
       try {
-        const response = await fetch(`http://localhost/tutorMatch/server/reviews/createReview.php`, {
+        const response = await fetch(`https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/reviews/createReview.php`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

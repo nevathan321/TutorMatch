@@ -1,5 +1,20 @@
 <?php
-//update matches when tutee wants to match with tutor
+/**
+ * File: updateMatches.php
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Adrian, Liyu, Abishan
+ *
+ * Description:
+ * This file updates the list of tutors that a tutee has chosen to match with.
+ * When a tutee accepts a tutor, the tutor's ID is added to the `matched_tutors` field 
+ * in the Users table. This field is stored as a JSON array.
+ * 
+ * The script accepts `tuteeID` and `tutorID` as GET parameters and updates the corresponding record.
+ * The updated matched tutors array is returned as a JSON-encoded response.
+ * 
+ * Includes headers to support CORS for cross-origin requests.
+ */
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");

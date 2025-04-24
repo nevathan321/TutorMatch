@@ -1,4 +1,16 @@
 <?php
+/**
+ * File: getReviews.php
+ * Group: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: April 24, 2025
+ *
+ * Description:
+ * This file handles the retrieval of all reviews for a given tutor ID from the database.
+ * It returns the reviews in JSON format, ordered from newest to oldest.
+ * The endpoint expects a GET request with a `tutorID` query parameter.
+ */
+
 header("Access-Control-Allow-Origin: *");  // Replace '*' with the specific domain for better security
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");

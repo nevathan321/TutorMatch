@@ -1,5 +1,22 @@
 <?php
-//return all tutors that tutee has matched with
+/**
+ * File: getMatches.php
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Adrian, Liyu, Abishan
+ * 
+ * Description:
+ * This script retrieves all tutors that a specific tutee has matched with.
+ * It queries the `matched_tutors` field from the `Users` table using the provided
+ * tutee ID, decodes the JSON array of tutor IDs, and then fetches the full tutor
+ * profiles matching those IDs.
+ * 
+ * Accepts:
+ * - GET parameter `tuteeID`: the ID of the tutee
+ * 
+ * Returns:
+ * - A JSON-encoded array of tutor profiles that have been matched with the tutee
+ */
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");

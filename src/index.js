@@ -1,3 +1,14 @@
+/**
+ * Group Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: April 20, 2025
+ *
+ * Description:
+ * This is the main entry point for the React application. It sets up the root rendering
+ * and wraps the entire app in the GoogleOAuthProvider to support Google Login
+ * functionality across components. It also optionally supports performance monitoring
+ * through reportWebVitals.
+ */
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";

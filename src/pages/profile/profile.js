@@ -13,6 +13,16 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import './profile.css';
 
+
+/**
+ * Renders the Profile page where users can view and update their profile information.
+ * 
+ * @param {Object} userProfile - The current user's profile data.
+ * @param {Function} setUserProfile - Function to update the user's profile data in global state.
+ * @param {Function} setIsLoggedIn - Function to update login state (used on logout).
+ * @returns {JSX.Element} The profile component.
+ */
+
 function Profile({ userProfile, setUserProfile, setIsLoggedIn }) {
     const [profilePhoto, setProfilePhoto] = useState(null);
 
@@ -208,7 +218,7 @@ function Profile({ userProfile, setUserProfile, setIsLoggedIn }) {
             email
         };
 
-        fetch('http://localhost/tutormatch/server/profile/createProfile.php', {
+        fetch('https://cs1xd3.cas.mcmaster.ca/~xiaol31/Tutormatch/server/profile/createProfile.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

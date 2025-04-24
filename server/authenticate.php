@@ -1,4 +1,18 @@
 <?php
+/**
+ * File: authenticate.php
+ * Team: WebFusion
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: 2025-04-24
+ *
+ * Description:
+ * This script handles OAuth2 authentication with Google for the TutorMatch application.
+ * It enables access to Gmail, Google Calendar, and user email info.
+ * Upon successful login, it stores the access token and refresh token in both the session
+ * and the database, allowing the user to send emails and schedule calendar events.
+ * The script also provides a simple UI for Google login and confirmation messages.
+ */
+
 session_start(); // Start the session
 
 ini_set('display_errors', 1);

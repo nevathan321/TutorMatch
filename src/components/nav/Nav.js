@@ -1,10 +1,16 @@
 /**
-* TutorMatch Group
-* 
-* Date: April 7, 2025
-* 
-* Navigation Component for switching between pages
-*/
+ * File: Nav.js
+ * Team: TutorMatch
+ * Members: Nevathan, Liyu, Adrian, Abishan
+ * Date: April 7, 2025
+ *
+ * Description:
+ * Navigation bar component used across all pages in the application.
+ * Provides links to Dashboard, Match, Inbox, and Profile pages.
+ * Integrates notification badge and dropdown panel using NotificationContext.
+ * Highlights the active link based on current route.
+ */
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationContext';
@@ -14,7 +20,12 @@ import './Nav.css';
 
 
 
-// This is the nav bar that shows up at the top of every page
+/**
+ * Renders the main navigation bar for the application.
+ *
+ * @returns {JSX.Element} A React component displaying navigation links and notification badge/panel.
+ */
+
 function Nav() {
   const location = useLocation(); // lets us know what page we're currently on
   const { unreadCount } = useNotifications(); // grabs how many unread notifications we have

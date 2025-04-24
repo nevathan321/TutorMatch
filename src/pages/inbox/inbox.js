@@ -1,6 +1,17 @@
-// src/pages/inbox/inbox.js
-// Team: WebFusion | Members: Nevathan, Liyu, Adrian, Abishan | Date: 2025-04-24
-// This file handles the inbox view, including fetching matched tutors, searching for tutors, sending emails, and scheduling sessions.
+/**
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Liyu, Adrian, Abishan
+ *
+ * Description:
+ * This component renders the Inbox page for TutorMatch. It allows users to:
+ * - Fetch and view matched tutors
+ * - Search tutors by name
+ * - Email tutors through Gmail API
+ * - Schedule sessions via Google Calendar
+ * 
+ * It also supports authentication redirection and shows real-time status messages.
+ */
 
 "use client";
 
@@ -12,23 +23,14 @@ import Modal from "../../components/modal/modal";
 import Reviews from "../../components/Reviews/reviews";
 
 
-// Function to return a string representing the year of study based on the year number
-const getYearOfStudyString = (year) => {
-    switch (year) {
-        case 1:
-            return "1st Year";
-        case 2:
-            return "2nd Year";
-        case 3:
-            return "3rd Year";
-        case 4:
-            return "4th Year";
-        case 5:
-            return "5th Year";
-        default:
-            return "N/A";
-    }
-};
+/**
+ * Renders the inbox view with matched tutors.
+ *
+ * @param {Object} props
+ * @param {Object} props.userProfile - The profile of the currently logged-in user.
+ *
+ * @returns {JSX.Element} Inbox page with search, email, calendar invite, and review modal functionality.
+ */
 
 function Inbox({ userProfile }) {
     // State variables for managing data and UI
@@ -51,42 +53,77 @@ function Inbox({ userProfile }) {
     const [showReviewsModal, setShowReviewsModal] = useState(false);
 
 
-    // Function to fetch tutor matches based on the user profile and search term
     useEffect(() => {
-        const fetchMatchedTutors = async () => {
-            try {
-                const response = await fetch(
-                    `http://localhost/tutorMatch/server/match/getMatches.php?tuteeID=${userProfile.id}`,
-                    {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded",
-                        },
-                    }
-                );
-
-                // Error handling for failed response
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const matchedTutors = await response.json();
-                console.log("Fetched matches:", matchedTutors); // Debugging
-                setMatches(matchedTutors);
-                setFilteredMatches(matchedTutors.filter((match) =>
-                    match.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-                ));
-            } catch (err) {
-                console.error("Error fetching matches:", err);
-                setMatches([]);
-                setFilteredMatches([]);
-            }
-        };
-
         fetchMatchedTutors();
-    }, [searchTerm, userProfile.id]);
+    }, []);
 
+
+    /**
+     * Fetches tutor matches for the current user from the backend.
+     * Filters the matches based on the current search term.
+     *
+     * @async
+     * @effect Runs on component mount and when searchTerm or user ID changes.
+     */
+    const fetchMatchedTutors = async () => {
+        try {
+            const response = await fetch(
+                `https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/match/getMatches.php?tuteeID=${userProfile.id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                }
+            );
+
+            // Error handling for failed response
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const matchedTutors = await response.json();
+            console.log("Fetched matches:", matchedTutors); // Debugging
+            setMatches(matchedTutors);
+            setFilteredMatches(matchedTutors.filter((match) =>
+                match.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+            ));
+        } catch (err) {
+            console.error("Error fetching matches:", err);
+            setMatches([]);
+            setFilteredMatches([]);
+        }
+    };
+
+    /**
+     * Returns the academic year label based on the numerical value.
+     *
+     * @param {number} year - The academic year as a number.
+     * @returns {string} - The corresponding year label (e.g., "1st Year").
+     */
+    const getYearOfStudyString = (year) => {
+        switch (year) {
+            case 1:
+                return "1st Year";
+            case 2:
+                return "2nd Year";
+            case 3:
+                return "3rd Year";
+            case 4:
+                return "4th Year";
+            case 5:
+                return "5th Year";
+            default:
+                return "N/A";
+        }
+    };
+
+    /**
+     * Updates the searchTerm state and filters tutor matches accordingly.
+     *
+     * @param {Object} e - The input change event.
+     */
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
         setFilteredMatches(matches.filter((match) =>
@@ -94,8 +131,12 @@ function Inbox({ userProfile }) {
         ));
     };
 
-    // Function to handle selecting a tutor for scheduling or emailing
-
+    /**
+     * Handles selecting a tutor for email or calendar interaction.
+     * Sets the selected tutor and prepares a default email message.
+     *
+     * @param {Object} tutor - The selected tutor's information.
+     */
     const handleSelectTutor = (tutor) => {
         setSelectedTutor(tutor);
         const subjects = tutor.main_subjects && typeof tutor.main_subjects === 'string'
@@ -108,9 +149,16 @@ function Inbox({ userProfile }) {
         setShowEmailModal(true);
     };
 
-
-    // Function to send a calendar invite to the selected tutor
-
+    /**
+     * Sends a Google Calendar event invitation to the selected tutor.
+     * If not authenticated, opens Google OAuth in a new tab and retries.
+     *
+     * @param {Object} tutor - Tutor object containing email and name.
+     * @param {Date} date - Selected session date.
+     * @param {string} startTimeStr - Start time string (e.g., "10:00").
+     * @param {string} endTimeStr - End time string (e.g., "11:00").
+     * @returns {Promise<Object>} - Result object with success status and event link.
+     */
     const sendCalendarInvite = async (tutor, date, startTimeStr, endTimeStr) => {
         try {
             const startDateTime = new Date(date);
@@ -127,7 +175,7 @@ function Inbox({ userProfile }) {
             const description = `Tutoring session for ${subjectsArray.join(', ') || 'Unknown Subjects'}`;
 
 
-            const response = await fetch('http://localhost/TutorMatch/server/calendar/calendar.php', {
+            const response = await fetch('https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/calendar/calendar.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -179,14 +227,18 @@ function Inbox({ userProfile }) {
         }
     };
 
-
-    // Function to handle sending the email
-
+    /**
+     * Sends an email to the selected tutor via Gmail API.
+     * Handles token refresh and redirects to authentication if required.
+     *
+     * @async
+     * @returns {void}
+     */
     const handleSendEmail = async () => {
         setEmailStatus({ type: "loading", message: "Sending email..." });
       
         try {
-          const emailEndpoint = "http://localhost/TutorMatch/server/email/email.php";
+          const emailEndpoint = "https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/email/email.php";
       
           const response = await fetch(emailEndpoint, {
             method: "POST",
@@ -211,7 +263,7 @@ function Inbox({ userProfile }) {
                 message: "Authentication required. Redirecting to Google login...",
               });
       
-              const authWindow = window.open("https://localhost/TutorMatch/server/authenticate.php", "googleAuth", "width=600,height=600");
+              const authWindow = window.open("https://cs1xd3.cas.mcmaster.ca/~xiaol31/TutorMatch/server/authenticate.php", "googleAuth", "width=600,height=600");
       
               const checkAuthWindow = setInterval(() => {
                 if (authWindow.closed) {

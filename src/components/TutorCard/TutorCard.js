@@ -1,17 +1,15 @@
-/* 
-GroupName: WebFusion 
-GroupMembers: Nevathan, Adrian, Liyu, Abishan
-Date: 2025-04-23
+/**
+ * GroupName: WebFusion 
+ * GroupMembers: Nevathan, Adrian, Liyu, Abishan
+ * Date: 2025-04-23
+ *
+ * This file contains the TutorCard component which displays a tutor's 
+ * information such as their name, subjects, hourly wage, education, and rating. 
+ * It fetches the latest review for the tutor and renders it along with star ratings. 
+ * The component also includes buttons to accept or reject the tutor and shows 
+ * a modal with more reviews when clicked.
+ */
 
-Description: This file contains the TutorCard component which displays a tutor's 
-information such as their name, subjects, hourly wage, education, and rating. It 
-fetches the latest review for the tutor and renders it along with star ratings. 
-The component also includes buttons to accept or reject the tutor and shows 
-a modal with more reviews when clicked. The getYearOfStudyString function is 
-used to display the tutor's academic year in a user-friendly format, and 
-subject-specific CSS classes are applied to differentiate subjects. 
-The Reviews component is used to show additional reviews in a modal dialog. 
-*/
 
 
 import { useState, useEffect } from "react";
@@ -19,48 +17,74 @@ import './TutorCard.css';
 import Reviews from '../Reviews/reviews';
 import { fetchReviews } from '../Reviews/reviews';
 
-// Function to return the year of study string based on the year number
-const getYearOfStudyString = (year) => {
-  switch (year) {
-    case 1:
-      return "1st Year";
-    case 2:
-      return "2nd Year";
-    case 3:
-      return "3rd Year";
-    case 4:
-      return "4th Year";
-    case 5:
-      return "5th Year";
-    default:
-      return "N/A";
-  }
-};
-
-const review = {
-  title: 'AMAZING',
-  text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed.',
-  reviewerName: 'Ashley',
-  reviewerImage: '/placeholder-avatar.png',
-  date: 'March 23, 2024'
-}
-
-function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
+/**
+ * Renders a card component for a given tutor, including their subjects, wage,
+ * education, rating, latest review, and buttons to accept or reject them.
+ *
+ * @param {Object} tutor - The tutor object containing data like name, subjects, wage, etc.
+ * @param {Function} onAccept - Callback when the user accepts the tutor.
+ * @param {Function} onReject - Callback when the user rejects the tutor.
+ *
+ * @returns {JSX.Element} A formatted card displaying tutor details and interaction buttons.
+ */
+function TutorCard({ tutor, onAccept, onReject }) {
   const [showReviewsModal, setShowReviewsModal] = useState(false);
   const [latestReview, setLatestReview] = useState(null);
   const subjects = JSON.parse(tutor.main_subjects)
 
+  /**
+   * Fetches the latest review for the current tutor
+   * 
+   * @effect Runs whenever tutor ID changes
+   */
   useEffect(() => {
-      const getLatestReview = async () => {
-          const reviews = await fetchReviews(tutor.id);
-          if (reviews && reviews.length > 0) {
-              setLatestReview(reviews[0]); // Get the first (latest) review
-          }
-      };
-
       getLatestReview();
   }, [tutor.id]);
- 
+
+
+  /**
+   * Gets the latest review from the backend and updates component state
+   * 
+   * @async
+   * @returns {Promise<void>} - Updates the latestReview state
+   */
+  const getLatestReview = async () => {
+    const reviews = await fetchReviews(tutor.id);
+    if (reviews && reviews.length > 0) {
+        setLatestReview(reviews[0]); // Get the first (latest) review
+    }
+  };
+
+  /**
+   * Converts a numeric academic year to a readable string format
+   * 
+   * @param {Number} year - Academic year (1 to 5)
+   * @returns {String} - Corresponding year string ("1st Year", etc.)
+   */
+  const getYearOfStudyString = (year) => {
+    switch (year) {
+      case 1:
+        return "1st Year";
+      case 2:
+        return "2nd Year";
+      case 3:
+        return "3rd Year";
+      case 4:
+        return "4th Year";
+      case 5:
+        return "5th Year";
+      default:
+        return "N/A";
+    }
+  };
+
+
+  /**
+   * Renders a set of star icons based on the tutor's rating
+   * 
+   * @param {Number} rating - Rating value from 1 to 5
+   * @returns {JSX.Element[]} - Array of SVG stars (filled or outlined)
+   */
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -81,6 +105,13 @@ function TutorCard({ tutor, onSeeMoreReviews, onAccept, onReject }) {
     return stars;
   };
   
+
+  /**
+   * Returns a CSS class name for styling based on the subject category
+   * 
+   * @param {String} subject - Name of the subject
+   * @returns {String} - CSS class name (e.g., 'chemistry', 'math')
+   */
   const getSubjectClass = (subject) => {
     const subjectLower = subject.toLowerCase();
     if (subjectLower.includes('chemistry')) return 'chemistry';

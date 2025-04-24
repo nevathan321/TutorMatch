@@ -1,6 +1,16 @@
 <?php
+/**
+ * File: login.php
+ * Date: 2025-04-24
+ * Team: WebFusion
+ * Team Members: Nevathan, Adrian, Liyu, Abishan
+ * 
+ * Description:
+ * Handles user authentication using traditional email and password login.
+ * Verifies credentials against the Users table. If the credentials match,
+ * the user profile is returned in JSON format. Otherwise, a failure response is sent.
+ */
 
-//regular login, verify if user exists and passwords match then return profile
 header("Access-Control-Allow-Origin: *");  // Replace '*' with the specific domain for better security
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
