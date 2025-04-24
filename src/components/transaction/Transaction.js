@@ -1,3 +1,11 @@
+/* 
+  Transaction Component
+  Date: 2025-04-24
+  Designed by WebFusion (Nevathan, Liyu, Adrian, Abishan)
+  Displays transaction details like type, amount, status, date, and time
+  Includes functions to determine status and transaction type images
+*/
+
 import './Transaction.css';
 import card from '../../images/card.png';
 import exchange from '../../images/exchange.png';

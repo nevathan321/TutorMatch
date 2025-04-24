@@ -1,3 +1,12 @@
+/* 
+  Date: 2025-04-23
+  Team: WebFusion
+  Team Members: Nevathan, Liyu, Adrian, Abishan
+  Description: This stylesheet defines the styles for the TutorMatch login page. It includes 
+  layout styles for the login form and image section, as well as input fields, error messages, 
+  buttons, and responsive adjustments for smaller screens.
+*/
+
 .login-page {
   display: flex;
   height: 100vh;

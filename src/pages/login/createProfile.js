@@ -1,3 +1,14 @@
+/**
+ * Date: 2025-04-23
+ * Team: WebFusion
+ * Team Members: Nevathan, Liyu, Adrian, Abishan
+ * Description: This component handles the creation of a user profile during the TutorMatch signup flow.
+ * It captures user details, validates passwords, conditionally renders additional fields for tutors, 
+ * and submits the data to the backend. Upon success, it updates the login state and navigates to the homepage.
+ */
+
+
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./createProfile.css";

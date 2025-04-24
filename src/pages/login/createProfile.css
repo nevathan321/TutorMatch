@@ -1,3 +1,14 @@
+/* 
+ * Date: 2025-04-23
+ * Team: WebFusion
+ * Team Members: Nevathan, Liyu, Adrian, Abishan
+ * Description: This CSS file contains styles for the CreateProfile component.
+ * It includes layout, form styling, button styles, input field designs, and responsiveness.
+ * Specific styles are applied to form inputs, buttons, and warning messages, with special styling
+ * for the user type toggle and form fields for tutors. Additionally, there are media queries for responsiveness.
+ */
+
+
 .user-type-toggle {
   display: flex;
   justify-content: center;

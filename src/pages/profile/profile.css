@@ -1,13 +1,11 @@
 /**
-* TutorMatch Group
-* 
-* Date: April 7, 2025
+* Group Members: Nevathan,Liyu,Adrian,Abishan
+* Date: April 20, 2025
 * 
 * Styling for the Profile Component
 * Also handles responsive design for all components with Nav.js
 */
 
-/* Reset and Base Styles */
 .user-details p{
   font-size: 14px;
   font-weight: bold;
@@ -24,7 +22,7 @@
   padding: 0;
 }
 
-/* Container styles */
+
 .Profile {
   display: flex;
   flex-direction: column;
@@ -34,9 +32,7 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Card Styles */
 
-/* Profile Header */
 .top {
   display: flex;
   flex-direction: column;
@@ -50,7 +46,7 @@
   margin-bottom: 1.5rem;
 }
 
-/* Profile Image and Info */
+
 .top img {
   width: 120px;
   height: 120px;
@@ -74,7 +70,7 @@
   margin-bottom: 1.5rem;
 }
 
-/* Button Styles */
+
 button,
 .button {
   padding: 0.75rem 1.5rem;
@@ -105,7 +101,7 @@ button,
   background-color: #f53e3e;
 }
 
-/* User Details Section */
+
 .userDetails h2 {
   font-size: 1.5rem;
   font-weight: 600;
@@ -115,11 +111,10 @@ button,
   color: #333;
 }
 
-/* Form Styles */
 .userContainer {
   display: flex;
   flex-wrap: wrap;
-  /* margin: 0 -1rem; */
+ 
 }
 
 .userContainer > div {
@@ -161,9 +156,9 @@ input::placeholder {
   color: #aaa;
 }
 
-/* Toggle Switch - Removed from UI but kept styles for backward compatibility */
+
 .toggleWrapper {
-  display: none; /* Hide the toggle switch */
+  display: none; 
 }
 
 .toggleSwitch {
@@ -205,12 +200,12 @@ input::placeholder {
   left: 60px;
 }
 
-/* Tutor Details - Hidden by default */
+
 .TutorDetails {
-  display: none !important; /* Force hide the tutor details section */
+  display: none !important; 
 }
 
-/* Notification Styles */
+
 .profile-notification {
   width: 100%;
   padding: 12px 20px;
@@ -274,30 +269,6 @@ input::placeholder {
   font-size: 1rem;
 }
 
-/* Responsive Adjustments */
-/* @media (max-width: 768px) {
-  .top {
-    text-align: center;
-  }
-
-
-@media (min-width: 600px) {
-  .Profile {
-    padding: 0 2rem;
-  }
-  
-  .card {
-    padding: 2rem;
-  }
-  
-  .userContainer {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-  }
-
-} */
-
   .userContainer > div {
     flex: 1;
     min-width: 250px;
@@ -316,7 +287,7 @@ input::placeholder {
   font-size: 18px;
 }
 
-/* Interactive Preferred Days Styling - kept for compatibility but not used */
+
 .days-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -354,7 +325,7 @@ input::placeholder {
   }
 }
 
-/* Adjust layout when navbar is present */
+
 @media (max-width: 1024px) {
   .tile {
     flex-direction: column;
@@ -420,7 +391,7 @@ input::placeholder {
   }
 }
 
-/* Adjust layout when navbar is present */
+
 @media (max-width: 1024px) {
   .tile {
     flex-direction: column;
@@ -437,7 +408,7 @@ input::placeholder {
 }
 
 
-/* Very small devices */
+
 @media (max-width: 400px) {
   .card {
     padding: 1rem;

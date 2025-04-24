@@ -1,3 +1,14 @@
+/**
+* Group Members: Nevathan, Liyu, Adrian, Abishan
+* Date: April 20, 2025
+*
+* Match component for displaying and managing tutor matches.
+* Allows users to browse, accept, or reject tutor profiles.
+* Communicates with backend APIs to update match and rejection data.
+* Notifies users about successful matches and simulates tutor responses.
+*/
+
+
 import { useState, useEffect } from "react"
 import TutorCard from "../../components/TutorCard/TutorCard"
 import { useNotifications } from "../../context/NotificationContext"

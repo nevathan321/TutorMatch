@@ -1,3 +1,11 @@
+/**
+ * Signup component for TutorMatch.
+ * Handles user signup via email or Google login.
+ * On successful Google auth, decodes token and proceeds to profile creation.
+ * Renders either the signup form or the CreateProfile component based on the current step.
+ */
+
+
 import React, { useState } from "react";
 import "./login.css";
 import { GoogleLogin } from "@react-oauth/google";

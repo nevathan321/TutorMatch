@@ -1,3 +1,11 @@
+/* 
+  ToastNotification Styles
+  Date: 2025-04-24
+  Designed by WebFusion (Nevathan, Liyu, Adrian, Abishan)
+  Styles for toast notifications with slide-in/out animations, type-based color customization (success, error, warning, info)
+  Includes close button functionality and mobile responsiveness
+*/
+
 .toast-notification {
   display: flex;
   align-items: flex-start;
