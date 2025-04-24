@@ -18,7 +18,7 @@ function App() {
   const [userProfile, setUserProfile] = useState(null);//should be null
 
   useEffect(() => {
-    const email = localStorage.getItem("tutorMatch-email");
+    const email = localStorage.getItem("userEmail");
     if (email == null) {
       setIsLoggedIn(false)
       return

@@ -68,7 +68,7 @@ try {
             throw new Exception("Token refresh failed: " . $newToken['error']);
         }
 
-        $update = $pdo->prepare("UPDATE Users SET gauth_access_token = ?, gauth_expiry = ? WHERE email = ?");
+        $update = $dbh->prepare("UPDATE Users SET gauth_access_token = ?, gauth_expiry = ? WHERE email = ?");
         $update->execute([
             $newToken['access_token'],
             date('Y-m-d H:i:s', time() + $newToken['expires_in']),

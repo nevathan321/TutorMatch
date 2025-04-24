@@ -59,7 +59,7 @@ function Dashboard({userProfile}) {
     };
 
     fetchGoogleEvents();
-  }, );
+  }, []);
 
   // Fetches matched tutors for the user from the server and updates the recent matches and total matches state
   useEffect(() => {
