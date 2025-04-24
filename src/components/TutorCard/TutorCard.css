@@ -1,3 +1,10 @@
+/* 
+  Tutor Card Styles
+  Date: 2025-04-24
+  Designed by WebFusion (Nevathan, Liyu, Adrian, Abishan)
+  Includes card layout, hover effects, tutor details, and responsive design
+*/
+
 .tutor-card {
   background: white;
   border-radius: 16px;

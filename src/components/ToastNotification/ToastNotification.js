@@ -1,3 +1,11 @@
+/* 
+  ToastNotification Component
+  Date: 2025-04-24
+  Designed by WebFusion (Nevathan, Liyu, Adrian, Abishan)
+  Displays toast notifications with different types (success, error, warning, info)
+  Automatically disappears after 5 seconds with an exit animation, can be manually closed
+*/
+
 import React, { useState, useEffect } from 'react';
 import './ToastNotification.css';
 

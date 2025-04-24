@@ -1,3 +1,19 @@
+/* 
+GroupName: WebFusion 
+GroupMembers: Nevathan, Adrian, Liyu, Abishan
+Date: 2025-04-23
+
+Description: This file provides a NotificationContext and related functionality 
+to manage notifications and toast alerts in a React application. The NotificationProvider 
+component manages the state for notifications, unread counts, and sound preferences, 
+while offering methods to add, remove, mark as read, and clear notifications. It also 
+handles the playback of notification sounds based on user preferences and interacts 
+with local storage to persist the sound setting. Additionally, the file provides a 
+custom hook (useNotifications) to access and manipulate notifications within other 
+components of the application.
+*/
+
+
 import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
 
 const NotificationContext = createContext();
