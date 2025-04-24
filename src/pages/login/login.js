@@ -1,3 +1,10 @@
+// Date: 2025-04-23
+// Team: WebFusion
+// Team Members: Nevathan, Liyu, Adrian, Abishan
+// Description: This React component renders the login page for TutorMatch. It supports both
+// traditional email/password authentication and Google OAuth login. Upon successful login,
+// it updates the app state and stores the user's email locally.
+
 import React, { useState } from "react";
 import "./login.css";
 import { GoogleLogin } from "@react-oauth/google";

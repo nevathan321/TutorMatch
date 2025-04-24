@@ -1,7 +1,6 @@
 /**
-* TutorMatch Group
-* 
-* Date: April 7, 2025
+* Group Members: Nevathan,Liyu,Adrian,Abishan
+* Date: April 20, 2025
 * 
 * Profile component for handling user profile editing and updates.
 * Manages user details, profile photo, password changes, and form submission.

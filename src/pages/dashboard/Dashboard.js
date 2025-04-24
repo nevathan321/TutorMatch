@@ -1,4 +1,20 @@
-// src/pages/dashboard/Dashboard.js
+/**
+ * Dashboard Component
+ * 
+ * Date: 2025-04-23
+ * Team: WebFusion
+ * Team Members: Nevathan, Liyu, Adrian, Abishan
+ * 
+ * This component handles the display of the user's dashboard, including their recent matches,
+ * upcoming sessions, and reviews. It fetches data from the server for matched tutors, Google
+ * Calendar events, and allows the user to submit reviews for tutors.
+ * 
+ * Key Features:
+ * - Fetches Google Calendar events and displays upcoming sessions.
+ * - Displays recent tutor matches for the user.
+ * - Provides a form to submit a review for a tutor.
+ */
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Review from "../../components/review/Review";

@@ -1,3 +1,16 @@
+/* 
+GroupName: WebFusion 
+GroupMembers: Nevathan, Adrian, Liyu, Abishan
+Date: 2025-04-23
+
+Description: This CSS file contains styles for the dashboard layout of a web application. 
+It includes styling for the dashboard container, header, stat cards, reviews, 
+calendar, match listings, and various buttons. The file also handles responsiveness 
+for different screen sizes and defines interactive hover effects, transitions, 
+and dynamic layouts for a seamless user experience.
+*/
+
+
 .dashboard-container {
   max-width: 1200px;
   margin: 0 auto;

@@ -1,3 +1,9 @@
+/* 
+  Transaction Styles
+  Date: 2025-04-24
+  Designed by WebFusion (Nevathan, Liyu, Adrian, Abishan)
+  Styles for the Transaction component, including layout, status color coding, and spacing
+*/
 .Transaction {
     width: 100%;
     border: 2px solid rgb(211, 211, 211);

@@ -1,3 +1,7 @@
+// src/pages/inbox/inbox.js
+// Team: WebFusion | Members: Nevathan, Liyu, Adrian, Abishan | Date: 2025-04-24
+// This file handles the inbox view, including fetching matched tutors, searching for tutors, sending emails, and scheduling sessions.
+
 "use client";
 
 // src/pages/inbox/inbox.js

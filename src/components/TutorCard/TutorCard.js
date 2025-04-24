@@ -1,3 +1,19 @@
+/* 
+GroupName: WebFusion 
+GroupMembers: Nevathan, Adrian, Liyu, Abishan
+Date: 2025-04-23
+
+Description: This file contains the TutorCard component which displays a tutor's 
+information such as their name, subjects, hourly wage, education, and rating. It 
+fetches the latest review for the tutor and renders it along with star ratings. 
+The component also includes buttons to accept or reject the tutor and shows 
+a modal with more reviews when clicked. The getYearOfStudyString function is 
+used to display the tutor's academic year in a user-friendly format, and 
+subject-specific CSS classes are applied to differentiate subjects. 
+The Reviews component is used to show additional reviews in a modal dialog. 
+*/
+
+
 import { useState, useEffect } from "react";
 import './TutorCard.css';
 import Reviews from '../Reviews/reviews';
