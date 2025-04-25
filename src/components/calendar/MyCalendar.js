@@ -9,8 +9,9 @@
  * Displays an interactive calendar UI and maintains the selected date using local state.
  */
 
+import React from 'react';
+import PropTypes from 'prop-types';
 import Calendar from 'react-calendar';
-import React, { useState } from 'react';
 import 'react-calendar/dist/Calendar.css';
 import './MyCalendar.css';
 
@@ -19,12 +20,18 @@ import './MyCalendar.css';
  * 
  * @returns {JSX.Element} A calendar UI component with current date selected by default.
  */
-function MyCalendar() {
-    // State to hold the selected calendar date
-    const [value, onChange] = useState(new Date());
-
-    // Render the calendar and update state when a new date is selected
-    return <Calendar onChange={onChange} value={value} />;
+function MyCalendar({ selectedDate, onDateChange }) {
+    return (
+      <Calendar
+        value={selectedDate}
+        onChange={onDateChange}
+      />
+    );
 }
+
+MyCalendar.propTypes = {
+    selectedDate: PropTypes.instanceOf(Date).isRequired,
+    onDateChange: PropTypes.func.isRequired
+};
 
 export default MyCalendar;
